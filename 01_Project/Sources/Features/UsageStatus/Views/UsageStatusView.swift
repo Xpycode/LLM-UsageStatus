@@ -64,11 +64,21 @@ struct UsageStatusView: View {
 }
 
 /// One provider's section: populated content, not-detected copy, pre-approved
-/// failure copy, or a loading indicator — never raw error text.
+/// failure copy, or a loading indicator — never raw error text. Populated
+/// sections lead with the percent-left headline; the full detail expands on
+/// click and hovers as a compact tooltip.
 struct ProviderSectionView: View {
     @ObservedObject var store: UsageStore
     let now: Date
     let showFiveHourLimit: Bool
+    @State private var expanded: Bool
+
+    init(store: UsageStore, now: Date, showFiveHourLimit: Bool, expanded: Bool = false) {
+        _store = ObservedObject(wrappedValue: store)
+        self.now = now
+        self.showFiveHourLimit = showFiveHourLimit
+        _expanded = State(initialValue: expanded)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -100,16 +110,21 @@ struct ProviderSectionView: View {
     @ViewBuilder
     private func sectionContent(_ section: ProviderSection) -> some View {
         VStack(alignment: .leading, spacing: 14) {
-            // The Codex 5-hour display is optional; the provider owns these
-            // stable ids. Hiding the meter hides its reset countdown with it.
-            ForEach(showFiveHourLimit ? section.meters : section.meters.filter { $0.id != "five-hour-limit" }) { meter in
-                SectionMeterView(meter: meter)
+            if let headline = section.headline {
+                SectionHeadlineView(headline: headline, now: now)
             }
-            ForEach(section.rows) { row in
-                SectionRowView(row: row)
-            }
-            ForEach(showFiveHourLimit ? section.deadlines : section.deadlines.filter { $0.id != "five-hour-reset" }) { deadline in
-                SectionDeadlineView(deadline: deadline, now: now)
+            if expanded {
+                // The Codex 5-hour display is optional; the provider owns these
+                // stable ids. Hiding the meter hides its reset countdown with it.
+                ForEach(visibleMeters(section)) { meter in
+                    SectionMeterView(meter: meter)
+                }
+                ForEach(section.rows) { row in
+                    SectionRowView(row: row)
+                }
+                ForEach(visibleDeadlines(section)) { deadline in
+                    SectionDeadlineView(deadline: deadline, now: now)
+                }
             }
 
             VStack(alignment: .leading, spacing: 4) {
@@ -127,6 +142,90 @@ struct ProviderSectionView: View {
             .font(.caption)
             .foregroundStyle(.secondary)
         }
+        .contentShape(Rectangle())
+        .onTapGesture { expanded.toggle() }
+        .help(tooltip(section))
+    }
+
+    private func visibleMeters(_ section: ProviderSection) -> [SectionMeter] {
+        showFiveHourLimit ? section.meters : section.meters.filter { $0.id != "five-hour-limit" }
+    }
+
+    private func visibleDeadlines(_ section: ProviderSection) -> [SectionDeadline] {
+        showFiveHourLimit ? section.deadlines : section.deadlines.filter { $0.id != "five-hour-reset" }
+    }
+
+    /// Compact hover summary of the full detail, for glance-without-click.
+    private func tooltip(_ section: ProviderSection) -> String {
+        var lines: [String] = []
+        if let headline = section.headline {
+            lines.append("\(headline.windowLabel): \(Int((headline.fractionLeft * 100).rounded()))% left")
+        }
+        for meter in visibleMeters(section) {
+            lines.append("\(meter.label): \(Int((meter.fractionLeft * 100).rounded()))% left")
+        }
+        for row in section.rows {
+            lines.append("\(row.label): \(row.value)\(row.isEstimate ? " (estimated)" : "")")
+        }
+        for deadline in visibleDeadlines(section) {
+            lines.append("\(deadline.label): resets \(deadline.date.formatted(date: .abbreviated, time: .shortened))")
+        }
+        return lines.joined(separator: "\n")
+    }
+}
+
+/// The glance line: percent left for the primary window, its live reset
+/// countdown, and — when a remaining quantity exists — the estimated
+/// per-day amount for the remaining days.
+private struct SectionHeadlineView: View {
+    let headline: SectionHeadline
+    let now: Date
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text("\(Int((headline.fractionLeft * 100).rounded()))% left")
+                    .font(.title3.weight(.semibold))
+                Text(headline.windowLabel)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                if headline.isEstimate {
+                    estimateTag
+                }
+            }
+            if let resetsAt = headline.resetsAt {
+                HStack(spacing: 8) {
+                    Text(countdown(resetsAt))
+                    if let quote = dailyQuote {
+                        Text(quote)
+                    }
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
+            ProgressView(value: headline.fractionLeft)
+                .progressViewStyle(.linear)
+        }
+    }
+
+    /// Remaining quantity divided by the days until reset; an arithmetic
+    /// projection, always presented as an estimate.
+    private var dailyQuote: String? {
+        guard let budget = headline.dailyBudget, let resetsAt = headline.resetsAt else { return nil }
+        let seconds = resetsAt.timeIntervalSince(now)
+        guard seconds > 0 else { return nil }
+        let days = Decimal(seconds / 86_400)
+        guard days > 0 else { return nil }
+        let perDay = budget.amount / days
+        let value = perDay.formatted(.number.notation(.compactName).locale(.current))
+        let tail = headline.dailyBudget?.isEstimate == true ? " est." : ""
+        return budget.unitText == "$"
+            ? "≈ $\(value)/day\(tail)"
+            : "≈ \(value) \(budget.unitText)/day\(tail)"
+    }
+
+    private func countdown(_ date: Date) -> String {
+        SectionDeadlineView.countdownText(date, now: now)
     }
 }
 
@@ -158,11 +257,12 @@ private struct SectionMeterView: View {
                     estimateTag
                 }
             }
-            // The model's fraction is utilization (used), clamped to 0...1.
-            Text("\(Int((meter.fraction * 100).rounded()))% used")
+            // The model's fraction is utilization (used), clamped to 0...1;
+            // presentation leads with the remaining share.
+            Text("\(Int((meter.fractionLeft * 100).rounded()))% left")
                 .font(.caption)
                 .foregroundStyle(.secondary)
-            ProgressView(value: meter.fraction)
+            ProgressView(value: meter.fractionLeft)
                 .progressViewStyle(.linear)
         }
     }
@@ -187,10 +287,15 @@ private struct SectionDeadlineView: View {
     }
 
     private var countdown: String {
-        guard deadline.date > now else {
+        Self.countdownText(deadline.date, now: now)
+    }
+
+    /// Shared countdown phrasing for deadlines and headlines.
+    static func countdownText(_ date: Date, now: Date) -> String {
+        guard date > now else {
             return "Reset time passed · awaiting updated usage"
         }
-        let minutes = Int(min(deadline.date.timeIntervalSince(now) / 60, Double(Int.max / 2)))
+        let minutes = Int(min(date.timeIntervalSince(now) / 60, Double(Int.max / 2)))
         let days = minutes / 1_440
         let hours = (minutes % 1_440) / 60
         let remainder = minutes % 60
@@ -223,6 +328,10 @@ private struct SectionPreview: View {
             meters: [SectionMeter(id: "weekly", label: "Weekly limit", fraction: 0.32)!,
                      SectionMeter(id: "five-hour", label: "5-hour limit", fraction: 0.18, isEstimate: true)!],
             deadlines: [SectionDeadline(id: "reset", label: "Weekly limit", date: now.addingTimeInterval(90_000))],
+            headline: SectionHeadline(windowLabel: "Weekly limit", fractionLeft: 0.68,
+                                      resetsAt: now.addingTimeInterval(90_000),
+                                      dailyBudget: SectionDailyBudget(amount: Decimal(string: "7417273")!,
+                                                                      unitText: "credits", isEstimate: false)),
             lastUpdated: now)
         ProviderSectionView(store: store(section: section), now: now, showFiveHourLimit: true)
     }

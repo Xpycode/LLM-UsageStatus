@@ -52,6 +52,23 @@ final class ClaudeUsageProviderTests: XCTestCase {
         ])
         XCTAssertTrue(section.rows.isEmpty)
         XCTAssertEqual(section.lastUpdated, Self.now)
+        // The headline leads with the window that resets soonest: here the
+        // seven-day window (2027) resets before the five-hour one (2030).
+        XCTAssertEqual(section.headline,
+                       SectionHeadline(windowLabel: "7-day limit", fractionLeft: 1 - 0.81,
+                                       resetsAt: Self.isoDate("2027-01-21T00:00:00Z")))
+    }
+
+    func testFiveHourWindowLeadsHeadlineWhenItResetsSooner() {
+        let fiveHourReset = Self.now.addingTimeInterval(3_600)
+        let usage = ClaudeOAuthUsage(
+            fiveHour: ClaudeUsageWindow(utilization: 0.42, resetsAt: fiveHourReset),
+            sevenDay: ClaudeUsageWindow(utilization: 0.81, resetsAt: Self.now.addingTimeInterval(600_000)),
+            fetchedAt: Self.now)
+        let section = ClaudeUsageProvider.section(for: usage)
+        XCTAssertEqual(section.headline,
+                       SectionHeadline(windowLabel: "5-hour limit", fractionLeft: 1 - 0.42,
+                                       resetsAt: fiveHourReset))
     }
 
     func testMissingTokenFallsBackToLabeledLocalAggregates() async throws {

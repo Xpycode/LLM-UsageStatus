@@ -1,27 +1,52 @@
 import Foundation
 
+/// Cross-layer preference keys: `UsagePreferences` (Features) writes them,
+/// this provider (Shared) reads them. UserDefaults is thread-safe, so the
+/// read needs no actor hop.
+enum UsagePreferenceKeys {
+    static let vibeMonthlyBudgetUSD = "vibe.monthlyBudgetUSD"
+    static let vibeBudgetResetDay = "vibe.budgetResetDay"
+}
+
+/// A user-configured monthly spend budget for Vibe. Mistral publishes no
+/// allowance API, so any percentage derived from it is an estimate.
+struct VibeBudget: Equatable, Sendable {
+    /// Monthly budget in USD; always positive.
+    let amountUSD: Double
+    /// Day of month (1...31) the budget resets.
+    let resetDay: Int
+}
+
 /// Joins the local Vibe journal aggregation to the normalized provider seam.
 /// Token counts are facts read from the local store; rolling-window rows are
 /// labeled as estimates whenever unattributed session totals had to degrade
 /// into them, and the cost line appears only when every used session's model
 /// price resolves from the bundled rate card.
+/// With a configured monthly budget, the section leads with an estimated
+/// percent-left headline derived from the local cost estimate.
 struct VibeUsageProvider: Provider {
     let id = "vibe"
     let displayName = "Mistral Vibe"
 
     private let aggregator: VibeJournalAggregator
+    /// UserDefaults is documented thread-safe but not marked Sendable; the
+    /// read in `refresh` runs off the main actor. The handle is never mutated.
+    nonisolated(unsafe) private let defaults: UserDefaults
 
-    init(aggregator: VibeJournalAggregator = VibeJournalAggregator()) {
+    init(aggregator: VibeJournalAggregator = VibeJournalAggregator(),
+         defaults: UserDefaults = .standard) {
         self.aggregator = aggregator
+        self.defaults = defaults
     }
 
     func refresh() async -> ProviderSectionState {
         let report = await aggregator.scan()
         guard report.detected else { return .notDetected }
-        return .populated(Self.section(for: report))
+        return .populated(Self.section(for: report, budget: Self.budget(from: defaults)))
     }
 
-    static func section(for report: VibeUsageReport) -> ProviderSection {
+    static func section(for report: VibeUsageReport, budget: VibeBudget? = nil,
+                        now: Date = Date(), calendar: Calendar = .current) -> ProviderSection {
         let totalAllTime = Self.totalTokens(report.totals)
         var rows = [
             SectionRow(id: "sessions", label: "Sessions", value: report.sessions.count.formatted()),
@@ -46,7 +71,55 @@ struct VibeUsageProvider: Provider {
             rows.append(SectionRow(id: "malformed-records", label: "Skipped malformed records",
                                    value: report.malformedRecords.formatted()))
         }
-        return ProviderSection(rows: rows, lastUpdated: report.scannedAt)
+        return ProviderSection(rows: rows, headline: headline(for: report, budget: budget,
+                                                              now: now, calendar: calendar),
+                               lastUpdated: report.scannedAt)
+    }
+
+    /// Reads the persisted budget; malformed or non-positive values mean none.
+    static func budget(from defaults: UserDefaults) -> VibeBudget? {
+        guard let amount = defaults.object(forKey: UsagePreferenceKeys.vibeMonthlyBudgetUSD) as? Double,
+              amount.isFinite, amount > 0 else { return nil }
+        let day = defaults.object(forKey: UsagePreferenceKeys.vibeBudgetResetDay) as? Int ?? 1
+        guard (1...31).contains(day) else { return nil }
+        return VibeBudget(amountUSD: amount, resetDay: day)
+    }
+
+    /// Estimated headline from the local cost estimate against the budget.
+    /// No cost (unresolved model prices) or no budget means no headline —
+    /// the section stays token-first, never a partial guess.
+    private static func headline(for report: VibeUsageReport, budget: VibeBudget?,
+                                 now: Date, calendar: Calendar) -> SectionHeadline? {
+        guard let budget, let cost = estimatedCost(for: report.sessions) else { return nil }
+        let amount = Decimal(budget.amountUSD)
+        let spent = Double(truncating: cost as NSDecimalNumber)
+        let fractionLeft = min(max(1 - spent / budget.amountUSD, 0), 1)
+        let raw = amount - cost
+        let remaining = raw < 0 ? Decimal(0) : raw
+        return SectionHeadline(windowLabel: "Monthly budget",
+                               fractionLeft: fractionLeft,
+                               resetsAt: nextResetDate(onOrAfter: now, dayOfMonth: budget.resetDay,
+                                                       calendar: calendar),
+                               dailyBudget: SectionDailyBudget(amount: remaining, unitText: "$",
+                                                              isEstimate: true),
+                               isEstimate: true)
+    }
+
+    /// Next monthly occurrence of `day`, clamped to the month's length
+    /// (day 31 in a 30-day month resets on the 30th), at local midnight.
+    static func nextResetDate(onOrAfter now: Date, dayOfMonth day: Int,
+                              calendar: Calendar = .current) -> Date? {
+        guard (1...31).contains(day) else { return nil }
+        for offset in 0...1 {
+            guard let anchor = calendar.date(byAdding: .month, value: offset, to: now),
+                  let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: anchor))
+            else { continue }
+            let days = calendar.range(of: .day, in: .month, for: monthStart)?.count ?? 30
+            guard let candidate = calendar.date(bySetting: .day, value: min(day, days), of: monthStart)
+            else { continue }
+            if candidate > now { return candidate }
+        }
+        return nil
     }
 
     /// All counted token classes summed; `inputTokens` already folds in

@@ -14,7 +14,7 @@ struct SectionFixturePreview: View {
     @State private var store: UsageStore?
 
     var body: some View {
-        SectionFixture.sectionView(store: store)
+        SectionFixture.sectionView(store: store, expanded: scenario.expanded)
             .padding(16)
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14))
             .task {
@@ -23,7 +23,8 @@ struct SectionFixturePreview: View {
     }
 }
 
-// One preview per provider and section state (3 x 5 = 15).
+// One preview per provider and section state (3 x 5 = 15), plus the
+// collapsed headline variants including the Vibe monthly-budget headline.
 
 #Preview("Codex · populated") { SectionFixturePreview(scenario: .fixture("codex", .populated)) }
 #Preview("Codex · unavailable") { SectionFixturePreview(scenario: .fixture("codex", .unavailable)) }
@@ -42,3 +43,7 @@ struct SectionFixturePreview: View {
 #Preview("Mistral Vibe · not detected") { SectionFixturePreview(scenario: .fixture("vibe", .notDetected)) }
 #Preview("Mistral Vibe · stale") { SectionFixturePreview(scenario: .fixture("vibe", .stale)) }
 #Preview("Mistral Vibe · estimate fallback") { SectionFixturePreview(scenario: .fixture("vibe", .estimateFallback)) }
+
+#Preview("Codex · headline") { SectionFixturePreview(scenario: SectionFixture.headlineScenarios[0]) }
+#Preview("Claude Code · headline") { SectionFixturePreview(scenario: SectionFixture.headlineScenarios[1]) }
+#Preview("Mistral Vibe · budget headline") { SectionFixturePreview(scenario: SectionFixture.headlineScenarios[2]) }

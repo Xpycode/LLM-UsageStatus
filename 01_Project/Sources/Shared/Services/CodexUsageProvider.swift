@@ -64,7 +64,23 @@ extension CodexUsageService: Provider {
                        value: snapshot.resets.availableCount.map { $0.formatted() } ?? "Unavailable"),
         ]
 
+        var headline: SectionHeadline?
+        if let weekly = snapshot.weekly {
+            // The weekly window is Codex's primary constraint; the headline's
+            // remaining amount is the credit balance when one exists.
+            let dailyBudget: SectionDailyBudget?
+            if case .available(let balance) = snapshot.credits {
+                dailyBudget = SectionDailyBudget(amount: balance, unitText: "credits", isEstimate: false)
+            } else {
+                dailyBudget = nil
+            }
+            headline = SectionHeadline(windowLabel: "Weekly limit",
+                                       fractionLeft: weekly.remainingPercentage / 100,
+                                       resetsAt: weekly.resetsAt,
+                                       dailyBudget: dailyBudget)
+        }
+
         return ProviderSection(rows: rows, meters: meters, deadlines: deadlinesOut,
-                               lastUpdated: snapshot.fetchedAt)
+                               headline: headline, lastUpdated: snapshot.fetchedAt)
     }
 }

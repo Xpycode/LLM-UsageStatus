@@ -66,15 +66,57 @@ struct ProviderSection: Equatable, Sendable {
     let meters: [SectionMeter]
     /// Future dates with labels (resets, renewals) for countdown rendering.
     let deadlines: [SectionDeadline]
+    /// Glance-first headline; nil when no utilization window is present.
+    let headline: SectionHeadline?
     /// When the provider produced these values.
     let lastUpdated: Date
 
-    init(rows: [SectionRow] = [], meters: [SectionMeter] = [], deadlines: [SectionDeadline] = [], lastUpdated: Date) {
+    init(rows: [SectionRow] = [], meters: [SectionMeter] = [], deadlines: [SectionDeadline] = [],
+         headline: SectionHeadline? = nil, lastUpdated: Date) {
         self.rows = rows
         self.meters = meters
         self.deadlines = deadlines
+        self.headline = headline
         self.lastUpdated = lastUpdated
     }
+}
+
+/// The glance line at the top of a populated section: percent left until the
+/// next reset of the provider's primary window. Pure data; the view renders
+/// the live countdown against its ticking clock.
+struct SectionHeadline: Equatable, Sendable {
+    /// What resets, e.g. "Weekly limit".
+    let windowLabel: String
+    /// Remaining fraction, always clamped to 0...1 (1 − utilization).
+    let fractionLeft: Double
+    /// When the window resets; nil disables the countdown and daily quote.
+    let resetsAt: Date?
+    /// Quantified remainder for the daily-budget quote, when one exists.
+    let dailyBudget: SectionDailyBudget?
+    /// True when the headline derives from estimated rather than authoritative
+    /// data, so the view can label it.
+    var isEstimate = false
+
+    /// Rejects non-finite input so a broken payload cannot reach presentation.
+    init?(windowLabel: String, fractionLeft: Double, resetsAt: Date? = nil,
+          dailyBudget: SectionDailyBudget? = nil, isEstimate: Bool = false) {
+        guard fractionLeft.isFinite else { return nil }
+        self.windowLabel = windowLabel
+        self.fractionLeft = min(max(fractionLeft, 0), 1)
+        self.resetsAt = resetsAt
+        self.dailyBudget = dailyBudget
+        self.isEstimate = isEstimate
+    }
+}
+
+/// The remaining quantity behind a daily-budget quote, e.g. 7,417,273 credits.
+struct SectionDailyBudget: Equatable, Sendable {
+    /// Remaining amount as a plain quantity; the view divides by the days left.
+    let amount: Decimal
+    /// Unit suffix for rendering, e.g. "credits" or "$".
+    let unitText: String
+    /// True when the amount is an estimate; the rendered quote inherits it.
+    let isEstimate: Bool
 }
 
 /// One label/value line in a section, e.g. "Credits — 12.75".
@@ -102,6 +144,8 @@ struct SectionMeter: Equatable, Sendable, Identifiable {
     let label: String
     /// Utilization fraction, always clamped to 0...1.
     let fraction: Double
+    /// Remaining fraction, always clamped to 0...1; presentation leads with it.
+    var fractionLeft: Double { min(max(1 - fraction, 0), 1) }
     /// True when the fraction is a fallback or estimate rather than authoritative.
     var isEstimate = false
 

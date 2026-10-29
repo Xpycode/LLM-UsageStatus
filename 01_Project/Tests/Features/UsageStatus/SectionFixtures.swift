@@ -48,14 +48,38 @@ enum SectionFixture {
         /// Content shown for populated/stale/estimate-fallback; nil for the
         /// pure failure states, which never display section content.
         let section: ProviderSection?
+        /// Collapsed renders show the headline only (the glance state the
+        /// panel opens in); expanded renders show the full detail.
+        var expanded: Bool = true
+        /// Render file name when it differs from the state-derived default.
+        var fileNameOverride: String? = nil
 
-        var id: String { "\(providerID)-\(state.slug)" }
-        var fileName: String { "\(providerID)-\(state.slug).png" }
-        var title: String { "\(displayName) · \(state.slug)" }
+        var id: String { "\(providerID)-\(state.slug)\(expanded ? "" : "-collapsed")" }
+        var fileName: String {
+            if let fileNameOverride { return fileNameOverride }
+            return expanded ? "\(providerID)-\(state.slug).png" : "\(providerID)-headline.png"
+        }
+        var title: String { "\(displayName) · \(expanded ? state.slug : state.slug + " (headline)")" }
     }
 
-    /// All 15 scenarios: three providers crossed with five section states.
+    /// The canonical 15 scenarios: three providers crossed with five section
+    /// states, rendered expanded (full detail).
     static let scenarios: [Scenario] = codexScenarios + claudeScenarios + vibeScenarios
+
+    /// Collapsed-headline variants: the glance state the panel opens in,
+    /// including the Vibe monthly-budget headline.
+    static let headlineScenarios: [Scenario] = [
+        Scenario(providerID: "codex", displayName: "Codex", state: .populated,
+                  section: codexPopulatedSection, expanded: false),
+        Scenario(providerID: "claude", displayName: "Claude Code", state: .populated,
+                  section: claudeEndpointSection, expanded: false),
+        Scenario(providerID: "vibe", displayName: "Mistral Vibe", state: .populated,
+                  section: vibeBudgetSection, expanded: false,
+                  fileNameOverride: "vibe-budget-headline.png"),
+    ]
+
+    /// Every scenario, expanded detail and collapsed headlines alike.
+    static var allScenarios: [Scenario] { scenarios + headlineScenarios }
 
     static func scenario(_ providerID: String, _ state: SectionFixtureState) -> Scenario {
         guard let match = scenarios.first(where: { $0.providerID == providerID && $0.state == state }) else {
@@ -67,9 +91,9 @@ enum SectionFixture {
     /// The single-section visual used by previews and render tests alike:
     /// panel-width framing around the production `ProviderSectionView`.
     @ViewBuilder
-    static func sectionView(store: UsageStore?) -> some View {
+    static func sectionView(store: UsageStore?, expanded: Bool = true) -> some View {
         if let store {
-            ProviderSectionView(store: store, now: now, showFiveHourLimit: true)
+            ProviderSectionView(store: store, now: now, showFiveHourLimit: true, expanded: expanded)
                 .frame(width: 320, alignment: .topLeading)
         } else {
             ProgressView().frame(width: 320)
@@ -124,6 +148,10 @@ enum SectionFixture {
                 SectionDeadline(id: "five-hour-reset", label: "5-hour limit", date: now.addingTimeInterval(4_500)),
                 SectionDeadline(id: "pass-expiry", label: "Next reset-pass expiry", date: now.addingTimeInterval(172_800)),
             ],
+            headline: SectionHeadline(windowLabel: "Weekly limit", fractionLeft: 0.68,
+                                     resetsAt: now.addingTimeInterval(90_000),
+                                     dailyBudget: SectionDailyBudget(amount: Decimal(string: "7417273")!,
+                                                                     unitText: "credits", isEstimate: false)),
             lastUpdated: now)
     }
 
@@ -174,6 +202,8 @@ enum SectionFixture {
                 SectionDeadline(id: "five-hour-reset", label: "5-hour limit", date: now.addingTimeInterval(4_500)),
                 SectionDeadline(id: "seven-day-reset", label: "7-day limit", date: now.addingTimeInterval(90_000)),
             ],
+            headline: SectionHeadline(windowLabel: "5-hour limit", fractionLeft: 0.58,
+                                     resetsAt: now.addingTimeInterval(4_500)),
             lastUpdated: now)
     }
 
@@ -226,6 +256,25 @@ enum SectionFixture {
                 SectionRow(id: "tokens-7d", label: "Tokens (7 days)", value: "1,500", isEstimate: true),
                 SectionRow(id: "tokens-total", label: "Tokens (all time)", value: "1,500"),
             ],
+            lastUpdated: now)
+    }
+
+    /// Populated plus a configured monthly budget: mirrors
+    /// VibeUsageProvider's budget headline (estimated % left + $/day).
+    private static var vibeBudgetSection: ProviderSection {
+        ProviderSection(
+            rows: [
+                SectionRow(id: "sessions", label: "Sessions", value: "3"),
+                SectionRow(id: "tokens-24h", label: "Tokens (24 hours)", value: "5,300"),
+                SectionRow(id: "tokens-7d", label: "Tokens (7 days)", value: "18,204"),
+                SectionRow(id: "tokens-total", label: "Tokens (all time)", value: "9,876,543"),
+                SectionRow(id: "estimated-cost", label: "Estimated cost", value: "$17.47", isEstimate: true),
+            ],
+            headline: SectionHeadline(windowLabel: "Monthly budget", fractionLeft: 0.94,
+                                     resetsAt: now.addingTimeInterval(172_800),
+                                     dailyBudget: SectionDailyBudget(amount: Decimal(string: "282.53")!,
+                                                                     unitText: "$", isEstimate: true),
+                                     isEstimate: true),
             lastUpdated: now)
     }
 

@@ -100,11 +100,25 @@ struct ClaudeOAuthUsageService: Sendable {
         }
 
         do {
-            return try JSONDecoder().decode(Envelope.self, from: data).usage(fetchedAt: now())
+            let usage = try JSONDecoder().decode(Envelope.self, from: data).usage(fetchedAt: now())
+            // Privacy-safe window diagnostics: presence and utilization percentage
+            // only — never reset timestamps, identifiers, or raw payloads. The
+            // live section at E1 showed no five-hour meter while the vendor page
+            // did; this resolves which windows the endpoint actually returns.
+            let line = "Usage windows five_hour=\(Self.windowLog(usage.fiveHour)) seven_day=\(Self.windowLog(usage.sevenDay))"
+            Self.logger.notice("\(line, privacy: .public)")
+            return usage
         } catch {
             // Response bodies can contain private data; never surface the decode error.
             throw FetchError.usageUnavailable
         }
+    }
+
+    private static func windowLog(_ window: ClaudeUsageWindow?) -> String {
+        guard let window else { return "absent" }
+        let util = window.utilization.map { "\(Int(($0 * 100).rounded()))%" } ?? "nil"
+        let reset = window.resetsAt != nil
+        return "present util=\(util) reset=\(reset)"
     }
 
     private struct Envelope: Decodable {

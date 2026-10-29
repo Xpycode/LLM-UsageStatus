@@ -136,6 +136,87 @@ final class VibeUsageProviderTests: XCTestCase {
         XCTAssertTrue(section.rows.allSatisfy { $0.value == "0" })
     }
 
+    // MARK: - Monthly budget headline
+
+    func testBudgetHeadlineEstimatesPercentLeftAndDailyBudget() async throws {
+        try writeSession("session-budget", journal: [
+            usageRecord(sequence: 1, actionID: "b1", input: 100, cached: 5_000, output: 200),
+            coreInputRecord(sequence: 2, actionID: "b1", timeUnixMs: milliseconds(Self.now)),
+        ], modelName: "mistral-medium-3.5")
+        let report = await aggregator(modelName: { _, _ in "mistral-medium-3.5" }).scan()
+
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        let now = calendar.date(from: DateComponents(year: 2025, month: 1, day: 1))!
+
+        let section = VibeUsageProvider.section(for: report,
+                                                budget: VibeBudget(amountUSD: 300, resetDay: 15),
+                                                now: now, calendar: calendar)
+
+        let cost = MistralRateCard.cost(inputTokens: 100, cachedTokens: 5_000, outputTokens: 200,
+                                        prices: MistralRateCard.resolve("mistral-medium-3.5")!)
+        let expectedHeadline = SectionHeadline(
+            windowLabel: "Monthly budget",
+            fractionLeft: 1 - Double(truncating: cost as NSDecimalNumber) / 300,
+            resetsAt: calendar.date(from: DateComponents(year: 2025, month: 1, day: 15)),
+            dailyBudget: SectionDailyBudget(amount: Decimal(300) - cost, unitText: "$", isEstimate: true),
+            isEstimate: true)
+        XCTAssertEqual(section.headline, expectedHeadline)
+    }
+
+    func testBudgetWithoutResolvableCostHasNoHeadline() async throws {
+        try writeSession("session-unknown-budget", journal: [
+            usageRecord(sequence: 1, actionID: "u1", input: 100, output: 10),
+            coreInputRecord(sequence: 2, actionID: "u1", timeUnixMs: milliseconds(Self.now)),
+        ], modelName: nil)
+        let report = await aggregator(modelName: { _, _ in "unknown-model" }).scan()
+
+        let section = VibeUsageProvider.section(for: report,
+                                                budget: VibeBudget(amountUSD: 300, resetDay: 15))
+        XCTAssertNil(section.headline)
+    }
+
+    func testNoBudgetMeansNoHeadline() async throws {
+        try writeSession("session-no-budget", journal: [
+            usageRecord(sequence: 1, actionID: "n1", input: 100, output: 10),
+            coreInputRecord(sequence: 2, actionID: "n1", timeUnixMs: milliseconds(Self.now)),
+        ], modelName: "mistral-medium-3.5")
+        let report = await aggregator(modelName: { _, _ in "mistral-medium-3.5" }).scan()
+        XCTAssertNil(VibeUsageProvider.section(for: report, budget: nil).headline)
+    }
+
+    func testNextResetDateClampsToMonthLengthAndRollsForward() {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        let jan20 = calendar.date(from: DateComponents(year: 2025, month: 1, day: 20))!
+
+        // Day already passed this month -> rolls to next month.
+        XCTAssertEqual(VibeUsageProvider.nextResetDate(onOrAfter: jan20, dayOfMonth: 15, calendar: calendar),
+                       calendar.date(from: DateComponents(year: 2025, month: 2, day: 15)))
+        // Day 31 clamps to February's 28 days.
+        let feb1 = calendar.date(from: DateComponents(year: 2025, month: 2, day: 1))!
+        XCTAssertEqual(VibeUsageProvider.nextResetDate(onOrAfter: feb1, dayOfMonth: 31, calendar: calendar),
+                       calendar.date(from: DateComponents(year: 2025, month: 2, day: 28)))
+        // Out-of-range day yields nil.
+        XCTAssertNil(VibeUsageProvider.nextResetDate(onOrAfter: jan20, dayOfMonth: 0, calendar: calendar))
+    }
+
+    func testBudgetReadIgnoresMalformedDefaults() {
+        let name = "VibeUsageProviderTests.Budget-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: name)!
+        defer { defaults.removePersistentDomain(forName: name) }
+
+        XCTAssertNil(VibeUsageProvider.budget(from: defaults))
+        defaults.set(-5.0, forKey: UsagePreferenceKeys.vibeMonthlyBudgetUSD)
+        XCTAssertNil(VibeUsageProvider.budget(from: defaults))
+        defaults.set(300.0, forKey: UsagePreferenceKeys.vibeMonthlyBudgetUSD)
+        defaults.set(45, forKey: UsagePreferenceKeys.vibeBudgetResetDay)
+        XCTAssertNil(VibeUsageProvider.budget(from: defaults))
+        defaults.set(15, forKey: UsagePreferenceKeys.vibeBudgetResetDay)
+        XCTAssertEqual(VibeUsageProvider.budget(from: defaults),
+                       VibeBudget(amountUSD: 300, resetDay: 15))
+    }
+
     // MARK: - Fixtures
 
     private func aggregator(modelName: @escaping VibeJournalAggregator.ModelNameSource) -> VibeJournalAggregator {

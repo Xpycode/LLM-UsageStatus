@@ -84,6 +84,7 @@ import SwiftUI
         let menu = NSMenu()
         let displayOption = menu.addItem(withTitle: "Show 5-hour limit", action: #selector(toggleCodexFiveHourLimit), keyEquivalent: "")
         displayOption.state = preferences.showCodexFiveHourLimit ? .on : .off
+        menu.addItem(withTitle: "Set Vibe Monthly Budget…", action: #selector(editVibeBudget), keyEquivalent: "")
         menu.addItem(.separator())
         menu.addItem(withTitle: "Restart LLM Usage Status", action: #selector(restart), keyEquivalent: "")
         menu.addItem(.separator())
@@ -95,6 +96,19 @@ import SwiftUI
     @objc private func toggleCodexFiveHourLimit(_ sender: NSMenuItem) {
         preferences.showCodexFiveHourLimit.toggle()
         sender.state = preferences.showCodexFiveHourLimit ? .on : .off
+    }
+
+    @objc private func editVibeBudget() {
+        VibeBudgetEditor.shared.present(
+            amount: preferences.vibeMonthlyBudgetUSD,
+            resetDay: preferences.vibeBudgetResetDay
+        ) { [weak self] amount, resetDay in
+            guard let self else { return }
+            self.preferences.vibeMonthlyBudgetUSD = amount
+            self.preferences.vibeBudgetResetDay = resetDay
+            // The open panel picks the new headline up through the stores.
+            self.stores.forEach { $0.refresh() }
+        }
     }
 
     @objc private func quit() { NSApp.terminate(nil) }

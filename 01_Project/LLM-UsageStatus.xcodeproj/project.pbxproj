@@ -17,6 +17,7 @@
 		296F51207DAB51EDB5F6A3FB /* UsageResponseDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5BEBC9BCD01682D42F37B5 /* UsageResponseDecoder.swift */; };
 		33D5EC94411959A61CAADA70 /* GlobalHotKeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F39E311E6A2612C0A467434B /* GlobalHotKeyTests.swift */; };
 		48CD3554BAAAAE0E5F2DA52F /* ClaudeTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1DA9A29E1DFD828D59DD02 /* ClaudeTokenProvider.swift */; };
+		50E84E605C398D452D8958A8 /* VibeBudgetEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1990B3291A76DB3D3CCFDA80 /* VibeBudgetEditor.swift */; };
 		550A500AA648447460D4280D /* ClaudeOAuthUsageServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A91A276F08FF60DEAA238BC /* ClaudeOAuthUsageServiceTests.swift */; };
 		558F53E04CD7DEEC5D3D265A /* UsageSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D86D18557950E0CAFEA9A68 /* UsageSnapshotTests.swift */; };
 		58EB06E0BC31EB981AE007E2 /* SectionFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6406DBE5BC91A2BCB8C679E /* SectionFixtures.swift */; };
@@ -61,6 +62,7 @@
 		10C5FC1444DA093FA5FB49D8 /* CodexUsageProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexUsageProviderTests.swift; sourceTree = "<group>"; };
 		145B4E2671959B566C14E361 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1962AB6F02C1A3B93B3B8A7B /* VibeJournalAggregatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeJournalAggregatorTests.swift; sourceTree = "<group>"; };
+		1990B3291A76DB3D3CCFDA80 /* VibeBudgetEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeBudgetEditor.swift; sourceTree = "<group>"; };
 		2236B8889F6DDB2D5F356A57 /* LLMUsageStatusApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMUsageStatusApp.swift; sourceTree = "<group>"; };
 		223B33EEAE0FCC317DB5700A /* CodexUsageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexUsageService.swift; sourceTree = "<group>"; };
 		28627813D66FF774A5DB857E /* ProviderModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderModels.swift; sourceTree = "<group>"; };
@@ -158,6 +160,7 @@
 				514EE2AF472B97AA1985CC48 /* GlobalHotKey.swift */,
 				2236B8889F6DDB2D5F356A57 /* LLMUsageStatusApp.swift */,
 				B3460E4F1309B764C254CD4E /* UsagePanelController.swift */,
+				1990B3291A76DB3D3CCFDA80 /* VibeBudgetEditor.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -439,6 +442,7 @@
 				719277C80D5D2CA7980908D2 /* UsageSnapshot.swift in Sources */,
 				0F540680EC4CA9DDA014B9AF /* UsageStatusView.swift in Sources */,
 				85C15B1E8054471F8BF40197 /* UsageStore.swift in Sources */,
+				50E84E605C398D452D8958A8 /* VibeBudgetEditor.swift in Sources */,
 				9D2119BF6606A7A76DBC2469 /* VibeJournalAggregator.swift in Sources */,
 				BFFE93F8A1DFA07828DBD381 /* VibeUsageProvider.swift in Sources */,
 			);

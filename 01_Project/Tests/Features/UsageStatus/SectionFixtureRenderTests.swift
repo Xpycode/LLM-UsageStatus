@@ -47,8 +47,10 @@ final class SectionFixtureRenderTests: XCTestCase {
     }
 
     private func renderAllScenarios(providerID: String) async throws {
-        let scenarios = SectionFixture.scenarios.filter { $0.providerID == providerID }
-        XCTAssertEqual(scenarios.count, SectionFixtureState.allCases.count,
+        // Expanded detail renders for every state, plus the collapsed
+        // headline variants that mirror what the panel first shows.
+        let scenarios = SectionFixture.allScenarios.filter { $0.providerID == providerID }
+        XCTAssertGreaterThanOrEqual(scenarios.count, SectionFixtureState.allCases.count,
                        "\(providerID) fixtures must cover every section state")
         for scenario in scenarios {
             let store = await SectionFixture.makeStore(for: scenario)
@@ -67,7 +69,8 @@ final class SectionFixtureRenderTests: XCTestCase {
     }
 
     private func renderPNG(scenario: SectionFixture.Scenario, store: UsageStore) -> Data? {
-        let renderer = ImageRenderer(content: SectionFixture.sectionView(store: store))
+        let renderer = ImageRenderer(content: SectionFixture.sectionView(store: store,
+                                                                         expanded: scenario.expanded))
         renderer.scale = 2
         guard let image = renderer.nsImage,
               let tiff = image.tiffRepresentation,

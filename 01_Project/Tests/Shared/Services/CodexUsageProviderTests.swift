@@ -35,6 +35,10 @@ final class CodexUsageProviderTests: XCTestCase {
             SectionRow(id: "reset-passes", label: "Reset passes", value: "Unavailable"),
         ])
         XCTAssertTrue(section.deadlines.isEmpty)
+        XCTAssertEqual(section.headline,
+                       SectionHeadline(windowLabel: "Weekly limit", fractionLeft: 0.8, resetsAt: nil,
+                                       dailyBudget: SectionDailyBudget(amount: Decimal(string: "12.5")!,
+                                                                        unitText: "credits", isEstimate: false)))
     }
 
     func testSectionMappingCarriesResetsExpiryAndUnlimitedCredits() {
@@ -58,6 +62,9 @@ final class CodexUsageProviderTests: XCTestCase {
             SectionDeadline(id: "five-hour-reset", label: "5-hour limit", date: now.addingTimeInterval(3_600)),
             SectionDeadline(id: "pass-expiry", label: "Next reset-pass expiry", date: now.addingTimeInterval(172_800)),
         ])
+        XCTAssertEqual(section.headline,
+                       SectionHeadline(windowLabel: "Weekly limit", fractionLeft: 0.68,
+                                       resetsAt: now.addingTimeInterval(90_000), dailyBudget: nil))
         XCTAssertEqual(section.lastUpdated, now)
     }
 
