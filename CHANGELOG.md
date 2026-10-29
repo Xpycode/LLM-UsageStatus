@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Headline-first sections: every populated section leads with the percent left
+  until its next reset and a live countdown, plus an estimated per-day amount
+  for the remaining days where a remaining quantity exists.
+- On-demand detail: click a section to expand or collapse its full detail;
+  hover for a compact tooltip summary. Meters read "X% left".
+- Optional Mistral Vibe monthly budget (amount + reset day, right-click menu):
+  with a budget set, the Vibe headline shows an estimated percent left and
+  dollars-per-day quote; without one, the section stays token-first.
+- Privacy-safe Claude endpoint diagnostics (window presence and utilization).
 - Initial dockless multi-provider usage HUD, summoned with Control-Option-Command-L.
 - One section per installed CLI — Codex, Claude Code, and Mistral Vibe — with
   absent CLIs shown as "not detected" and per-provider failure isolation.

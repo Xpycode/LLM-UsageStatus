@@ -53,11 +53,21 @@ end user.
    and seven-day utilization with vendor `resets_at`; fallback to locally aggregated tokens
    (`~/.claude/projects/**/*.jsonl`) clearly labeled as estimates when the token is unavailable.
 3. **Mistral Vibe section** — locally aggregated usage: tokens per rolling period (and optionally
-   derived cost) from `~/.vibe/logs/session/unified/*/journal/*.jsonl`.
+   derived cost) from `~/.vibe/logs/session/unified/*/journal/*.jsonl`. Optionally, the user can
+   set a monthly budget (amount + reset day; Mistral publishes no allowance API): with a budget,
+   the section leads with an estimated percent-left headline and a dollars-per-day quote derived
+   from the local cost estimate; without one, it stays token-first with no percentage.
 4. **Provider isolation** — a missing CLI shows "not detected"; a failing refresh shows the last
    good values with a failure message; providers never break each other.
 5. **HUD interaction** — same interaction model as CodexUsageStatus: global hotkey toggle,
    click-elsewhere dismissal, draggable panel, refresh on open.
+6. **Headline-first sections** (accepted 2026-10-29 at E1 review) — every populated section leads
+   with one glance line: **percentage left until the next reset** for its primary window, the reset
+   countdown, and — where a remaining quantity exists (Codex credits, Vibe budget) — an estimated
+   per-day amount for the remaining days, visibly labeled as an estimate. Utilization meters render
+   as "X% left". The full detail (meters, token counts, credits, passes, sessions, cost) is
+   available on demand: click a section to expand it inline, click again to collapse; hovering
+   shows a compact tooltip summary.
 
 ### User Flow
 
@@ -101,6 +111,18 @@ end user.
 - [ ] Given the app is launched by a user who has never configured anything, when the HUD opens,
       then every section populated purely from existing CLI-owned files — no API keys, no sign-in,
       no preferences required.
+- [ ] Given a populated section, when the HUD renders, then the section leads with the percentage
+      left for its primary window and its reset countdown (Codex: weekly; Claude: seven-day, or
+      five-hour when that is what the endpoint returns; Vibe: monthly budget when configured).
+- [ ] Given a section with a quantifiable remaining amount, when the headline renders, then it
+      shows the estimated per-day amount for the remaining days, visibly labeled as an estimate.
+- [ ] Given a populated section, when the user clicks it, then it expands to show the full detail;
+      clicking again collapses it; hovering shows a compact tooltip summary of the detail.
+- [ ] Given the user configured a Vibe monthly budget, when the Vibe section refreshes, then the
+      headline shows an estimated percent left and dollars-per-day quote until the configured
+      reset; given no budget is configured, then the Vibe section shows no percentage.
+- [ ] Given any quantity is rendered, when it is formatted, then thousands grouping is correct and
+      consistent for the user's locale (no mangled separators).
 
 ### Edge Cases
 
