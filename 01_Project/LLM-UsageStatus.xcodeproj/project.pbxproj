@@ -1,0 +1,644 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		08D12EE3A38C73CF510ECF1C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 145B4E2671959B566C14E361 /* AppDelegate.swift */; };
+		1317E37CB906096E7F3F4ECF /* UsageStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5E5974951BEE5C78AC243E /* UsageStoreTests.swift */; };
+		141D2409FAB57983E555A62E /* ClaudeLogAggregatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE7383097646DBAAD3BAC40E /* ClaudeLogAggregatorTests.swift */; };
+		1E99FE25CBCF9A47B7145512 /* GlobalHotKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514EE2AF472B97AA1985CC48 /* GlobalHotKey.swift */; };
+		240C13B382E6DCAA5D0D2661 /* MistralRateCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7750712C9735A9D6EF73E4F0 /* MistralRateCard.swift */; };
+		296F51207DAB51EDB5F6A3FB /* UsageResponseDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5BEBC9BCD01682D42F37B5 /* UsageResponseDecoder.swift */; };
+		33D5EC94411959A61CAADA70 /* GlobalHotKeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F39E311E6A2612C0A467434B /* GlobalHotKeyTests.swift */; };
+		48CD3554BAAAAE0E5F2DA52F /* ClaudeTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1DA9A29E1DFD828D59DD02 /* ClaudeTokenProvider.swift */; };
+		550A500AA648447460D4280D /* ClaudeOAuthUsageServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A91A276F08FF60DEAA238BC /* ClaudeOAuthUsageServiceTests.swift */; };
+		558F53E04CD7DEEC5D3D265A /* UsageSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D86D18557950E0CAFEA9A68 /* UsageSnapshotTests.swift */; };
+		5B221A6EB9DD838E8C805193 /* ClaudeLogAggregator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653152AA58139EA42CDC87C5 /* ClaudeLogAggregator.swift */; };
+		66F7E8F47082A19249060FAC /* MistralRateCardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C8D4F2D3B22C615F2DE2A5 /* MistralRateCardTests.swift */; };
+		69136A175B2F1E5835FDF54E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F6753BBC944B341814A3CA22 /* Assets.xcassets */; };
+		691DB206BEB7D941B2D7F81D /* VibeJournalAggregatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1962AB6F02C1A3B93B3B8A7B /* VibeJournalAggregatorTests.swift */; };
+		6AF5B6CC6BABEA3B54FB1B2C /* LLMUsageStatusApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2236B8889F6DDB2D5F356A57 /* LLMUsageStatusApp.swift */; };
+		719277C80D5D2CA7980908D2 /* UsageSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC692C15F291BE643A748AB /* UsageSnapshot.swift */; };
+		79A7E53EC8C50A8C822C428F /* ProviderModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5602417D4314F025F772B3 /* ProviderModelsTests.swift */; };
+		80E77CD8A15B46DBDBFD2138 /* UsageResponseDecoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E513A5ED1CFC017B7335D39 /* UsageResponseDecoderTests.swift */; };
+		85C15B1E8054471F8BF40197 /* UsageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86AEDD7CC8C3C1D4D6E1F9D /* UsageStore.swift */; };
+		86127BE71EECBA43DA3661DF /* CodexUsageServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C6F20829570EFFC12C69A6 /* CodexUsageServiceTests.swift */; };
+		86ACA730375860E14899199C /* CodexUsageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 223B33EEAE0FCC317DB5700A /* CodexUsageService.swift */; };
+		9D2119BF6606A7A76DBC2469 /* VibeJournalAggregator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853AB380986CA290F24B25F4 /* VibeJournalAggregator.swift */; };
+		C14D0945F5234D3D733B1FBB /* ClaudeOAuthUsageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03BD948C67F4E923C56A9D88 /* ClaudeOAuthUsageService.swift */; };
+		C71DA81FC5D7A148750B6548 /* UsagePanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3460E4F1309B764C254CD4E /* UsagePanelController.swift */; };
+		D553CA6AFCD910F92C60475E /* PlaceholderHUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB7D93C9611D64CA788E2818 /* PlaceholderHUDView.swift */; };
+		F907750B91316108497BCCA5 /* ProviderModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28627813D66FF774A5DB857E /* ProviderModels.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		546BC84D8AB6E88A76AC1434 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83FC9CB3EAF47DC63722A4E6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DA0C10C3D20B9E76B88D8EDB;
+			remoteInfo = "LLM-UsageStatus";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		03BD948C67F4E923C56A9D88 /* ClaudeOAuthUsageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeOAuthUsageService.swift; sourceTree = "<group>"; };
+		145B4E2671959B566C14E361 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		1962AB6F02C1A3B93B3B8A7B /* VibeJournalAggregatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeJournalAggregatorTests.swift; sourceTree = "<group>"; };
+		2236B8889F6DDB2D5F356A57 /* LLMUsageStatusApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMUsageStatusApp.swift; sourceTree = "<group>"; };
+		223B33EEAE0FCC317DB5700A /* CodexUsageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexUsageService.swift; sourceTree = "<group>"; };
+		28627813D66FF774A5DB857E /* ProviderModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderModels.swift; sourceTree = "<group>"; };
+		2D86D18557950E0CAFEA9A68 /* UsageSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageSnapshotTests.swift; sourceTree = "<group>"; };
+		2EC692C15F291BE643A748AB /* UsageSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageSnapshot.swift; sourceTree = "<group>"; };
+		31C6F20829570EFFC12C69A6 /* CodexUsageServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexUsageServiceTests.swift; sourceTree = "<group>"; };
+		3E513A5ED1CFC017B7335D39 /* UsageResponseDecoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageResponseDecoderTests.swift; sourceTree = "<group>"; };
+		4B1DA9A29E1DFD828D59DD02 /* ClaudeTokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeTokenProvider.swift; sourceTree = "<group>"; };
+		514EE2AF472B97AA1985CC48 /* GlobalHotKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalHotKey.swift; sourceTree = "<group>"; };
+		653152AA58139EA42CDC87C5 /* ClaudeLogAggregator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeLogAggregator.swift; sourceTree = "<group>"; };
+		7750712C9735A9D6EF73E4F0 /* MistralRateCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MistralRateCard.swift; sourceTree = "<group>"; };
+		7A5BEBC9BCD01682D42F37B5 /* UsageResponseDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageResponseDecoder.swift; sourceTree = "<group>"; };
+		7A91A276F08FF60DEAA238BC /* ClaudeOAuthUsageServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeOAuthUsageServiceTests.swift; sourceTree = "<group>"; };
+		7AC39F644D4F732B0A73938A /* LLM-UsageStatus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "LLM-UsageStatus.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		853AB380986CA290F24B25F4 /* VibeJournalAggregator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeJournalAggregator.swift; sourceTree = "<group>"; };
+		A097E4846F5F9BA0AF0A9C2D /* LLM-UsageStatusTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "LLM-UsageStatusTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3460E4F1309B764C254CD4E /* UsagePanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePanelController.swift; sourceTree = "<group>"; };
+		D86AEDD7CC8C3C1D4D6E1F9D /* UsageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageStore.swift; sourceTree = "<group>"; };
+		DC5602417D4314F025F772B3 /* ProviderModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderModelsTests.swift; sourceTree = "<group>"; };
+		E2C8D4F2D3B22C615F2DE2A5 /* MistralRateCardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MistralRateCardTests.swift; sourceTree = "<group>"; };
+		EB7D93C9611D64CA788E2818 /* PlaceholderHUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderHUDView.swift; sourceTree = "<group>"; };
+		F39E311E6A2612C0A467434B /* GlobalHotKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalHotKeyTests.swift; sourceTree = "<group>"; };
+		F6753BBC944B341814A3CA22 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FB5E5974951BEE5C78AC243E /* UsageStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageStoreTests.swift; sourceTree = "<group>"; };
+		FE7383097646DBAAD3BAC40E /* ClaudeLogAggregatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeLogAggregatorTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0266E5528468E7A863C28F48 /* Vibe */ = {
+			isa = PBXGroup;
+			children = (
+				7750712C9735A9D6EF73E4F0 /* MistralRateCard.swift */,
+				853AB380986CA290F24B25F4 /* VibeJournalAggregator.swift */,
+			);
+			path = Vibe;
+			sourceTree = "<group>";
+		};
+		2D642342F6EB0C5CA7010158 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				F39E311E6A2612C0A467434B /* GlobalHotKeyTests.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		2F42B59474282938EF55C09B /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				A57304364D46DBE6F0C4BEDD /* UsageStatus */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		336EA913FD30C5C88D62D597 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				3FE4C466E8845837C3142F30 /* Models */,
+				9A5D3A85BD93CF86C9598BF4 /* Services */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		3FE4C466E8845837C3142F30 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				DC5602417D4314F025F772B3 /* ProviderModelsTests.swift */,
+				2D86D18557950E0CAFEA9A68 /* UsageSnapshotTests.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		51AF343D3FC897F8EB5157BF /* App */ = {
+			isa = PBXGroup;
+			children = (
+				145B4E2671959B566C14E361 /* AppDelegate.swift */,
+				514EE2AF472B97AA1985CC48 /* GlobalHotKey.swift */,
+				2236B8889F6DDB2D5F356A57 /* LLMUsageStatusApp.swift */,
+				EB7D93C9611D64CA788E2818 /* PlaceholderHUDView.swift */,
+				B3460E4F1309B764C254CD4E /* UsagePanelController.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		5D5136EF98673C38B24414C9 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				223B33EEAE0FCC317DB5700A /* CodexUsageService.swift */,
+				7A5BEBC9BCD01682D42F37B5 /* UsageResponseDecoder.swift */,
+				D260D0E57833500EFB9CDCB2 /* Claude */,
+				0266E5528468E7A863C28F48 /* Vibe */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		61E847F2854F4C935BC64D3F /* Claude */ = {
+			isa = PBXGroup;
+			children = (
+				FE7383097646DBAAD3BAC40E /* ClaudeLogAggregatorTests.swift */,
+				7A91A276F08FF60DEAA238BC /* ClaudeOAuthUsageServiceTests.swift */,
+			);
+			path = Claude;
+			sourceTree = "<group>";
+		};
+		76A3C94EE12E44A6C7C30150 /* UsageStatus */ = {
+			isa = PBXGroup;
+			children = (
+				FB5E5974951BEE5C78AC243E /* UsageStoreTests.swift */,
+			);
+			path = UsageStatus;
+			sourceTree = "<group>";
+		};
+		9A5D3A85BD93CF86C9598BF4 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				31C6F20829570EFFC12C69A6 /* CodexUsageServiceTests.swift */,
+				3E513A5ED1CFC017B7335D39 /* UsageResponseDecoderTests.swift */,
+				61E847F2854F4C935BC64D3F /* Claude */,
+				BC779ABECE6BEF2FFD1291B9 /* Vibe */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		A57304364D46DBE6F0C4BEDD /* UsageStatus */ = {
+			isa = PBXGroup;
+			children = (
+				D86AEDD7CC8C3C1D4D6E1F9D /* UsageStore.swift */,
+			);
+			path = UsageStatus;
+			sourceTree = "<group>";
+		};
+		ADF39DDDA8F590162BF3D42F /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				28627813D66FF774A5DB857E /* ProviderModels.swift */,
+				2EC692C15F291BE643A748AB /* UsageSnapshot.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		AEC47E8FC71FC084F73FEFC4 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				51AF343D3FC897F8EB5157BF /* App */,
+				2F42B59474282938EF55C09B /* Features */,
+				F539AACC6DCCC753E92924AC /* Shared */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		BC3491F46A5D8DE8CFC8D10F /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				2D642342F6EB0C5CA7010158 /* App */,
+				DDD42E69B469E792A4ECA8CE /* Features */,
+				336EA913FD30C5C88D62D597 /* Shared */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		BC779ABECE6BEF2FFD1291B9 /* Vibe */ = {
+			isa = PBXGroup;
+			children = (
+				E2C8D4F2D3B22C615F2DE2A5 /* MistralRateCardTests.swift */,
+				1962AB6F02C1A3B93B3B8A7B /* VibeJournalAggregatorTests.swift */,
+			);
+			path = Vibe;
+			sourceTree = "<group>";
+		};
+		CDF2DF933F31954A1C58E66E = {
+			isa = PBXGroup;
+			children = (
+				D4D8C6E49A0D9FBE60E54ABF /* Resources */,
+				AEC47E8FC71FC084F73FEFC4 /* Sources */,
+				BC3491F46A5D8DE8CFC8D10F /* Tests */,
+				EAB30DF3ECF3F8CC04415FCB /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D260D0E57833500EFB9CDCB2 /* Claude */ = {
+			isa = PBXGroup;
+			children = (
+				653152AA58139EA42CDC87C5 /* ClaudeLogAggregator.swift */,
+				03BD948C67F4E923C56A9D88 /* ClaudeOAuthUsageService.swift */,
+				4B1DA9A29E1DFD828D59DD02 /* ClaudeTokenProvider.swift */,
+			);
+			path = Claude;
+			sourceTree = "<group>";
+		};
+		D4D8C6E49A0D9FBE60E54ABF /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F6753BBC944B341814A3CA22 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		DDD42E69B469E792A4ECA8CE /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				76A3C94EE12E44A6C7C30150 /* UsageStatus */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		EAB30DF3ECF3F8CC04415FCB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7AC39F644D4F732B0A73938A /* LLM-UsageStatus.app */,
+				A097E4846F5F9BA0AF0A9C2D /* LLM-UsageStatusTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F539AACC6DCCC753E92924AC /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				ADF39DDDA8F590162BF3D42F /* Models */,
+				5D5136EF98673C38B24414C9 /* Services */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		BB3E522AE0EBBB103D6204DC /* LLM-UsageStatusTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C5E317E74315C8D41856596D /* Build configuration list for PBXNativeTarget "LLM-UsageStatusTests" */;
+			buildPhases = (
+				1843C3ABDE6A702FC337ECCE /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				57D5F0BCF319A0B2BE3BFD97 /* PBXTargetDependency */,
+			);
+			name = "LLM-UsageStatusTests";
+			packageProductDependencies = (
+			);
+			productName = "LLM-UsageStatusTests";
+			productReference = A097E4846F5F9BA0AF0A9C2D /* LLM-UsageStatusTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		DA0C10C3D20B9E76B88D8EDB /* LLM-UsageStatus */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 156376A9FCD5756BA95B3B19 /* Build configuration list for PBXNativeTarget "LLM-UsageStatus" */;
+			buildPhases = (
+				E43A9BAD4B78D4EF30A0A1D1 /* Sources */,
+				826AB634BBD3EF6CE9E47EA8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "LLM-UsageStatus";
+			packageProductDependencies = (
+			);
+			productName = "LLM-UsageStatus";
+			productReference = 7AC39F644D4F732B0A73938A /* LLM-UsageStatus.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		83FC9CB3EAF47DC63722A4E6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 8D70B1CC585FC2E7BA280B38 /* Build configuration list for PBXProject "LLM-UsageStatus" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = CDF2DF933F31954A1C58E66E;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = EAB30DF3ECF3F8CC04415FCB /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DA0C10C3D20B9E76B88D8EDB /* LLM-UsageStatus */,
+				BB3E522AE0EBBB103D6204DC /* LLM-UsageStatusTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		826AB634BBD3EF6CE9E47EA8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				69136A175B2F1E5835FDF54E /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1843C3ABDE6A702FC337ECCE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				141D2409FAB57983E555A62E /* ClaudeLogAggregatorTests.swift in Sources */,
+				550A500AA648447460D4280D /* ClaudeOAuthUsageServiceTests.swift in Sources */,
+				86127BE71EECBA43DA3661DF /* CodexUsageServiceTests.swift in Sources */,
+				33D5EC94411959A61CAADA70 /* GlobalHotKeyTests.swift in Sources */,
+				66F7E8F47082A19249060FAC /* MistralRateCardTests.swift in Sources */,
+				79A7E53EC8C50A8C822C428F /* ProviderModelsTests.swift in Sources */,
+				80E77CD8A15B46DBDBFD2138 /* UsageResponseDecoderTests.swift in Sources */,
+				558F53E04CD7DEEC5D3D265A /* UsageSnapshotTests.swift in Sources */,
+				1317E37CB906096E7F3F4ECF /* UsageStoreTests.swift in Sources */,
+				691DB206BEB7D941B2D7F81D /* VibeJournalAggregatorTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E43A9BAD4B78D4EF30A0A1D1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				08D12EE3A38C73CF510ECF1C /* AppDelegate.swift in Sources */,
+				5B221A6EB9DD838E8C805193 /* ClaudeLogAggregator.swift in Sources */,
+				C14D0945F5234D3D733B1FBB /* ClaudeOAuthUsageService.swift in Sources */,
+				48CD3554BAAAAE0E5F2DA52F /* ClaudeTokenProvider.swift in Sources */,
+				86ACA730375860E14899199C /* CodexUsageService.swift in Sources */,
+				1E99FE25CBCF9A47B7145512 /* GlobalHotKey.swift in Sources */,
+				6AF5B6CC6BABEA3B54FB1B2C /* LLMUsageStatusApp.swift in Sources */,
+				240C13B382E6DCAA5D0D2661 /* MistralRateCard.swift in Sources */,
+				D553CA6AFCD910F92C60475E /* PlaceholderHUDView.swift in Sources */,
+				F907750B91316108497BCCA5 /* ProviderModels.swift in Sources */,
+				C71DA81FC5D7A148750B6548 /* UsagePanelController.swift in Sources */,
+				296F51207DAB51EDB5F6A3FB /* UsageResponseDecoder.swift in Sources */,
+				719277C80D5D2CA7980908D2 /* UsageSnapshot.swift in Sources */,
+				85C15B1E8054471F8BF40197 /* UsageStore.swift in Sources */,
+				9D2119BF6606A7A76DBC2469 /* VibeJournalAggregator.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		57D5F0BCF319A0B2BE3BFD97 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DA0C10C3D20B9E76B88D8EDB /* LLM-UsageStatus */;
+			targetProxy = 546BC84D8AB6E88A76AC1434 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		2D7D7D4FE1A4E416CF588E29 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Resources/LLM-UsageStatus.entitlements";
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "LLM Usage Status";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_LSUIElement = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.sim.LLM-UsageStatus";
+				PRODUCT_MODULE_NAME = LLMUsageStatus;
+				SDKROOT = macosx;
+				SWIFT_STRICT_CONCURRENCY = complete;
+			};
+			name = Debug;
+		};
+		69A78272940C721280D3568A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Resources/LLM-UsageStatus.entitlements";
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "LLM Usage Status";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_LSUIElement = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.sim.LLM-UsageStatus";
+				PRODUCT_MODULE_NAME = LLMUsageStatus;
+				SDKROOT = macosx;
+				SWIFT_STRICT_CONCURRENCY = complete;
+			};
+			name = Release;
+		};
+		6C97D6269A57CF4BA0B23DD1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 100;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		6F98BED9EFD543165D24F7FC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.sim.LLM-UsageStatusTests";
+				SDKROOT = macosx;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LLM-UsageStatus.app/Contents/MacOS/LLM-UsageStatus";
+			};
+			name = Debug;
+		};
+		A678057E011AEDE92087A9E7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 100;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		C629DB837F5A3439B01A9B45 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.sim.LLM-UsageStatusTests";
+				SDKROOT = macosx;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LLM-UsageStatus.app/Contents/MacOS/LLM-UsageStatus";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		156376A9FCD5756BA95B3B19 /* Build configuration list for PBXNativeTarget "LLM-UsageStatus" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D7D7D4FE1A4E416CF588E29 /* Debug */,
+				69A78272940C721280D3568A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8D70B1CC585FC2E7BA280B38 /* Build configuration list for PBXProject "LLM-UsageStatus" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6C97D6269A57CF4BA0B23DD1 /* Debug */,
+				A678057E011AEDE92087A9E7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C5E317E74315C8D41856596D /* Build configuration list for PBXNativeTarget "LLM-UsageStatusTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6F98BED9EFD543165D24F7FC /* Debug */,
+				C629DB837F5A3439B01A9B45 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 83FC9CB3EAF47DC63722A4E6 /* Project object */;
+}
