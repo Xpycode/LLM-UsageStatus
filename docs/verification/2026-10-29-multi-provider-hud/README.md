@@ -1,6 +1,7 @@
 # Verification — Multi-Provider Usage HUD v1 (Task 3.2)
 
-Evidence for task 3.2 of `docs/plans/2026-10-29-multi-provider-hud/IMPLEMENTATION_PLAN.md`:
+Evidence for task 3.2 (and Wave 4's evidence refresh, task 4.3) of
+`docs/plans/2026-10-29-multi-provider-hud/IMPLEMENTATION_PLAN.md`:
 full-suite verification plus fixture renders of every section state for every provider.
 
 ## What this evidence shows
@@ -17,6 +18,9 @@ cd 01_Project && xcodebuild -project LLM-UsageStatus.xcodeproj -scheme LLM-Usage
 
 - Baseline (pre-3.2 files): 116 tests, 0 failures — `** TEST SUCCEEDED **`.
 - After 3.2 additions: 119 tests, 0 failures — `** TEST SUCCEEDED **`.
+- After Wave 4 (headline-first sections, Vibe monthly budget; task 4.3):
+  129 tests, 0 failures — `** TEST SUCCEEDED **`, all 18 renders regenerated
+  (15 expanded states + 3 collapsed headline variants).
   The 3 new tests are `SectionFixtureRenderTests` (one per provider, app-hosted).
 
 No existing test failed at any point; no app source was changed for this task.
@@ -30,11 +34,17 @@ File names are `<provider>-<state>.png`:
 
 | State | Meaning (store/view vocabulary) | Files |
 |---|---|---|
-| `populated` | Fresh values; rows/meters/deadlines rendered | `codex-populated.png`, `claude-populated.png`, `vibe-populated.png` |
+| `populated` | Fresh values; headline + rows/meters/deadlines rendered | `codex-populated.png`, `claude-populated.png`, `vibe-populated.png` |
 | `unavailable` | Refresh failed before any values existed; pre-approved "Unable to load usage" copy | `codex-unavailable.png`, `claude-unavailable.png`, `vibe-unavailable.png` |
 | `not-detected` | CLI absent; "Not detected on this Mac." copy | `codex-not-detected.png`, `claude-not-detected.png`, `vibe-not-detected.png` |
 | `stale` | Failed refresh retained prior values; orange "Update failed · showing previous values" caption | `codex-stale.png`, `claude-stale.png`, `vibe-stale.png` |
 | `estimate-fallback` | Fallback data visibly labeled "estimated" | `codex-estimate-fallback.png`, `claude-estimate-fallback.png`, `vibe-estimate-fallback.png` |
+| `headline` (collapsed) | The glance state the panel opens in: percent-left headline + reset countdown + estimated per-day amount, detail hidden until clicked | `codex-headline.png`, `claude-headline.png`, `vibe-budget-headline.png` |
+
+The populated/stale/estimate-fallback renders above show the **expanded** detail (all rows,
+meters, deadlines); the three headline renders show the **collapsed** glance state, including
+the Vibe monthly-budget headline (`vibe-budget-headline.png`: estimated % left, $/day quote,
+estimate tag — mirrors `VibeUsageProvider`'s budget path).
 
 Fixture provenance notes (honest labeling, per the project rule that estimates must be
 visibly labeled and never confused with authoritative values):
@@ -56,9 +66,10 @@ deterministic across machines and runs.
 
 ### 3. Checked-in previews
 
-The same 15 scenarios are available as SwiftUI previews (Xcode canvas) in
+The same scenarios are available as SwiftUI previews (Xcode canvas) in
 `01_Project/Tests/Features/UsageStatus/SectionFixturePreviews.swift` — one
-`#Preview` per provider × state, all driven by the shared catalog in
+`#Preview` per provider × state (15), plus the three headline variants
+(Codex, Claude, Vibe with budget), all driven by the shared catalog in
 `SectionFixtures.swift`. Previews and render tests share the catalog, so they
 cannot drift.
 
