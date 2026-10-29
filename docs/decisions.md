@@ -4,6 +4,27 @@ Durable, project-specific decisions. Newest first.
 
 ---
 
+## 2026-10-29 — No in-app Claude token refresh; stale tokens degrade to labeled local estimates
+
+**Choice:** The app reads the Claude OAuth token from the Keychain item Claude Code owns but never
+refreshes or writes it. When the stored access token is expired/rejected (usage endpoint 401), the
+Claude section shows the labeled local-log fallback; the user refreshes the sign-in by running
+Claude Code itself.
+
+**Why:** the token's refresh flow is Claude Code's internal OAuth client and is undocumented;
+implementing our own refresh would write to a Keychain item another app owns, risk invalidating
+Claude Code's session, and couple this app to an unstable internal contract. The diagnosis
+(2026-10-29) proved the read/decode/fetch path correct — HTTP 401 came from a stale stored token,
+and the labeled fallback engaged exactly as designed, so the graceful degradation is the right
+steady-state behavior.
+
+**Consequences:** whenever Claude Code has not run recently, the HUD shows labeled local
+estimates instead of subscription utilization (acceptable: values are visibly labeled, never
+presented as authoritative). E1 includes an explicit check: run Claude Code once, then confirm
+the section switches to endpoint utilization.
+
+---
+
 ## 2026-10-29 — Open-question resolutions (from `/make-plan` research)
 
 Researched by three subagents (web + local), evidence in `docs/plans/2026-10-29-multi-provider-hud/IMPLEMENTATION_PLAN.md` research annex.

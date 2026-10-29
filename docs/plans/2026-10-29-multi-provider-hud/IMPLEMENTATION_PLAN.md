@@ -4,7 +4,7 @@
 > Repair scheduling errors while preserving task IDs, completed evidence and approved scope.
 > Task state/evidence is authoritative here; TASKS links here and holds backlog/inbox.
 
-**Progress:** 8/13; external acceptance: E1 (fresh-build smoke test), E2 (notarized 0.1.0 release).
+**Progress:** 13/13 (all code tasks complete); external acceptance: E1 (fresh-build smoke test), E2 (notarized 0.1.0 release).
 **Task states:** unchecked = pending / implemented-unverified / blocked (name gate);
 checked = complete with required evidence. Task identity includes this plan path plus ID.
 
@@ -135,14 +135,14 @@ criteria must pass). Summary:
 
 ### Wave 3 (parallel)
 
-- [ ] **3.1**: Release pipeline and repo surface -> `scripts/release.sh`, `scripts/notarize-release.sh`, `.github/workflows/ci.yml`, `README.md`, `LICENSE`, `CHANGELOG.md`
+- [x] **3.1**: Release pipeline and repo surface -> `scripts/release.sh`, `scripts/notarize-release.sh`, `.github/workflows/ci.yml`, `README.md`, `LICENSE`, `CHANGELOG.md`
   - Depends on: 2.3
   - External gates: none (E2 gates actual publication)
   - Owns: `scripts/`, `.github/`, root README/LICENSE/CHANGELOG
   - Interface: release scripts app-name-templated (LLM-UsageStatus, com.sim.LLM-UsageStatus)
   - Success: `release.sh 0.1.0` dry-run builds a universal unsigned artifact with matching CFBundleShortVersionString and refuses to overwrite an existing version dir; CI workflow runs build+tests on push
   - Backpressure: script dry-run evidence retained; CI green on push
-- [ ] **3.2**: Full verification and fixture visuals -> `docs/verification/2026-10-29-multi-provider-hud/`
+- [x] **3.2**: Full verification and fixture visuals -> `docs/verification/2026-10-29-multi-provider-hud/`
   - Depends on: 2.3
   - External gates: none
   - Owns: verification evidence directory
@@ -185,6 +185,7 @@ criteria must pass). Summary:
 | Plan review 2026-10-29 | 2 web-verification subagents (Claude OAuth, Mistral pricing) + local verification (CUS refs, unified store, Keychain metadata) | All claims confirmed; refinements folded into 1.4/1.5/2.1 and the annex | — | Plan review passed; Wave 1 ready on user request |
 | Wave 1 (1.1–1.5) 2026-10-29 | 5 parallel fresh-context agents (shell, provider abstraction, Codex verbatim port, Claude sources, Vibe aggregator); coordinator integration | `xcodegen generate` + `xcodebuild build` SUCCEEDED; full `xcodebuild test` (app-hosted, user-authorized) 91/91 green — covers every task's backpressure suite (GlobalHotKey, ProviderModels, UsageStore, Codex/decoder/snapshot, Claude OAuth+aggregator, Vibe aggregator+rate card); app-hosted launch evidences dockless launch + hotkey registration; 1.1's interactive panel behaviors are verbatim CUS ports, full confirmation folds into E1 | "Wave 1: HUD shell + provider abstraction + Codex/Claude/Vibe data sources" (+ coordinator fixes: missing try, NSDirectoryEnumerator async-context fix, realpath session-id fix in Claude aggregator) | Wave 2 ready (2.1 after 1.1–1.3, then 2.2, 2.3); E1/E2 open |
 | Wave 2 (2.1→2.2→2.3) 2026-10-29 | Serial coordinator execution — integration tasks share the views/composition-root surface, so no independent fresh-context work existed; delegation offered no benefit | `xcodegen generate` + full `xcodebuild test` (app-hosted, user-authorized for this wave) green at each task boundary: 98/98 (2.1), 112/112 (2.2), 116/116 (2.3) — new coverage: CodexUsageProviderTests (identity, section mapping incl. resets/expiry/unlimited/zero-passes, error→state mapping), ClaudeUsageProviderTests (endpoint meters/deadlines incl. both resets_at formats, labeled local fallback, not-detected, 403 fallback, 429 retains unavailable, transport failure), VibeUsageProviderTests (scan rows + cost when model resolves, cost omitted when unresolvable, unattributed windows flagged as estimates, skipped/malformed notes, absent/empty store), UsagePreferencesTests (injected defaults suite) | Three task commits: "Wave 2 task 2.1: multi-provider HUD views, Codex provider conformance, composition root" (62cc4ae), "Wave 2 task 2.2: Claude and Vibe sections live" (aa94c96), "Wave 2 task 2.3: preferences, renewal timers, menu parity" (bbdd5e6) | Wave 3 ready (3.1 and 3.2 after 2.3); E1/E2 open. Note: meters render utilization ("X% used") rather than CUS's "X% remaining" — the normalized model carries one utilization fraction for all providers; E1 acceptance can revisit wording. Interactive behaviors (hotkey toggle, live sections populating, restart) fold into E1 |
+| Wave 3 (3.1 ∥ 3.2) 2026-10-29 | 2 parallel fresh-context agents (release pipeline; verification/renders) — disjoint file ownership; coordinator integrated + committed. Same-session preamble: Claude endpoint diagnosis closed (401 = stale stored token; implementation verified end-to-end; labeled fallback engaged as designed; endpoint stays primary) — commit 38ecefb | 3.1: real `release.sh 0.1.0` run — universal unsigned build (`lipo`: x86_64 arm64), CFBundleShortVersionString 0.1.0 match, second run refuses overwrite (exit 1); `zsh -n` on both scripts; notarize script NOT executed (E2 credentials). CI implemented + YAML-validated; **CI green-on-push unverifiable — repo has no git remote**. 3.2: full suite (app-hosted, user-authorized this session) 116/116 baseline then **119/119 green** with the 3 new SectionFixtureRenderTests, re-run confirmed with byte-identical renders; 15 fixture PNGs (3 providers × 5 states) checked in under `docs/verification/2026-10-29-multi-provider-hud/` + regeneration README; 15 #Preview declarations share the fixture catalog. Coordinator: fresh Release handoff — old Debug instance quit gracefully (PID 66578 confirmed exited), fresh `dist/0.1.0/LLM-UsageStatus.app` launched and verified (PID 93177, executable path + version 0.1.0) | "Wave 3 task 3.1: release pipeline and repo surface" (e7ef277); "Wave 3 task 3.2: full verification and fixture renders" (439a09a); dist/ artifacts intentionally uncommitted | 13/13 code tasks complete; E1 next (user-operated smoke test of the running fresh artifact — run Claude Code once first to refresh the stale token, then check the Claude section shows endpoint utilization); E2 after E1. Open notes: Codex estimate-fallback fixture exercises view capability only (Codex section never sets isEstimate — documented in verification README); .gitignore lacks a dist/ entry (decide at E2 whether release evidence is committed) |
 
 ---
 
