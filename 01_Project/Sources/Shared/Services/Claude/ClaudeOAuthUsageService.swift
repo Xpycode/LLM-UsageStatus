@@ -143,12 +143,19 @@ struct ClaudeOAuthUsageService: Sendable {
     }
 
     private struct Window: Decodable {
+        /// Utilization as a fraction 0...1, normalized from the endpoint's
+        /// percentage scale (verified live 2026-10-29: five_hour 2.0 ↔ the
+        /// vendor page's "2% used"; seven_day 0.0 ↔ "0% used").
         let utilization: Double?
         let resetsAt: Date?
 
         init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            utilization = try? container.decodeIfPresent(Double.self, forKey: .utilization)
+            let raw = try? container.decodeIfPresent(Double.self, forKey: .utilization)
+            utilization = raw.map { value in
+                guard value.isFinite else { return nil }
+                return min(max(value / 100, 0), 1)
+            } ?? nil
             resetsAt = (try? container.decodeIfPresent(FlexibleReset.self, forKey: .resetsAt))?.date
         }
 

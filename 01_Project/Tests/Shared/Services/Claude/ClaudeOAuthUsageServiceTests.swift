@@ -40,18 +40,28 @@ final class ClaudeOAuthUsageServiceTests: XCTestCase {
     }
 
     func testResetTimestampsAcceptISOAndEpochAndEpochStringFormats() async throws {
-        let payload = Data(#"{"five_hour":{"utilization":0.1,"resets_at":"2030-01-01T00:00:00Z"},"seven_day":{"utilization":0.2,"resets_at":"1893456000"}}"#.utf8)
+        let payload = Data(#"{"five_hour":{"utilization":10,"resets_at":"2030-01-01T00:00:00Z"},"seven_day":{"utilization":20,"resets_at":"1893456000"}}"#.utf8)
         let transport = ScriptedTransport([.http(200, payload)])
         let result = try await service(transport).fetch()
         XCTAssertEqual(result.fiveHour?.resetsAt, Date(timeIntervalSince1970: 1_893_456_000))
         XCTAssertEqual(result.sevenDay?.resetsAt, Date(timeIntervalSince1970: 1_893_456_000))
     }
 
+    func testUtilizationIsDecodedFromTheEndpointPercentageScale() async throws {
+        // Verified live 2026-10-29: five_hour utilization 2.0 means 2% used
+        // (the vendor page showed "2% used"), not a 200% fraction. Over-limit
+        // values clamp to fully used.
+        let payload = Data(#"{"five_hour":{"utilization":2.0},"seven_day":{"utilization":137}}"#.utf8)
+        let result = try await service(ScriptedTransport([.http(200, payload)])).fetch()
+        XCTAssertEqual(result.fiveHour?.utilization ?? 0, 0.02, accuracy: 1e-9)
+        XCTAssertEqual(result.sevenDay?.utilization ?? 0, 1)
+    }
+
     func testNullAbsentAndGarbageWindowsDegradeInsteadOfFailing() async throws {
         let payloads = [
-            Data(#"{"five_hour":{"utilization":0.3},"seven_day":{"utilization":0.4,"resets_at":null}}"#.utf8),
+            Data(#"{"five_hour":{"utilization":30},"seven_day":{"utilization":40,"resets_at":null}}"#.utf8),
             Data("{}".utf8),
-            Data(#"{"five_hour":5,"seven_day":false,"seven_day_opus":{"utilization":0.9},"extra_usage":[]}"#.utf8)
+            Data(#"{"five_hour":5,"seven_day":false,"seven_day_opus":{"utilization":90},"extra_usage":[]}"#.utf8)
         ]
         for payload in payloads {
             let transport = ScriptedTransport([.http(200, payload)])
@@ -148,10 +158,10 @@ final class ClaudeOAuthUsageServiceTests: XCTestCase {
     }
 
     private static let fullResponse = Data("""
-    {"five_hour":{"utilization":0.42,"resets_at":"2025-06-01T00:00:00.000Z"},
-    "seven_day":{"utilization":0.73,"resets_at":1750000000},
-    "seven_day_opus":{"utilization":0.9,"resets_at":"2030-01-01T00:00:00Z"},
-    "seven_day_sonnet":{"utilization":0.1,"resets_at":1893456000},
+    {"five_hour":{"utilization":42,"resets_at":"2025-06-01T00:00:00.000Z"},
+    "seven_day":{"utilization":73,"resets_at":1750000000},
+    "seven_day_opus":{"utilization":90,"resets_at":"2030-01-01T00:00:00Z"},
+    "seven_day_sonnet":{"utilization":10,"resets_at":1893456000},
     "extra_usage":{"models":["synthetic"],"sessions":9}}
     """.utf8)
 }

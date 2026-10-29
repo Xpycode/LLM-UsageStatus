@@ -28,8 +28,8 @@ final class ClaudeUsageProviderTests: XCTestCase {
 
     func testEndpointSuccessPublishesAuthoritativeMetersAndDeadlines() async throws {
         let body = Data("""
-        {"five_hour":{"utilization":0.42,"resets_at":1893456000},
-        "seven_day":{"utilization":0.81,"resets_at":"2027-01-21T00:00:00Z"}}
+        {"five_hour":{"utilization":42,"resets_at":1893456000},
+        "seven_day":{"utilization":81,"resets_at":"2027-01-21T00:00:00Z"}}
         """.utf8)
         let provider = ClaudeUsageProvider(
             oauthService: oauth(transport: .success(body), token: "synthetic-claude-token"),
