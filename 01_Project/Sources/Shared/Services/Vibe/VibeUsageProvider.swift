@@ -71,9 +71,44 @@ struct VibeUsageProvider: Provider {
             rows.append(SectionRow(id: "malformed-records", label: "Skipped malformed records",
                                    value: report.malformedRecords.formatted()))
         }
-        return ProviderSection(rows: rows, headline: headline(for: report, budget: budget,
-                                                              now: now, calendar: calendar),
+        let sectionHeadline = headline(for: report, budget: budget, now: now, calendar: calendar)
+        let glance = sectionHeadline == nil ? glanceLine(for: report) : nil
+        return ProviderSection(rows: rows, headline: sectionHeadline, glanceLine: glance,
                                lastUpdated: report.scannedAt)
+    }
+
+    /// Fallback glance line for sections without a headline (no budget, or a
+    /// budget whose cost cannot resolve): last-24-hours spend where the
+    /// all-or-nothing price rule resolves it, plus the window's token count.
+    /// Rate-card costs are estimates, so the line is always estimate-labeled;
+    /// a silent window (no tokens) has nothing to glance at.
+    private static func glanceLine(for report: VibeUsageReport) -> SectionGlanceLine? {
+        let tokens = Self.totalTokens(report.last24Hours.combined)
+        guard tokens > 0 else { return nil }
+        var parts: [String] = []
+        if let cost = estimatedCost(for: report.last24Hours.sessionTotals) {
+            parts.append("≈ " + cost.formatted(.currency(code: "USD")))
+        }
+        parts.append(tokens.formatted(.number.notation(.compactName).locale(.current)) + " tokens")
+        return SectionGlanceLine(parts.joined(separator: " · ") + " · 24 hours", isEstimate: true)
+    }
+
+    /// Window-scoped cost with the same all-or-nothing price rule as the
+    /// all-time line: every contributing session's model price must resolve,
+    /// otherwise nil — a partial sum is never presented.
+    static func estimatedCost(for sessions: [VibeWindowSessionTotals]) -> Decimal? {
+        var used = 0
+        var total: Decimal = 0
+        for session in sessions where !session.totals.isEmpty {
+            used += 1
+            guard let prices = MistralRateCard.resolve(session.modelName) else { return nil }
+            total += MistralRateCard.cost(inputTokens: session.totals.inputTokens,
+                                          cachedTokens: session.totals.cachedInputTokens,
+                                          outputTokens: session.totals.outputTokens,
+                                          prices: prices)
+        }
+        guard used > 0 else { return nil }
+        return total
     }
 
     /// Reads the persisted budget; malformed or non-positive values mean none.

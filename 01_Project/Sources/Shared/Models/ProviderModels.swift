@@ -68,16 +68,31 @@ struct ProviderSection: Equatable, Sendable {
     let deadlines: [SectionDeadline]
     /// Glance-first headline; nil when no utilization window is present.
     let headline: SectionHeadline?
+    /// Compact fallback line when no headline exists (e.g. Vibe without a
+    /// budget): the most glance-relevant local fact, one sentence.
+    let glanceLine: SectionGlanceLine?
     /// When the provider produced these values.
     let lastUpdated: Date
 
     init(rows: [SectionRow] = [], meters: [SectionMeter] = [], deadlines: [SectionDeadline] = [],
-         headline: SectionHeadline? = nil, lastUpdated: Date) {
+         headline: SectionHeadline? = nil, glanceLine: SectionGlanceLine? = nil, lastUpdated: Date) {
         self.rows = rows
         self.meters = meters
         self.deadlines = deadlines
         self.headline = headline
+        self.glanceLine = glanceLine
         self.lastUpdated = lastUpdated
+    }
+}
+
+/// One preformatted glance sentence, e.g. "≈ $0.85 · 5.3K tokens · 24 hours".
+struct SectionGlanceLine: Equatable, Sendable {
+    let text: String
+    let isEstimate: Bool
+
+    init(_ text: String, isEstimate: Bool = false) {
+        self.text = text
+        self.isEstimate = isEstimate
     }
 }
 

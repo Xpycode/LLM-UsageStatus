@@ -34,9 +34,20 @@ struct VibeTokenTotals: Sendable, Equatable {
 struct VibeWindowTotals: Sendable, Equatable {
     var attributed = VibeTokenTotals.zero
     var unattributed = VibeTokenTotals.zero
+    /// Per-session contributions inside the window (model binding retained),
+    /// so window-scoped cost can apply the same all-or-nothing price rule.
+    var sessionTotals: [VibeWindowSessionTotals] = []
 
     var combined: VibeTokenTotals { attributed + unattributed }
-    var isEmpty: Bool { attributed.isEmpty && unattributed.isEmpty }
+    var isEmpty: Bool { attributed.isEmpty && unattributed.isEmpty && sessionTotals.isEmpty }
+}
+
+/// One session's contribution to a window; `totals` is that session's
+/// in-window share, not its all-time total.
+struct VibeWindowSessionTotals: Sendable, Equatable {
+    let sessionID: String
+    let modelName: String?
+    let totals: VibeTokenTotals
 }
 
 /// Per-session aggregation. Only token counts are retained; journal prompt and
@@ -335,14 +346,27 @@ struct VibeJournalAggregator: Sendable {
     private static func window(cutoff: Date, sessions: [ParsedSession]) -> VibeWindowTotals {
         var window = VibeWindowTotals()
         for session in sessions {
+            var inWindow = VibeTokenTotals.zero
             for row in session.timestampedRows where row.timestamp >= cutoff {
                 window.attributed += row.totals
+                inWindow += row.totals
             }
-            guard !session.remainder.isEmpty else { continue }
-            if let endedAt = session.session.endedAt {
-                if endedAt >= cutoff { window.attributed += session.remainder }
-            } else {
-                window.unattributed += session.remainder
+            if !session.remainder.isEmpty {
+                if let endedAt = session.session.endedAt {
+                    if endedAt >= cutoff {
+                        window.attributed += session.remainder
+                        inWindow += session.remainder
+                    }
+                } else {
+                    window.unattributed += session.remainder
+                    inWindow += session.remainder
+                }
+            }
+            if !inWindow.isEmpty {
+                window.sessionTotals.append(
+                    VibeWindowSessionTotals(sessionID: session.session.id,
+                                            modelName: session.session.modelName,
+                                            totals: inWindow))
             }
         }
         return window

@@ -245,6 +245,7 @@ enum SectionFixture {
                 SectionRow(id: "tokens-total", label: "Tokens (all time)", value: "9,876,543"),
                 SectionRow(id: "estimated-cost", label: "Estimated cost", value: "$2.41", isEstimate: true),
             ],
+            glanceLine: SectionGlanceLine("≈ $2.41 · 5.3K tokens · 24 hours", isEstimate: true),
             lastUpdated: now)
     }
 
@@ -256,6 +257,7 @@ enum SectionFixture {
                 SectionRow(id: "tokens-7d", label: "Tokens (7 days)", value: "1,500", isEstimate: true),
                 SectionRow(id: "tokens-total", label: "Tokens (all time)", value: "1,500"),
             ],
+            glanceLine: SectionGlanceLine("1.5K tokens · 24 hours", isEstimate: true),
             lastUpdated: now)
     }
 

@@ -112,6 +112,16 @@ struct ProviderSectionView: View {
         VStack(alignment: .leading, spacing: 14) {
             if let headline = section.headline {
                 SectionHeadlineView(headline: headline, now: now)
+            } else if let glance = section.glanceLine {
+                // No utilization window (e.g. Vibe without a budget): one
+                // glance sentence of the most relevant local fact instead.
+                HStack(spacing: 8) {
+                    Text(glance.text)
+                        .font(.subheadline.weight(.semibold))
+                    if glance.isEstimate {
+                        estimateTag
+                    }
+                }
             }
             if expanded {
                 // The Codex 5-hour display is optional; the provider owns these
@@ -160,6 +170,8 @@ struct ProviderSectionView: View {
         var lines: [String] = []
         if let headline = section.headline {
             lines.append("\(headline.windowLabel): \(Int((headline.fractionLeft * 100).rounded()))% left")
+        } else if let glance = section.glanceLine {
+            lines.append(glance.text)
         }
         for meter in visibleMeters(section) {
             lines.append("\(meter.label): \(Int((meter.fractionLeft * 100).rounded()))% left")

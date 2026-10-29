@@ -185,6 +185,58 @@ final class VibeUsageProviderTests: XCTestCase {
         XCTAssertNil(VibeUsageProvider.section(for: report, budget: nil).headline)
     }
 
+    func testGlanceLineShowsCostAndTokensForLast24Hours() async throws {
+        try writeSession("session-glance", journal: [
+            usageRecord(sequence: 1, actionID: "g1", input: 100, cached: 5_000, output: 200),
+            coreInputRecord(sequence: 2, actionID: "g1", timeUnixMs: milliseconds(Self.now)),
+        ], modelName: "mistral-medium-3.5")
+        let report = await aggregator(modelName: { _, _ in "mistral-medium-3.5" }).scan()
+
+        let section = VibeUsageProvider.section(for: report, budget: nil)
+
+        let cost = MistralRateCard.cost(inputTokens: 100, cachedTokens: 5_000, outputTokens: 200,
+                                        prices: MistralRateCard.resolve("mistral-medium-3.5")!)
+        let expected = "≈ \(cost.formatted(.currency(code: "USD"))) · \(5_300.formatted(.number.notation(.compactName).locale(.current))) tokens · 24 hours"
+        XCTAssertEqual(section.glanceLine, SectionGlanceLine(expected, isEstimate: true))
+    }
+
+    func testGlanceLineOmitsCostWhenWindowPriceUnresolvable() async throws {
+        try writeSession("session-glance-unknown", journal: [
+            usageRecord(sequence: 1, actionID: "u1", input: 100, output: 10),
+            coreInputRecord(sequence: 2, actionID: "u1", timeUnixMs: milliseconds(Self.now)),
+        ], modelName: nil)
+        let report = await aggregator(modelName: { _, _ in "unknown-model" }).scan()
+
+        let section = VibeUsageProvider.section(for: report, budget: nil)
+
+        XCTAssertEqual(section.glanceLine,
+                       SectionGlanceLine("110 tokens · 24 hours", isEstimate: true))
+    }
+
+    func testGlanceLineSuppressedWhenBudgetHeadlinePresent() async throws {
+        try writeSession("session-glance-budget", journal: [
+            usageRecord(sequence: 1, actionID: "b1", input: 100, output: 10),
+            coreInputRecord(sequence: 2, actionID: "b1", timeUnixMs: milliseconds(Self.now)),
+        ], modelName: "mistral-medium-3.5")
+        let report = await aggregator(modelName: { _, _ in "mistral-medium-3.5" }).scan()
+
+        let section = VibeUsageProvider.section(for: report,
+                                                budget: VibeBudget(amountUSD: 300, resetDay: 15))
+
+        XCTAssertNotNil(section.headline)
+        XCTAssertNil(section.glanceLine)
+    }
+
+    func testGlanceLineSuppressedWhenWindowIsEmpty() async throws {
+        try writeSession("session-glance-old", journal: [
+            usageRecord(sequence: 1, actionID: "o1", input: 100, output: 10),
+            coreInputRecord(sequence: 2, actionID: "o1", timeUnixMs: milliseconds(Self.now.addingTimeInterval(-48 * 3_600))),
+        ], modelName: "mistral-medium-3.5")
+        let report = await aggregator(modelName: { _, _ in "mistral-medium-3.5" }).scan()
+
+        XCTAssertNil(VibeUsageProvider.section(for: report, budget: nil).glanceLine)
+    }
+
     func testNextResetDateClampsToMonthLengthAndRollsForward() {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(identifier: "UTC")!
