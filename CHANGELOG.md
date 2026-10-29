@@ -16,7 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   hover for a compact tooltip summary. Meters read "X% left".
 - Optional Mistral Vibe monthly budget (amount + reset day, right-click menu):
   with a budget set, the Vibe headline shows an estimated percent left and
-  dollars-per-day quote; without one, the section stays token-first.
+  dollars-per-day quote; without one, the section shows a compact
+  last-24-hours glance line (estimated spend where price-resolvable, plus
+  token count).
 - Privacy-safe Claude endpoint diagnostics (window presence and utilization).
 - Initial dockless multi-provider usage HUD, summoned with Control-Option-Command-L.
 - One section per installed CLI — Codex, Claude Code, and Mistral Vibe — with

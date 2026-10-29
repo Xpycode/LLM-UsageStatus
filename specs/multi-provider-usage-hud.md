@@ -56,7 +56,9 @@ end user.
    derived cost) from `~/.vibe/logs/session/unified/*/journal/*.jsonl`. Optionally, the user can
    set a monthly budget (amount + reset day; Mistral publishes no allowance API): with a budget,
    the section leads with an estimated percent-left headline and a dollars-per-day quote derived
-   from the local cost estimate; without one, it stays token-first with no percentage.
+   from the local cost estimate; without one, it stays token-first with no percentage but shows a
+   compact glance line of the last 24 hours (estimated spend where every contributing session's
+   model price resolves, plus the token count), visibly labeled as an estimate.
 4. **Provider isolation** — a missing CLI shows "not detected"; a failing refresh shows the last
    good values with a failure message; providers never break each other.
 5. **HUD interaction** — same interaction model as CodexUsageStatus: global hotkey toggle,
@@ -121,6 +123,10 @@ end user.
 - [ ] Given the user configured a Vibe monthly budget, when the Vibe section refreshes, then the
       headline shows an estimated percent left and dollars-per-day quote until the configured
       reset; given no budget is configured, then the Vibe section shows no percentage.
+- [ ] Given no budget is configured but the Vibe store has recent activity, when the HUD renders,
+      then the collapsed Vibe section shows a compact last-24-hours glance line (estimated spend
+      when fully price-resolvable, plus token count), visibly labeled as an estimate; given no
+      activity in the window, then no glance line is shown.
 - [ ] Given any quantity is rendered, when it is formatted, then thousands grouping is correct and
       consistent for the user's locale (no mangled separators).
 

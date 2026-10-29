@@ -21,6 +21,9 @@ cd 01_Project && xcodebuild -project LLM-UsageStatus.xcodeproj -scheme LLM-Usage
 - After Wave 4 (headline-first sections, Vibe monthly budget; task 4.3):
   129 tests, 0 failures — `** TEST SUCCEEDED **`, all 18 renders regenerated
   (15 expanded states + 3 collapsed headline variants).
+- After task 4.4 (Vibe no-budget glance line): 133 tests, 0 failures —
+  `** TEST SUCCEEDED **`, renders regenerated again (the Vibe fixtures now
+  carry the last-24-hours glance line).
   The 3 new tests are `SectionFixtureRenderTests` (one per provider, app-hosted).
 
 No existing test failed at any point; no app source was changed for this task.
