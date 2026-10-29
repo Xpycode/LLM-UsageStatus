@@ -1,22 +1,20 @@
 # TASKS
 
-- **Active plan:** none yet — run `/make-plan` against `specs/multi-provider-usage-hud.md` after the open questions are resolved.
+- **Active plan:** `docs/plans/2026-10-29-multi-provider-hud/IMPLEMENTATION_PLAN.md` — 13 tasks, 3 waves; first ready IDs: **1.1–1.5** (all of Wave 1). The plan owns task status/evidence.
 
 ## Backlog
 
-Mapped to the spec's acceptance criteria (`specs/multi-provider-usage-hud.md`); the plan owns task
-status and evidence once created.
+Retained for discoverability; items map into plan tasks (executed work tracks there).
 
-1. Scaffold the XcodeGen app project in `01_Project/` (dockless HUD shell, global hotkey, warning-icon fallback) — reuse CodexUsageStatus patterns.
-2. Define the `Provider` protocol and the three-provider HUD layout (one section per provider, per-provider failure isolation).
-3. Codex provider: port auth-file reading and the usage-endpoint service from CodexUsageStatus.
-4. Claude provider: transcript aggregator over `~/.claude/projects/**/*.jsonl` (session and weekly token aggregates, estimate labeling).
-5. Vibe provider: session-journal aggregator over `~/.vibe/logs/session/unified/*/journal/*.jsonl`.
-6. Preference persistence: which providers are visible, estimate display settings (UserDefaults only).
-7. Tests: fixture-based aggregator tests for both log readers, provider-protocol tests, formatter tests.
-8. Distribution: Developer ID signing, notarization, release script (adapt `scripts/notarize-release.sh` from CodexUsageStatus).
+1. Scaffold the XcodeGen app project → plan task 1.1.
+2. Provider protocol + HUD layout → plan tasks 1.2, 2.1–2.2.
+3. Codex provider port → plan tasks 1.3, 2.1.
+4. Claude provider (OAuth endpoint + transcript fallback) → plan tasks 1.4, 2.2.
+5. Vibe provider (journal aggregator + rate card) → plan tasks 1.5, 2.2.
+6. Preference persistence + renewal timers → plan task 2.3.
+7. Tests/fixtures → embedded in every task's backpressure; full pass in 3.2.
+8. Distribution pipeline → plan tasks 3.1, E2.
 
 ## Inbox
 
-- Hotkey choice for the new app (CodexUsageStatus uses Control-Option-Command-X).
-- Icon design in `02_Design/`.
+- Icon design in `02_Design/` (independent of plan waves; does not gate E1/E2 — default Xcode icon acceptable for 0.1.0).

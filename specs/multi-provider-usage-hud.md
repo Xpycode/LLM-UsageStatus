@@ -1,8 +1,8 @@
 # Multi-Provider Usage HUD Specification
 
-**Status:** Draft
+**Status:** Approved
 **Created:** 2026-10-29
-**Last Updated:** 2026-10-29
+**Last Updated:** 2026-10-29 (open questions resolved via subagent research; Claude section upgraded to OAuth-endpoint primary)
 
 ---
 
@@ -48,9 +48,10 @@ end user.
 
 1. **Codex section** — authoritative allowance: weekly allowance remaining with renewal countdown,
    credits, available reset passes, optional five-hour limit (port of CodexUsageStatus behavior).
-2. **Claude Code section** — locally aggregated usage: tokens (input/output/cache) per current
-   session and per rolling period, aggregated from `~/.claude/projects/**/*.jsonl`, shown as
-   consumption facts with clearly labeled plan-limit estimates.
+2. **Claude Code section** — authoritative utilization via the undocumented OAuth usage endpoint
+   (`GET api.anthropic.com/api/oauth/usage`, token from the Claude Code Keychain items): five-hour
+   and seven-day utilization with vendor `resets_at`; fallback to locally aggregated tokens
+   (`~/.claude/projects/**/*.jsonl`) clearly labeled as estimates when the token is unavailable.
 3. **Mistral Vibe section** — locally aggregated usage: tokens per rolling period (and optionally
    derived cost) from `~/.vibe/logs/session/unified/*/journal/*.jsonl`.
 4. **Provider isolation** — a missing CLI shows "not detected"; a failing refresh shows the last
@@ -85,9 +86,11 @@ end user.
 - [ ] Given Codex signed in, when the Codex section refreshes, then it shows weekly allowance
       remaining with renewal countdown, credits, and available reset passes, matching
       CodexUsageStatus semantics (unavailable fields labeled as such, never guessed).
-- [ ] Given Claude Code transcripts exist, when the Claude section refreshes, then it shows
-      session and rolling-period token aggregates computed from those transcripts, with any
-      plan-limit comparison visibly labeled as an estimate.
+- [ ] Given Claude Code is signed in and its OAuth token is readable, when the Claude section
+      refreshes, then it shows five-hour and seven-day utilization with reset times from the OAuth
+      usage endpoint.
+- [ ] Given the Claude OAuth token is unavailable but transcripts exist, when the Claude section
+      refreshes, then it falls back to locally aggregated token counts visibly labeled as estimates.
 - [ ] Given Vibe sessions exist, when the Vibe section refreshes, then it shows rolling-period
       token aggregates from the session journals.
 - [ ] Given a provider's CLI is not installed, when the HUD opens, then that section shows
@@ -165,11 +168,11 @@ end user.
 
 | Question | Status | Answer |
 |----------|--------|--------|
-| Which Claude plan limits to encode as estimate baselines (Pro vs Max tiers), and are they configurable per install? | Open | - |
-| Should the Vibe section show derived cost from model prices, or tokens only? | Open | - |
-| Which global hotkey (CodexUsageStatus uses Control-Option-Command-X)? | Open | - |
-| Claude weekly window semantics: rolling 7 days vs calendar week (community tools disagree)? | Open | - |
-| Display "sessions" from Vibe's older non-unified session logs too, or only the unified store? | Open | - |
+| Which Claude plan limits to encode as estimate baselines (Pro vs Max tiers), and are they configurable per install? | Resolved | None encoded. Primary source is the OAuth usage endpoint (authoritative utilization + resets_at); local-log fallback shows tokens as labeled usage facts, no plan baselines — no officially published numbers exist and community figures conflict. See decisions 2026-10-29. |
+| Should the Vibe section show derived cost from model prices, or tokens only? | Resolved | Tokens-only primary; a derived cost line appears only when a price triple resolves for the model (bundled updatable rate card; config prices take precedence), hidden otherwise. |
+| Which global hotkey (CodexUsageStatus uses Control-Option-Command-X)? | Resolved | Control-Option-Command-L. |
+| Claude weekly window semantics: rolling 7 days vs calendar week (community tools disagree)? | Resolved | Display the endpoint's `resets_at`; local fallback shows a rolling 7-day aggregate labeled as an estimate; no hardcoded cadence. |
+| Display "sessions" from Vibe's older non-unified session logs too, or only the unified store? | Resolved | Unified store only in v1; legacy layouts out of scope. |
 
 ---
 
