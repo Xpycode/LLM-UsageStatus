@@ -97,8 +97,13 @@ struct ClaudeTokenProvider: ClaudeTokenProviding {
     }
 
     private static func accessToken(from data: Data) -> String? {
-        guard let root = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
-              let oauth = root["claudeAiOauth"] as? [String: Any],
+        guard let root = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] else {
+            logger.notice("Credentials blob root is not a JSON object")
+            return nil
+        }
+        // Key names only (structural, never values) to diagnose credential-shape drift.
+        logger.notice("Credentials blob keys \(root.keys.sorted().joined(separator: ","), privacy: .public)")
+        guard let oauth = root["claudeAiOauth"] as? [String: Any],
               let token = oauth["accessToken"] as? String else { return nil }
         let trimmed = token.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, !trimmed.contains(where: { $0.isNewline }) else { return nil }

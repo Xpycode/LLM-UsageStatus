@@ -1,4 +1,5 @@
 import Foundation
+import os
 
 /// Normalized usage windows from the Claude OAuth usage endpoint.
 struct ClaudeOAuthUsage: Equatable, Sendable {
@@ -15,6 +16,7 @@ struct ClaudeUsageWindow: Equatable, Sendable {
 
 /// Reads the current Claude OAuth usage; the token never leaves the request path and nothing is persisted.
 struct ClaudeOAuthUsageService: Sendable {
+    nonisolated private static let logger = Logger(subsystem: "com.sim.LLM-UsageStatus", category: "ClaudeOAuth")
     typealias Transport = @Sendable (URLRequest) async throws -> (Data, URLResponse)
 
     enum FetchError: LocalizedError, Equatable {
@@ -84,6 +86,10 @@ struct ClaudeOAuthUsageService: Sendable {
             throw FetchError.usageUnavailable
         }
 
+        if !(200...299).contains(http.statusCode) {
+            // Status code only (never headers or body) to diagnose token-scope rejections.
+            Self.logger.notice("Usage endpoint HTTP \(Int(http.statusCode))")
+        }
         switch http.statusCode {
         case 200...299: break
         case 401: throw FetchError.unauthorized
