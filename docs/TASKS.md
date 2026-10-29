@@ -14,14 +14,16 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
 6. Preference persistence + renewal timers → plan task 2.3.
 7. Tests/fixtures → embedded in every task's backpressure; full pass in 3.2.
 8. Distribution pipeline → plan tasks 3.1, E2.
-9. **Claude OAuth primary path on this Mac** (2026-10-29, updated same day): root cause of the
-   silent failure found — `SecItemCopyMatching` with `kSecMatchLimitAll` + `kSecReturnData`
-   returns `errSecParam` on this macOS build; fixed with a match-one fallback (32d2d89). The
-   read now reaches the item and blocks on the standard macOS access prompt; a prompt is
-   **pending on screen** for the running instance (PID 66578). Next: user clicks Always Allow,
-   then read the app log — the instrumented build (ce7349f) logs the exact HTTP status and the
-   credentials blob's key names (privacy-safe). If 401/403, scope/token acceptance is the
-   remaining question for the E1 Claude criterion.
+9. **Claude OAuth primary path on this Mac** (2026-10-29, resolved same day): root cause chain
+   complete. The `errSecParam` match-all failure was fixed with the match-one fallback (32d2d89);
+   after the user answered the pending access prompts, the instrumented build (ce7349f) read the
+   item, decoded the expected blob shape (`claudeAiOauth`/`mcpOAuth`), extracted
+   `claudeAiOauth.accessToken`, and the usage endpoint returned **HTTP 401** — the stored access
+   token is rejected (stale: Claude Code only refreshes it when Claude Code itself runs; this app
+   never writes to the item by design). Implementation verified correct end-to-end; the labeled
+   local fallback engaged exactly as specified. Endpoint stays primary. Remaining E1 check: run
+   Claude Code once to refresh the sign-in, then confirm the HUD's Claude section shows endpoint
+   utilization (2xx) instead of estimates.
 10. **Vibe cost line with mixed/unresolved models** (2026-10-29): the cost row suppresses entirely
     when any used session's model is not in the rate card (currently only mistral-medium-3.5), so
     real mixed-model usage never shows a cost line. Possible alternative: a per-model or partial
