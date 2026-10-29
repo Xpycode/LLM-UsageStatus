@@ -60,6 +60,8 @@ SESSION-LOG*.md
 fix-plan*.md
 *-addition.md
 TODO-*.md
+# Directions plans are persistent and versioned (the *PLAN*.md rule targets throwaway files)
+!docs/plans/**/IMPLEMENTATION_PLAN.md
 
 # === AI Tools ===
 .claude/
