@@ -75,6 +75,10 @@ final class ClaudeLogAggregatorTests: XCTestCase {
             line(timestamp: "2027-01-14T10:00:00Z", input: 3),
             "null",
             "[]",
+            // Claude Code's timestamp-less structural records are skipped silently,
+            // not counted as malformed: they are normal file structure, not corrupt data.
+            #"{"type":"summary","sessionId":"structural"}"#,
+            #"{"type":"mode","sessionId":"structural","mode":"accept"}"#,
             "{}",
             line(timestamp: "2027-01-14T11:00:00Z", output: 4)
         ], to: "proj/mixed.jsonl", root: root)
@@ -84,7 +88,7 @@ final class ClaudeLogAggregatorTests: XCTestCase {
             XCTFail("Expected a summarized result")
             return
         }
-        XCTAssertEqual(summary.malformedLines, 5)
+        XCTAssertEqual(summary.malformedLines, 4)
         XCTAssertEqual(summary.sessions.count, 1)
         XCTAssertEqual(summary.totals, ClaudeTokenTotals(inputTokens: 3, outputTokens: 4,
                                                          cacheCreationInputTokens: 0, cacheReadInputTokens: 0))

@@ -41,8 +41,9 @@ struct ClaudeTokenTotals: Equatable, Sendable {
 /// Local fallback: aggregates token counts from `~/.claude/projects/**/*.jsonl` transcripts.
 /// Only token counts, timestamps, and file identities are retained — never conversation content.
 /// Sidechain (subagent) lines are skipped entirely to avoid double counting their parent usage.
-/// A line counts as malformed when it is not a JSON object or lacks a parseable timestamp;
-/// lines that merely lack an assistant usage object are skipped silently.
+/// A line counts as malformed only when it is not a JSON object; Claude Code also writes
+/// timestamp-less structural records (summaries, titles, modes, snapshots) that carry no
+/// usage — those are skipped silently, as are lines that merely lack an assistant usage object.
 struct ClaudeLogAggregator: Sendable {
     private static let window: TimeInterval = 7 * 24 * 60 * 60
 
@@ -92,10 +93,8 @@ struct ClaudeLogAggregator: Sendable {
                         fileMalformed += 1
                         continue
                     }
-                    guard let timestamp = Self.timestamp(object["timestamp"]) else {
-                        fileMalformed += 1
-                        continue
-                    }
+                    // Timestamp-less objects are structural records, not corrupt data.
+                    guard let timestamp = Self.timestamp(object["timestamp"]) else { continue }
                     guard object["isSidechain"] as? Bool != true else { continue }
                     guard timestamp >= windowStart else { continue }
                     guard let message = object["message"] as? [String: Any],
