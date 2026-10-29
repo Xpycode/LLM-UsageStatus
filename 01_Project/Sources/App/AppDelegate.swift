@@ -11,6 +11,8 @@ import SwiftUI
         // Composition root: services conforming to `Provider`, one store per section.
         let providers: [any Provider] = [
             CodexUsageService(),
+            ClaudeUsageProvider(),
+            VibeUsageProvider(),
         ]
         stores = providers.map { UsageStore(provider: $0) }
         super.init()

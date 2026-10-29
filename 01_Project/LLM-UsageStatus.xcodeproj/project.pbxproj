@@ -30,11 +30,15 @@
 		86127BE71EECBA43DA3661DF /* CodexUsageServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C6F20829570EFFC12C69A6 /* CodexUsageServiceTests.swift */; };
 		86ACA730375860E14899199C /* CodexUsageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 223B33EEAE0FCC317DB5700A /* CodexUsageService.swift */; };
 		9D2119BF6606A7A76DBC2469 /* VibeJournalAggregator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853AB380986CA290F24B25F4 /* VibeJournalAggregator.swift */; };
+		A08D526E1AEB647702D9677F /* ClaudeUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CE3D3C497CC5D32E1131CB5 /* ClaudeUsageProvider.swift */; };
 		B40C6A205FC55839BF07F058 /* CodexUsageProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C5FC1444DA093FA5FB49D8 /* CodexUsageProviderTests.swift */; };
+		BFFE93F8A1DFA07828DBD381 /* VibeUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A84B6F317F0425FA903EF39 /* VibeUsageProvider.swift */; };
 		C14D0945F5234D3D733B1FBB /* ClaudeOAuthUsageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03BD948C67F4E923C56A9D88 /* ClaudeOAuthUsageService.swift */; };
+		C337443E92364DAFE08C1FCC /* ClaudeUsageProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B9B89BA65CE111B9B17F230 /* ClaudeUsageProviderTests.swift */; };
 		C71DA81FC5D7A148750B6548 /* UsagePanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3460E4F1309B764C254CD4E /* UsagePanelController.swift */; };
 		E2B5FEB1959E9AF647649442 /* CodexUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF45307ACADAB9E1BDF5D5C6 /* CodexUsageProvider.swift */; };
 		F907750B91316108497BCCA5 /* ProviderModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28627813D66FF774A5DB857E /* ProviderModels.swift */; };
+		FA376752DDC70FFA2BE8C49B /* VibeUsageProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D79B6AFFD91BA3A799CC6F8 /* VibeUsageProviderTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,11 +62,15 @@
 		2D86D18557950E0CAFEA9A68 /* UsageSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageSnapshotTests.swift; sourceTree = "<group>"; };
 		2EC692C15F291BE643A748AB /* UsageSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageSnapshot.swift; sourceTree = "<group>"; };
 		31C6F20829570EFFC12C69A6 /* CodexUsageServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexUsageServiceTests.swift; sourceTree = "<group>"; };
+		3D79B6AFFD91BA3A799CC6F8 /* VibeUsageProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeUsageProviderTests.swift; sourceTree = "<group>"; };
 		3E513A5ED1CFC017B7335D39 /* UsageResponseDecoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageResponseDecoderTests.swift; sourceTree = "<group>"; };
 		4544AE9F60C86AC4D81C5729 /* UsageStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageStatusView.swift; sourceTree = "<group>"; };
 		4B1DA9A29E1DFD828D59DD02 /* ClaudeTokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeTokenProvider.swift; sourceTree = "<group>"; };
 		514EE2AF472B97AA1985CC48 /* GlobalHotKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalHotKey.swift; sourceTree = "<group>"; };
+		5A84B6F317F0425FA903EF39 /* VibeUsageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeUsageProvider.swift; sourceTree = "<group>"; };
 		653152AA58139EA42CDC87C5 /* ClaudeLogAggregator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeLogAggregator.swift; sourceTree = "<group>"; };
+		6B9B89BA65CE111B9B17F230 /* ClaudeUsageProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeUsageProviderTests.swift; sourceTree = "<group>"; };
+		6CE3D3C497CC5D32E1131CB5 /* ClaudeUsageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeUsageProvider.swift; sourceTree = "<group>"; };
 		7750712C9735A9D6EF73E4F0 /* MistralRateCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MistralRateCard.swift; sourceTree = "<group>"; };
 		7A5BEBC9BCD01682D42F37B5 /* UsageResponseDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageResponseDecoder.swift; sourceTree = "<group>"; };
 		7A91A276F08FF60DEAA238BC /* ClaudeOAuthUsageServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeOAuthUsageServiceTests.swift; sourceTree = "<group>"; };
@@ -86,6 +94,7 @@
 			children = (
 				7750712C9735A9D6EF73E4F0 /* MistralRateCard.swift */,
 				853AB380986CA290F24B25F4 /* VibeJournalAggregator.swift */,
+				5A84B6F317F0425FA903EF39 /* VibeUsageProvider.swift */,
 			);
 			path = Vibe;
 			sourceTree = "<group>";
@@ -160,6 +169,7 @@
 			children = (
 				FE7383097646DBAAD3BAC40E /* ClaudeLogAggregatorTests.swift */,
 				7A91A276F08FF60DEAA238BC /* ClaudeOAuthUsageServiceTests.swift */,
+				6B9B89BA65CE111B9B17F230 /* ClaudeUsageProviderTests.swift */,
 			);
 			path = Claude;
 			sourceTree = "<group>";
@@ -227,6 +237,7 @@
 			children = (
 				E2C8D4F2D3B22C615F2DE2A5 /* MistralRateCardTests.swift */,
 				1962AB6F02C1A3B93B3B8A7B /* VibeJournalAggregatorTests.swift */,
+				3D79B6AFFD91BA3A799CC6F8 /* VibeUsageProviderTests.swift */,
 			);
 			path = Vibe;
 			sourceTree = "<group>";
@@ -247,6 +258,7 @@
 				653152AA58139EA42CDC87C5 /* ClaudeLogAggregator.swift */,
 				03BD948C67F4E923C56A9D88 /* ClaudeOAuthUsageService.swift */,
 				4B1DA9A29E1DFD828D59DD02 /* ClaudeTokenProvider.swift */,
+				6CE3D3C497CC5D32E1131CB5 /* ClaudeUsageProvider.swift */,
 			);
 			path = Claude;
 			sourceTree = "<group>";
@@ -373,6 +385,7 @@
 			files = (
 				141D2409FAB57983E555A62E /* ClaudeLogAggregatorTests.swift in Sources */,
 				550A500AA648447460D4280D /* ClaudeOAuthUsageServiceTests.swift in Sources */,
+				C337443E92364DAFE08C1FCC /* ClaudeUsageProviderTests.swift in Sources */,
 				B40C6A205FC55839BF07F058 /* CodexUsageProviderTests.swift in Sources */,
 				86127BE71EECBA43DA3661DF /* CodexUsageServiceTests.swift in Sources */,
 				33D5EC94411959A61CAADA70 /* GlobalHotKeyTests.swift in Sources */,
@@ -382,6 +395,7 @@
 				558F53E04CD7DEEC5D3D265A /* UsageSnapshotTests.swift in Sources */,
 				1317E37CB906096E7F3F4ECF /* UsageStoreTests.swift in Sources */,
 				691DB206BEB7D941B2D7F81D /* VibeJournalAggregatorTests.swift in Sources */,
+				FA376752DDC70FFA2BE8C49B /* VibeUsageProviderTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -393,6 +407,7 @@
 				5B221A6EB9DD838E8C805193 /* ClaudeLogAggregator.swift in Sources */,
 				C14D0945F5234D3D733B1FBB /* ClaudeOAuthUsageService.swift in Sources */,
 				48CD3554BAAAAE0E5F2DA52F /* ClaudeTokenProvider.swift in Sources */,
+				A08D526E1AEB647702D9677F /* ClaudeUsageProvider.swift in Sources */,
 				E2B5FEB1959E9AF647649442 /* CodexUsageProvider.swift in Sources */,
 				86ACA730375860E14899199C /* CodexUsageService.swift in Sources */,
 				1E99FE25CBCF9A47B7145512 /* GlobalHotKey.swift in Sources */,
@@ -405,6 +420,7 @@
 				0F540680EC4CA9DDA014B9AF /* UsageStatusView.swift in Sources */,
 				85C15B1E8054471F8BF40197 /* UsageStore.swift in Sources */,
 				9D2119BF6606A7A76DBC2469 /* VibeJournalAggregator.swift in Sources */,
+				BFFE93F8A1DFA07828DBD381 /* VibeUsageProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
