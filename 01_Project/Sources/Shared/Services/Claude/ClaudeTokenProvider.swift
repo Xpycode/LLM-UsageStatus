@@ -42,30 +42,57 @@ struct ClaudeTokenProvider: ClaudeTokenProviding {
         return services
     }
 
-    /// Exact-service query with match limit all, so multiple generic-password items under one
-    /// service (for instance different accounts) are all considered. A suffixed variant whose
-    /// CLAUDE_CONFIG_DIR is not set cannot be located by an exact-service query; that path is
-    /// only reachable via the environment probe above.
+    /// Exact-service query. Multiple generic-password items under one service (for instance
+    /// different accounts) are considered where the OS allows it; a suffixed variant whose
+    /// CLAUDE_CONFIG_DIR is not set cannot be located by an exact-service query — that path
+    /// is only reachable via the environment probe above.
     private static func token(matchingService service: String) -> String? {
-        let query: [String: Any] = [
+        // Match-all together with returned data is rejected as errSecParam on some macOS
+        // generations (verified empirically); degrade to a single match, which is the
+        // common shape anyway (one credentials item per service).
+        var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
-            kSecMatchLimit as String: kSecMatchLimitAll,
             kSecReturnAttributes as String: true,
-            kSecReturnData as String: true
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitAll,
         ]
         var result: CFTypeRef?
-        let status = SecItemCopyMatching(query as CFDictionary, &result)
+        var status = SecItemCopyMatching(query as CFDictionary, &result)
+        if status == errSecParam {
+            logger.notice("Keychain match-all with data rejected; falling back to match-one for \(service, privacy: .public)")
+            query[kSecMatchLimit as String] = kSecMatchLimitOne
+            result = nil
+            status = SecItemCopyMatching(query as CFDictionary, &result)
+        }
         // Absence and every denial (errSecItemNotFound, errSecUserCanceled, ACL refusals...)
         // are indistinguishable to the caller on purpose: local-only mode either way.
-        guard status == errSecSuccess else { return nil }
-        guard let items = result as? [Any] else { return nil }
-        for case let item as [String: Any] in items {
-            if let data = item[kSecValueData as String] as? Data,
-               let token = accessToken(from: data) {
+        guard status == errSecSuccess else {
+            // Status code only (no item content) to diagnose read denials.
+            logger.notice("Keychain probe \(service, privacy: .public) status \(Int(status))")
+            return nil
+        }
+
+        // Match-one returns a single attributes dictionary; match-all returns an array.
+        let items: [[String: Any]]
+        if let one = result as? [String: Any] {
+            items = [one]
+        } else if let anyItems = result as? [Any] {
+            items = anyItems.compactMap { $0 as? [String: Any] }
+        } else {
+            logger.notice("Keychain probe \(service, privacy: .public) unexpected result shape")
+            return nil
+        }
+
+        var readable = 0
+        for item in items {
+            guard let data = item[kSecValueData as String] as? Data else { continue }
+            readable += 1
+            if let token = accessToken(from: data) {
                 return token
             }
         }
+        logger.notice("Keychain probe \(service, privacy: .public) items \(items.count) readable \(readable) none decoded")
         return nil
     }
 

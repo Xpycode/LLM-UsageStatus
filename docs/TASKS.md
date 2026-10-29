@@ -14,12 +14,13 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
 6. Preference persistence + renewal timers → plan task 2.3.
 7. Tests/fixtures → embedded in every task's backpressure; full pass in 3.2.
 8. Distribution pipeline → plan tasks 3.1, E2.
-9. **Claude OAuth primary path unverified on this Mac** (2026-10-29, from the running HUD): the
-   Keychain item `Claude Code-credentials` exists (metadata read only), but the app got no usable
-   token at launch and the section degraded to labeled local aggregates as designed. Next step is
-   user-operated: reopen the HUD and watch for a Keychain access prompt (approve it). If no prompt
-   appears and the section stays on estimates, the `claudeAiOauth.accessToken` blob decode
-   assumption needs verification. Gates the E1 Claude endpoint acceptance criterion.
+9. **Claude OAuth primary path on this Mac** (2026-10-29, updated same day): the token provider's
+   Keychain query (match-all + returned data) was rejected as `errSecParam` on this macOS build —
+   the read never reached the item. Fixed with a match-one fallback (commit pending user
+   confirmation); after the fix the read completed silently (success path, no prompt required)
+   and the endpoint fetch ran. **Remaining:** user confirms the Claude section now shows endpoint
+   five-hour/seven-day utilization; if it still shows local estimates, the endpoint response
+   mapping (401/403) is the next suspect. Gates the E1 Claude endpoint acceptance criterion.
 10. **Vibe cost line with mixed/unresolved models** (2026-10-29): the cost row suppresses entirely
     when any used session's model is not in the rate card (currently only mistral-medium-3.5), so
     real mixed-model usage never shows a cost line. Possible alternative: a per-model or partial
