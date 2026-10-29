@@ -123,6 +123,15 @@ struct ProviderSectionView: View {
                     }
                 }
             }
+            if !expanded {
+                // Collapsed sections keep their secondary windows visible in
+                // small — the headline shows only the primary one.
+                ForEach(secondaryMeters(section)) { meter in
+                    Text(Self.smallWindowLine(meter, section: section, now: now))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
             if expanded {
                 // The Codex 5-hour display is optional; the provider owns these
                 // stable ids. Hiding the meter hides its reset countdown with it.
@@ -159,6 +168,24 @@ struct ProviderSectionView: View {
 
     private func visibleMeters(_ section: ProviderSection) -> [SectionMeter] {
         showFiveHourLimit ? section.meters : section.meters.filter { $0.id != "five-hour-limit" }
+    }
+
+    /// Meters other than the headline's primary window, shown small while collapsed.
+    private func secondaryMeters(_ section: ProviderSection) -> [SectionMeter] {
+        visibleMeters(section).filter { $0.label != section.headline?.windowLabel }
+    }
+
+    /// Compact collapsed line for one secondary window, with its reset countdown
+    /// when a same-label deadline exists.
+    private static func smallWindowLine(_ meter: SectionMeter, section: ProviderSection, now: Date) -> String {
+        var text = "\(meter.label): \(Int((meter.fractionLeft * 100).rounded()))% left"
+        if let deadline = section.deadlines.first(where: { $0.label == meter.label }) {
+            text += " · \(SectionDeadlineView.countdownText(deadline.date, now: now))"
+        }
+        if meter.isEstimate {
+            text += " (estimated)"
+        }
+        return text
     }
 
     private func visibleDeadlines(_ section: ProviderSection) -> [SectionDeadline] {
