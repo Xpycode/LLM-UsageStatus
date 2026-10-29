@@ -1,6 +1,6 @@
 # TASKS
 
-- **Active plan:** `docs/plans/2026-10-29-multi-provider-hud/IMPLEMENTATION_PLAN.md` — 13 tasks, 3 waves; first ready IDs: **1.1–1.5** (all of Wave 1). The plan owns task status/evidence.
+- **Active plan:** `docs/plans/2026-10-29-multi-provider-hud/IMPLEMENTATION_PLAN.md` — 13 tasks, 3 waves; 8/13 complete, next ready IDs: **3.1, 3.2** (Wave 3), then gates E1/E2. The plan owns task status/evidence.
 
 ## Backlog
 

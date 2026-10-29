@@ -4,7 +4,7 @@
 > Repair scheduling errors while preserving task IDs, completed evidence and approved scope.
 > Task state/evidence is authoritative here; TASKS links here and holds backlog/inbox.
 
-**Progress:** 5/13; external acceptance: E1 (fresh-build smoke test), E2 (notarized 0.1.0 release).
+**Progress:** 8/13; external acceptance: E1 (fresh-build smoke test), E2 (notarized 0.1.0 release).
 **Task states:** unchecked = pending / implemented-unverified / blocked (name gate);
 checked = complete with required evidence. Task identity includes this plan path plus ID.
 
@@ -111,21 +111,21 @@ criteria must pass). Summary:
 
 ### Wave 2 (serial integration)
 
-- [ ] **2.1**: Multi-provider HUD with Codex live -> `01_Project/Sources/Features/UsageStatus/Views/UsageStatusView.swift`, `AppDelegate` composition wiring
+- [x] **2.1**: Multi-provider HUD with Codex live -> `01_Project/Sources/Features/UsageStatus/Views/UsageStatusView.swift`, `AppDelegate` composition wiring
   - Depends on: 1.1 (shell), 1.2 (protocol/store), 1.3 (Codex service)
   - External gates: none
   - Owns: `Sources/Features/UsageStatus/Views/**`, the Codex `Provider` conformance extension in `Sources/Shared/Services/` (the one edit to 1.3-owned files, coordinated as Wave 2 serial work), the AppDelegate composition-root edit (services → providers → stores → panel)
   - Interface: per-provider section rendering from the normalized model (rows/meters/deadlines/estimate labels), one store per provider, refresh-on-open
   - Success: HUD shows the Codex section end-to-end through the provider path (build → hotkey → refresh → rows); a provider fetch failure shows safe copy and retains prior values; placeholder content removed
   - Backpressure: full `xcodebuild ... build` + app test suite green
-- [ ] **2.2**: Claude and Vibe sections live
+- [x] **2.2**: Claude and Vibe sections live
   - Depends on: 2.1 (section interface), 1.4, 1.5
   - External gates: none
   - Owns: Claude/Vibe provider conformance files (inside their service dirs), their section content within the views, composition-root wiring for the two stores
   - Interface: complete three-provider HUD
   - Success: all three sections populate; Claude shows endpoint utilization with `resets_at`, degrades to labeled local aggregates when the token is unavailable; Vibe shows token totals and a cost line only when the rate card resolves; absent CLIs show "not detected"; estimate labels visible wherever fallback data is shown
   - Backpressure: full app test suite green; fixture-driven section-state unit tests pass
-- [ ] **2.3**: Preferences, renewal timers, state parity -> `Sources/Features/UsageStatus/UsagePreferences.swift`, views, AppDelegate menu
+- [x] **2.3**: Preferences, renewal timers, state parity -> `Sources/Features/UsageStatus/UsagePreferences.swift`, views, AppDelegate menu
   - Depends on: 2.2
   - External gates: none
   - Owns: `UsagePreferences.swift` (per-provider persisted toggles), right-click menu, generalized `refreshPassedRenewals`, stale/failed caption cluster
@@ -184,6 +184,7 @@ criteria must pass). Summary:
 | Plan created 2026-10-29 | Research: 3 subagents (web + local) resolved all 5 spec open questions | Reports linked in research annex | — | Execution not yet requested; Wave 1 all-ready |
 | Plan review 2026-10-29 | 2 web-verification subagents (Claude OAuth, Mistral pricing) + local verification (CUS refs, unified store, Keychain metadata) | All claims confirmed; refinements folded into 1.4/1.5/2.1 and the annex | — | Plan review passed; Wave 1 ready on user request |
 | Wave 1 (1.1–1.5) 2026-10-29 | 5 parallel fresh-context agents (shell, provider abstraction, Codex verbatim port, Claude sources, Vibe aggregator); coordinator integration | `xcodegen generate` + `xcodebuild build` SUCCEEDED; full `xcodebuild test` (app-hosted, user-authorized) 91/91 green — covers every task's backpressure suite (GlobalHotKey, ProviderModels, UsageStore, Codex/decoder/snapshot, Claude OAuth+aggregator, Vibe aggregator+rate card); app-hosted launch evidences dockless launch + hotkey registration; 1.1's interactive panel behaviors are verbatim CUS ports, full confirmation folds into E1 | "Wave 1: HUD shell + provider abstraction + Codex/Claude/Vibe data sources" (+ coordinator fixes: missing try, NSDirectoryEnumerator async-context fix, realpath session-id fix in Claude aggregator) | Wave 2 ready (2.1 after 1.1–1.3, then 2.2, 2.3); E1/E2 open |
+| Wave 2 (2.1→2.2→2.3) 2026-10-29 | Serial coordinator execution — integration tasks share the views/composition-root surface, so no independent fresh-context work existed; delegation offered no benefit | `xcodegen generate` + full `xcodebuild test` (app-hosted, user-authorized for this wave) green at each task boundary: 98/98 (2.1), 112/112 (2.2), 116/116 (2.3) — new coverage: CodexUsageProviderTests (identity, section mapping incl. resets/expiry/unlimited/zero-passes, error→state mapping), ClaudeUsageProviderTests (endpoint meters/deadlines incl. both resets_at formats, labeled local fallback, not-detected, 403 fallback, 429 retains unavailable, transport failure), VibeUsageProviderTests (scan rows + cost when model resolves, cost omitted when unresolvable, unattributed windows flagged as estimates, skipped/malformed notes, absent/empty store), UsagePreferencesTests (injected defaults suite) | Three task commits: "Wave 2 task 2.1: multi-provider HUD views, Codex provider conformance, composition root" (62cc4ae), "Wave 2 task 2.2: Claude and Vibe sections live" (aa94c96), "Wave 2 task 2.3: preferences, renewal timers, menu parity" (bbdd5e6) | Wave 3 ready (3.1 and 3.2 after 2.3); E1/E2 open. Note: meters render utilization ("X% used") rather than CUS's "X% remaining" — the normalized model carries one utilization fraction for all providers; E1 acceptance can revisit wording. Interactive behaviors (hotkey toggle, live sections populating, restart) fold into E1 |
 
 ---
 
