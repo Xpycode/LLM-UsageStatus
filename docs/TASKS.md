@@ -31,6 +31,12 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
 
 ## Inbox
 
+- Provider logos/icons in the HUD sections (suggested 2026-10-29 at the Wave 4 handoff): show
+  each provider's logo next to its section title to speed up visual scanning of the panel.
+  Considerations before scoping: trademark/licensing of vendor marks in a published,
+  notarized app; monochrome/template rendering to fit the HUD aesthetic (and dark material);
+  sourcing simple official marks vs. custom glyphs; asset size overhead. Related existing
+  Inbox item: app icon design in `02_Design/`.
 - Icon design in `02_Design/` (independent of plan waves; does not gate E1/E2 — default Xcode icon acceptable for 0.1.0).
 - Vibe "Tokens (all time)" fluctuated across consecutive HUD refreshes (46.9M → 35.2M → 36.8M while
   session count stayed 14, observed 2026-10-29 via user screenshots): the unified store appears to
