@@ -5,11 +5,11 @@
 - **Purpose:** A dockless macOS HUD showing usage status for multiple LLM CLIs (Codex, Claude Code, Mistral Vibe) in one panel, for publishing to other CLI users.
 - **Stack:** Swift / SwiftUI, macOS 15 or newer, XcodeGen-generated project, non-sandboxed.
 - **Build:** `cd 01_Project && xcodegen generate && xcodebuild -project LLM-UsageStatus.xcodeproj -scheme LLM-UsageStatus -configuration Debug -destination 'platform=macOS' build`
-- **Test:** `xcodebuild -project LLM-UsageStatus.xcodeproj -scheme LLM-UsageStatus -derivedDataPath build/UsageHUD build-for-testing && xcodebuild ... test` (exact commands live in the plan once the project exists)
+- **Test:** `cd 01_Project && xcodebuild -project LLM-UsageStatus.xcodeproj -scheme LLM-UsageStatus -configuration Debug -destination 'platform=macOS' -derivedDataPath build/UsageHUD test`
 - **Lint:** none
 
-Note: `01_Project/` is still empty; the Xcode project is created by the first implementation plan. Until
-then the build/test commands above are placeholders matching CodexUsageStatus conventions.
+Note: the test bundle is app-hosted (TEST_HOST = the app): running tests launches the dockless app
+briefly and registers its global hotkey — treat as an app launch for control-scope purposes.
 
 ## Instruction Ownership
 
