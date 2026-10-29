@@ -4,6 +4,7 @@ import SwiftUI
 
 @MainActor final class AppDelegate: NSObject, NSApplicationDelegate {
     private let stores: [UsageStore]
+    private let preferences = UsagePreferences()
     private let panel = UsagePanelController(); private var clickAway: Any?
     private var shortcutFallback: NSStatusItem?
 
@@ -30,7 +31,7 @@ import SwiftUI
     private func toggle() { if panel.isVisible { panel.hide() } else { showHUD() } }
 
     @objc private func showHUD() {
-        panel.show { [stores] in UsageStatusView(stores: stores) }
+        panel.show { [stores, preferences] in UsageStatusView(stores: stores, preferences: preferences) }
         // Refresh on open: every provider fetches current values independently.
         stores.forEach { $0.refresh() }
     }
@@ -81,12 +82,36 @@ import SwiftUI
 
     private func makeMenu() -> NSMenu {
         let menu = NSMenu()
-        menu.addItem(withTitle: "Show HUD", action: #selector(showHUD), keyEquivalent: "")
+        let displayOption = menu.addItem(withTitle: "Show 5-hour limit", action: #selector(toggleCodexFiveHourLimit), keyEquivalent: "")
+        displayOption.state = preferences.showCodexFiveHourLimit ? .on : .off
+        menu.addItem(.separator())
+        menu.addItem(withTitle: "Restart LLM Usage Status", action: #selector(restart), keyEquivalent: "")
         menu.addItem(.separator())
         menu.addItem(withTitle: "Quit LLM Usage Status", action: #selector(quit), keyEquivalent: "q")
         menu.items.forEach { $0.target = self }
         return menu
     }
 
+    @objc private func toggleCodexFiveHourLimit(_ sender: NSMenuItem) {
+        preferences.showCodexFiveHourLimit.toggle()
+        sender.state = preferences.showCodexFiveHourLimit ? .on : .off
+    }
+
     @objc private func quit() { NSApp.terminate(nil) }
+    @objc private func restart() {
+        let configuration = NSWorkspace.OpenConfiguration()
+        // Reusing this process would make Restart merely quit. Release the hotkey
+        // before the replacement starts so its registration cannot collide.
+        configuration.createsNewApplicationInstance = true
+        GlobalHotKey.shared.unregister()
+        NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: configuration) { [weak self] _, error in
+            Task { @MainActor in
+                if error != nil {
+                    self?.registerHotKey()
+                    return
+                }
+                NSApp.terminate(nil)
+            }
+        }
+    }
 }

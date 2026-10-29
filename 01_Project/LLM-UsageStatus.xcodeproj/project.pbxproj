@@ -29,6 +29,7 @@
 		85C15B1E8054471F8BF40197 /* UsageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86AEDD7CC8C3C1D4D6E1F9D /* UsageStore.swift */; };
 		86127BE71EECBA43DA3661DF /* CodexUsageServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C6F20829570EFFC12C69A6 /* CodexUsageServiceTests.swift */; };
 		86ACA730375860E14899199C /* CodexUsageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 223B33EEAE0FCC317DB5700A /* CodexUsageService.swift */; };
+		8BDA9FF4B2A0D4537A97EEED /* UsagePreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9247D3430094602849538A72 /* UsagePreferences.swift */; };
 		9D2119BF6606A7A76DBC2469 /* VibeJournalAggregator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853AB380986CA290F24B25F4 /* VibeJournalAggregator.swift */; };
 		A08D526E1AEB647702D9677F /* ClaudeUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CE3D3C497CC5D32E1131CB5 /* ClaudeUsageProvider.swift */; };
 		B40C6A205FC55839BF07F058 /* CodexUsageProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C5FC1444DA093FA5FB49D8 /* CodexUsageProviderTests.swift */; };
@@ -36,6 +37,7 @@
 		C14D0945F5234D3D733B1FBB /* ClaudeOAuthUsageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03BD948C67F4E923C56A9D88 /* ClaudeOAuthUsageService.swift */; };
 		C337443E92364DAFE08C1FCC /* ClaudeUsageProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B9B89BA65CE111B9B17F230 /* ClaudeUsageProviderTests.swift */; };
 		C71DA81FC5D7A148750B6548 /* UsagePanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3460E4F1309B764C254CD4E /* UsagePanelController.swift */; };
+		DE343B3BF51264E678F89E4E /* UsagePreferencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBFACA8F222C460B9648EBF1 /* UsagePreferencesTests.swift */; };
 		E2B5FEB1959E9AF647649442 /* CodexUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF45307ACADAB9E1BDF5D5C6 /* CodexUsageProvider.swift */; };
 		F907750B91316108497BCCA5 /* ProviderModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28627813D66FF774A5DB857E /* ProviderModels.swift */; };
 		FA376752DDC70FFA2BE8C49B /* VibeUsageProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D79B6AFFD91BA3A799CC6F8 /* VibeUsageProviderTests.swift */; };
@@ -76,8 +78,10 @@
 		7A91A276F08FF60DEAA238BC /* ClaudeOAuthUsageServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeOAuthUsageServiceTests.swift; sourceTree = "<group>"; };
 		7AC39F644D4F732B0A73938A /* LLM-UsageStatus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "LLM-UsageStatus.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		853AB380986CA290F24B25F4 /* VibeJournalAggregator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeJournalAggregator.swift; sourceTree = "<group>"; };
+		9247D3430094602849538A72 /* UsagePreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePreferences.swift; sourceTree = "<group>"; };
 		A097E4846F5F9BA0AF0A9C2D /* LLM-UsageStatusTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "LLM-UsageStatusTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3460E4F1309B764C254CD4E /* UsagePanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePanelController.swift; sourceTree = "<group>"; };
+		CBFACA8F222C460B9648EBF1 /* UsagePreferencesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePreferencesTests.swift; sourceTree = "<group>"; };
 		D86AEDD7CC8C3C1D4D6E1F9D /* UsageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageStore.swift; sourceTree = "<group>"; };
 		DC5602417D4314F025F772B3 /* ProviderModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderModelsTests.swift; sourceTree = "<group>"; };
 		E2C8D4F2D3B22C615F2DE2A5 /* MistralRateCardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MistralRateCardTests.swift; sourceTree = "<group>"; };
@@ -177,6 +181,7 @@
 		76A3C94EE12E44A6C7C30150 /* UsageStatus */ = {
 			isa = PBXGroup;
 			children = (
+				CBFACA8F222C460B9648EBF1 /* UsagePreferencesTests.swift */,
 				FB5E5974951BEE5C78AC243E /* UsageStoreTests.swift */,
 			);
 			path = UsageStatus;
@@ -197,6 +202,7 @@
 		A57304364D46DBE6F0C4BEDD /* UsageStatus */ = {
 			isa = PBXGroup;
 			children = (
+				9247D3430094602849538A72 /* UsagePreferences.swift */,
 				D86AEDD7CC8C3C1D4D6E1F9D /* UsageStore.swift */,
 				200CC8176CCE292915379814 /* Views */,
 			);
@@ -391,6 +397,7 @@
 				33D5EC94411959A61CAADA70 /* GlobalHotKeyTests.swift in Sources */,
 				66F7E8F47082A19249060FAC /* MistralRateCardTests.swift in Sources */,
 				79A7E53EC8C50A8C822C428F /* ProviderModelsTests.swift in Sources */,
+				DE343B3BF51264E678F89E4E /* UsagePreferencesTests.swift in Sources */,
 				80E77CD8A15B46DBDBFD2138 /* UsageResponseDecoderTests.swift in Sources */,
 				558F53E04CD7DEEC5D3D265A /* UsageSnapshotTests.swift in Sources */,
 				1317E37CB906096E7F3F4ECF /* UsageStoreTests.swift in Sources */,
@@ -415,6 +422,7 @@
 				240C13B382E6DCAA5D0D2661 /* MistralRateCard.swift in Sources */,
 				F907750B91316108497BCCA5 /* ProviderModels.swift in Sources */,
 				C71DA81FC5D7A148750B6548 /* UsagePanelController.swift in Sources */,
+				8BDA9FF4B2A0D4537A97EEED /* UsagePreferences.swift in Sources */,
 				296F51207DAB51EDB5F6A3FB /* UsageResponseDecoder.swift in Sources */,
 				719277C80D5D2CA7980908D2 /* UsageSnapshot.swift in Sources */,
 				0F540680EC4CA9DDA014B9AF /* UsageStatusView.swift in Sources */,

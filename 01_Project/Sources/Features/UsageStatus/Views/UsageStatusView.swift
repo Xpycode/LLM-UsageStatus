@@ -6,7 +6,9 @@ import SwiftUI
 /// root when the panel opens.
 struct UsageStatusView: View {
     let stores: [UsageStore]
+    @ObservedObject var preferences: UsagePreferences
     @State private var now = Date()
+    @State private var requestedRenewals: Set<String> = []
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -20,7 +22,8 @@ struct UsageStatusView: View {
             .frame(maxWidth: .infinity)
 
             ForEach(stores, id: \.providerID) { store in
-                ProviderSectionView(store: store, now: now)
+                ProviderSectionView(store: store, now: now,
+                                    showFiveHourLimit: preferences.showCodexFiveHourLimit)
             }
         }
         .fixedSize(horizontal: false, vertical: true)
@@ -32,9 +35,31 @@ struct UsageStatusView: View {
             // dismissal, which cancels the loop.
             while !Task.isCancelled {
                 now = Date()
+                refreshPassedRenewals()
                 do { try await Task.sleep(for: .seconds(1)) } catch { return }
             }
         }
+    }
+
+    /// When any provider's deadline passes, request one refresh per passed
+    /// deadline — even if the provider keeps returning an old window or the
+    /// refresh fails. Reopening the HUD also refreshes normally.
+    private func refreshPassedRenewals() {
+        for store in stores {
+            guard let section = store.section else { continue }
+            let passed = section.deadlines.map(\.date).filter { date in
+                date <= now && !requestedRenewals.contains(Self.renewalKey(provider: store.providerID, date: date))
+            }
+            guard !passed.isEmpty else { continue }
+            if store.refresh() != nil {
+                requestedRenewals.formUnion(
+                    passed.map { Self.renewalKey(provider: store.providerID, date: $0) })
+            }
+        }
+    }
+
+    private static func renewalKey(provider: String, date: Date) -> String {
+        "\(provider)|\(date.timeIntervalSince1970)"
     }
 }
 
@@ -43,6 +68,7 @@ struct UsageStatusView: View {
 struct ProviderSectionView: View {
     @ObservedObject var store: UsageStore
     let now: Date
+    let showFiveHourLimit: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -74,13 +100,15 @@ struct ProviderSectionView: View {
     @ViewBuilder
     private func sectionContent(_ section: ProviderSection) -> some View {
         VStack(alignment: .leading, spacing: 14) {
-            ForEach(section.meters) { meter in
+            // The Codex 5-hour display is optional; the provider owns these
+            // stable ids. Hiding the meter hides its reset countdown with it.
+            ForEach(showFiveHourLimit ? section.meters : section.meters.filter { $0.id != "five-hour-limit" }) { meter in
                 SectionMeterView(meter: meter)
             }
             ForEach(section.rows) { row in
                 SectionRowView(row: row)
             }
-            ForEach(section.deadlines) { deadline in
+            ForEach(showFiveHourLimit ? section.deadlines : section.deadlines.filter { $0.id != "five-hour-reset" }) { deadline in
                 SectionDeadlineView(deadline: deadline, now: now)
             }
 
@@ -196,7 +224,7 @@ private struct SectionPreview: View {
                      SectionMeter(id: "five-hour", label: "5-hour limit", fraction: 0.18, isEstimate: true)!],
             deadlines: [SectionDeadline(id: "reset", label: "Weekly limit", date: now.addingTimeInterval(90_000))],
             lastUpdated: now)
-        ProviderSectionView(store: store(section: section), now: now)
+        ProviderSectionView(store: store(section: section), now: now, showFiveHourLimit: true)
     }
 
     private func store(section: ProviderSection?) -> UsageStore {
