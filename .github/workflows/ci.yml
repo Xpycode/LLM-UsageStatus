@@ -1,0 +1,13 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: 01_Project
+    steps:
+      - uses: actions/checkout@v4
+      - run: brew install xcodegen
+      - run: xcodegen generate
+      - run: xcodebuild -project LLM-UsageStatus.xcodeproj -scheme LLM-UsageStatus -destination 'platform=macOS' test
