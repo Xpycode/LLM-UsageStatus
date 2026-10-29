@@ -3,8 +3,18 @@ import Carbon.HIToolbox
 import SwiftUI
 
 @MainActor final class AppDelegate: NSObject, NSApplicationDelegate {
+    private let stores: [UsageStore]
     private let panel = UsagePanelController(); private var clickAway: Any?
     private var shortcutFallback: NSStatusItem?
+
+    override init() {
+        // Composition root: services conforming to `Provider`, one store per section.
+        let providers: [any Provider] = [
+            CodexUsageService(),
+        ]
+        stores = providers.map { UsageStore(provider: $0) }
+        super.init()
+    }
 
     func applicationDidFinishLaunching(_: Notification) {
         registerHotKey()
@@ -18,8 +28,9 @@ import SwiftUI
     private func toggle() { if panel.isVisible { panel.hide() } else { showHUD() } }
 
     @objc private func showHUD() {
-        // Placeholder shell: the later composition root replaces this content view.
-        panel.show { PlaceholderHUDView() }
+        panel.show { [stores] in UsageStatusView(stores: stores) }
+        // Refresh on open: every provider fetches current values independently.
+        stores.forEach { $0.refresh() }
     }
 
     @objc private func registerHotKey() {
