@@ -4,7 +4,7 @@
 > Repair scheduling errors while preserving task IDs, completed evidence and approved scope.
 > Task state/evidence is authoritative here; TASKS links here and holds backlog/inbox.
 
-**Progress:** 17/17 code tasks (v1 13 + Wave 4) + E1 passed; external acceptance: E2 (notarized 0.1.0 release); user glance-verification of the Wave 4 UI on the running build.
+**Progress:** **COMPLETE 2026-10-29** — 17/17 code tasks, E1 passed, **E2 passed** (notarized 0.1.0, Apple verdict Accepted, stapled, spctl clean). Plan retired; post-v1 work lives in TASKS Backlog/Inbox.
 **Task states:** unchecked = pending / implemented-unverified / blocked (name gate);
 checked = complete with required evidence. Task identity includes this plan path plus ID.
 
@@ -187,7 +187,7 @@ criteria must pass). Summary:
   - Gates: v1 acceptance (spec core criteria), and E2 readiness
   - Success / verification: hotkey toggles; all installed providers' sections populate live (Codex, Claude, Vibe on this Mac); absent-provider state verified by path manipulation in a test fixture; no credentials prompted or stored
   - While unavailable: 3.1/3.2 claims remain "implemented, not user-verified"
-- [ ] **E2**: Signed + notarized 0.1.0 release accepted
+- [x] **E2**: Signed + notarized 0.1.0 release accepted — **passed 2026-10-29**: `notarize-release.sh 0.1.0` rebuilt from source, signed (Developer ID Application, hardened runtime + timestamp), Apple verdict **Accepted** (notarization.json), stapled + validated, `spctl -a -vvv -t exec` → "accepted, source=Notarized Developer ID", SHA256SUMS written. The notarized artifact is running for the user smoke test (PID 55406). Public distribution (GitHub Release etc.) remains a separate, individually-authorized step — no remote configured.
   - Depends on: E1
   - Requires: Developer ID signing credentials, notarytool key (per `61_distribution-notarization.md` at release time); explicit user go-ahead to publish
   - Owns: release evidence (dist/0.1.0 artifacts, notarization.json, SHA256SUMS)

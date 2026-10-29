@@ -1,6 +1,6 @@
 # TASKS
 
-- **Active plan:** `docs/plans/2026-10-29-multi-provider-hud/IMPLEMENTATION_PLAN.md` — 13 tasks, 3 waves; **13/13 complete** (Wave 3 done 2026-10-29), remaining gates: **E1** (user-operated fresh-build smoke test) then **E2** (notarized 0.1.0). The plan owns task status/evidence.
+- **Plan (retired 2026-10-29):** `docs/plans/2026-10-29-multi-provider-hud/IMPLEMENTATION_PLAN.md` — **COMPLETE**: 17/17 code tasks, E1 passed, E2 passed (notarized 0.1.0, Apple verdict Accepted, stapled, spctl clean). It stays in place as the permanent execution record. No active plan; next work comes from Backlog/Inbox below.
 
 ## Backlog
 
