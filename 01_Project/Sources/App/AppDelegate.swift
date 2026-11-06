@@ -15,7 +15,8 @@ import SwiftUI
             ClaudeUsageProvider(),
             VibeUsageProvider(),
         ]
-        stores = providers.map { UsageStore(provider: $0) }
+        let sectionCache = SectionStateCache()
+        stores = providers.map { UsageStore(provider: $0, cache: sectionCache) }
         super.init()
     }
 

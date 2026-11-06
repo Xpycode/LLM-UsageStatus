@@ -149,6 +149,65 @@ final class UsageStoreTests: XCTestCase {
         XCTAssertNil(store.error)
     }
 
+    @MainActor
+    func testCacheSeedsLastKnownSectionAndFailureMarksItStale() async throws {
+        // Isolated cache namespace: app-hosted tests share the real app's
+        // Application Support, so the fixture never touches it.
+        let fileURL = FileManager.default.temporaryDirectory
+            .appending(path: "UsageStoreCacheTests-\(UUID().uuidString).json")
+        defer { try? FileManager.default.removeItem(at: fileURL) }
+        let cache = SectionStateCache(fileURL: fileURL)
+        let known = Self.section(at: 7_000)
+        cache.store(known, for: "provider-a")
+
+        let store = UsageStore(providerID: "provider-a", displayName: "Test", fetch: { .unavailable },
+                               cache: cache)
+
+        // Seeded at init: last-known values show immediately, no error state.
+        XCTAssertEqual(store.section, known)
+        XCTAssertEqual(store.lastUpdated, known.lastUpdated)
+        XCTAssertNil(store.error)
+        XCTAssertFalse(store.isStale)
+
+        let failed = try XCTUnwrap(store.refresh())
+        await failed.value
+
+        // A failed refresh keeps last-known values visible and marks them stale.
+        XCTAssertEqual(store.section, known)
+        XCTAssertEqual(store.lastUpdated, known.lastUpdated)
+        XCTAssertTrue(store.isStale)
+        XCTAssertEqual(store.error, .updateFailed)
+    }
+
+    @MainActor
+    func testSuccessfulRefreshReplacesSeedAndPersistsIt() async throws {
+        let fileURL = FileManager.default.temporaryDirectory
+            .appending(path: "UsageStoreCacheTests-\(UUID().uuidString).json")
+        defer { try? FileManager.default.removeItem(at: fileURL) }
+        let cache = SectionStateCache(fileURL: fileURL)
+        cache.store(Self.section(at: 8_000), for: "provider-b")
+
+        let fresh = Self.section(at: 9_000)
+        let store = UsageStore(providerID: "provider-b", displayName: "Test",
+                               fetch: { .populated(fresh) }, cache: cache)
+
+        let refresh = try XCTUnwrap(store.refresh())
+        await refresh.value
+
+        XCTAssertFalse(store.isStale)
+        XCTAssertNil(store.error)
+        XCTAssertEqual(store.section, fresh)
+        // The next launch seeds from the newest successful refresh.
+        XCTAssertEqual(cache.loadSections()["provider-b"], fresh)
+    }
+
+    @MainActor
+    func testNoCacheMeansNoSeed() {
+        let store = UsageStore(providerID: "test", displayName: "Test") { .unavailable }
+        XCTAssertNil(store.section)
+        XCTAssertNil(store.lastUpdated)
+    }
+
     private static func section(at timestamp: TimeInterval) -> ProviderSection {
         let date = Date(timeIntervalSince1970: timestamp)
         return ProviderSection(

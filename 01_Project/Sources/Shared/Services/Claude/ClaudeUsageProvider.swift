@@ -130,7 +130,7 @@ struct ClaudeUsageProvider: Provider {
         // window start.
         let lastUpdated = summary.sessions.map(\.lastActivity).max() ?? summary.windowStart
         return ProviderSection(rows: rows, glanceLine: fallbackGlanceLine(for: summary, hint: hint),
-                               lastUpdated: lastUpdated)
+                               note: .refreshClaudeSignIn, lastUpdated: lastUpdated)
     }
 
     /// The fallback's visible one-line summary: why the endpoint path degraded

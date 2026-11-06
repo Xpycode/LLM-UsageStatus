@@ -69,6 +69,7 @@ final class ClaudeUsageProviderTests: XCTestCase {
         XCTAssertEqual(section.headline,
                        SectionHeadline(windowLabel: "5-hour limit", fractionLeft: 1 - 0.42,
                                        resetsAt: fiveHourReset))
+        XCTAssertNil(section.note)
     }
 
     func testMissingTokenFallsBackToLabeledLocalAggregates() async throws {
@@ -101,6 +102,7 @@ final class ClaudeUsageProviderTests: XCTestCase {
         XCTAssertEqual(section.glanceLine,
                        SectionGlanceLine("No Claude sign-in · 1 session · 225 tokens · 7 days",
                                          isEstimate: true))
+        XCTAssertEqual(section.note, .refreshClaudeSignIn)
         XCTAssertEqual(section.lastUpdated, Self.now.addingTimeInterval(-3_600))
     }
 
@@ -118,6 +120,7 @@ final class ClaudeUsageProviderTests: XCTestCase {
         XCTAssertEqual(section.glanceLine,
                        SectionGlanceLine("Sign-in expired · 1 session · 10 tokens · 7 days",
                                          isEstimate: true))
+        XCTAssertEqual(section.note, .refreshClaudeSignIn)
     }
 
     func testFallbackWithoutLocalUsageSaysNoLocalUsage() async throws {
@@ -135,6 +138,7 @@ final class ClaudeUsageProviderTests: XCTestCase {
         }
         XCTAssertEqual(section.glanceLine,
                        SectionGlanceLine("No Claude sign-in · no local usage (7 days)", isEstimate: true))
+        XCTAssertEqual(section.note, .refreshClaudeSignIn)
         XCTAssertTrue(section.rows.allSatisfy { $0.value == "0" })
     }
 

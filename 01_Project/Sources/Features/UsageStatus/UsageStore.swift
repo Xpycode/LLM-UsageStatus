@@ -20,17 +20,35 @@ final class UsageStore: ObservableObject {
     let displayName: String
 
     private let fetch: @Sendable () async -> ProviderSectionState
+    /// Optional last-known-state persistence; populated sections are written
+    /// to it and seed the store at init. The composition root wires one in;
+    /// unit tests run without it or on an injected file.
+    private let cache: SectionStateCache?
 
-    init(provider: any Provider) {
+    init(provider: any Provider, cache: SectionStateCache? = nil) {
         self.providerID = provider.id
         self.displayName = provider.displayName
         self.fetch = { await provider.refresh() }
+        self.cache = cache
+        seedFromCache()
     }
 
-    init(providerID: String, displayName: String, fetch: @escaping @Sendable () async -> ProviderSectionState) {
+    init(providerID: String, displayName: String, fetch: @escaping @Sendable () async -> ProviderSectionState,
+         cache: SectionStateCache? = nil) {
         self.providerID = providerID
         self.displayName = displayName
         self.fetch = fetch
+        self.cache = cache
+        seedFromCache()
+    }
+
+    /// Last-known values from a previous run: shown immediately, replaced by
+    /// the first successful refresh and marked stale (not silently wrong) if
+    /// that refresh fails.
+    private func seedFromCache() {
+        guard let cache, let cached = cache.loadSections()[providerID] else { return }
+        section = cached
+        lastUpdated = cached.lastUpdated
     }
 
     /// Returns nil when a refresh is already in flight. The returned task can be
@@ -50,6 +68,7 @@ final class UsageStore: ObservableObject {
                 error = nil
                 isStale = false
                 isNotDetected = false
+                cache?.store(updated, for: providerID)
             case .notDetected:
                 // Retain prior values: they may be stale but are not wrong.
                 isNotDetected = true

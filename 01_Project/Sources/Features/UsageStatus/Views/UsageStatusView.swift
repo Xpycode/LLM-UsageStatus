@@ -147,6 +147,9 @@ struct ProviderSectionView: View {
             }
 
             VStack(alignment: .leading, spacing: 4) {
+                if let note = section.note {
+                    Text(note.text)
+                }
                 if store.isStale {
                     Text("Update failed · showing previous values")
                         .foregroundStyle(.orange)

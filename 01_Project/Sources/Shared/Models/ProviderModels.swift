@@ -57,9 +57,23 @@ enum SectionFailureMessage: Equatable, Sendable {
     }
 }
 
+/// A one-line actionable remedy attached to a section, e.g. what the user can
+/// run to end a degraded state. A closed enum, like the failure copy above:
+/// fixed, pre-approved text only — raw strings cannot cross the seam.
+enum SectionNote: String, Equatable, Sendable, Codable {
+    /// Claude local fallback: the sign-in token is refreshed by Claude Code.
+    case refreshClaudeSignIn
+
+    var text: String {
+        switch self {
+        case .refreshClaudeSignIn: "Run Claude Code to refresh the sign-in."
+        }
+    }
+}
+
 /// Normalized display model for one provider's section. Pure value type; the
 /// content view renders it without contacting any service.
-struct ProviderSection: Equatable, Sendable {
+struct ProviderSection: Equatable, Sendable, Codable {
     /// Label/value pairs, e.g. "Credits" -> "12.75".
     let rows: [SectionRow]
     /// Utilization displays rendered as progress bars.
@@ -71,22 +85,26 @@ struct ProviderSection: Equatable, Sendable {
     /// Compact fallback line when no headline exists (e.g. Vibe without a
     /// budget): the most glance-relevant local fact, one sentence.
     let glanceLine: SectionGlanceLine?
+    /// Optional actionable remedy for a degraded state, rendered as a caption.
+    let note: SectionNote?
     /// When the provider produced these values.
     let lastUpdated: Date
 
     init(rows: [SectionRow] = [], meters: [SectionMeter] = [], deadlines: [SectionDeadline] = [],
-         headline: SectionHeadline? = nil, glanceLine: SectionGlanceLine? = nil, lastUpdated: Date) {
+         headline: SectionHeadline? = nil, glanceLine: SectionGlanceLine? = nil,
+         note: SectionNote? = nil, lastUpdated: Date) {
         self.rows = rows
         self.meters = meters
         self.deadlines = deadlines
         self.headline = headline
         self.glanceLine = glanceLine
+        self.note = note
         self.lastUpdated = lastUpdated
     }
 }
 
 /// One preformatted glance sentence, e.g. "≈ $0.85 · 5.3K tokens · 24 hours".
-struct SectionGlanceLine: Equatable, Sendable {
+struct SectionGlanceLine: Equatable, Sendable, Codable {
     let text: String
     let isEstimate: Bool
 
@@ -99,7 +117,7 @@ struct SectionGlanceLine: Equatable, Sendable {
 /// The glance line at the top of a populated section: percent left until the
 /// next reset of the provider's primary window. Pure data; the view renders
 /// the live countdown against its ticking clock.
-struct SectionHeadline: Equatable, Sendable {
+struct SectionHeadline: Equatable, Sendable, Codable {
     /// What resets, e.g. "Weekly limit".
     let windowLabel: String
     /// Remaining fraction, always clamped to 0...1 (1 − utilization).
@@ -125,7 +143,7 @@ struct SectionHeadline: Equatable, Sendable {
 }
 
 /// The remaining quantity behind a daily-budget quote, e.g. 7,417,273 credits.
-struct SectionDailyBudget: Equatable, Sendable {
+struct SectionDailyBudget: Equatable, Sendable, Codable {
     /// Remaining amount as a plain quantity; the view divides by the days left.
     let amount: Decimal
     /// Unit suffix for rendering, e.g. "credits" or "$".
@@ -135,7 +153,7 @@ struct SectionDailyBudget: Equatable, Sendable {
 }
 
 /// One label/value line in a section, e.g. "Credits — 12.75".
-struct SectionRow: Equatable, Sendable, Identifiable {
+struct SectionRow: Equatable, Sendable, Identifiable, Codable {
     /// Stable identity within the section, e.g. "credits".
     let id: String
     let label: String
@@ -153,7 +171,7 @@ struct SectionRow: Equatable, Sendable, Identifiable {
 }
 
 /// One utilization meter: a fraction in 0...1 with a label.
-struct SectionMeter: Equatable, Sendable, Identifiable {
+struct SectionMeter: Equatable, Sendable, Identifiable, Codable {
     /// Stable identity within the section, e.g. "weekly-limit".
     let id: String
     let label: String
@@ -176,7 +194,7 @@ struct SectionMeter: Equatable, Sendable, Identifiable {
 
 /// One future date with a label, e.g. "Weekly limit" resetting at `date`.
 /// The view renders countdowns from `date` against a ticking now.
-struct SectionDeadline: Equatable, Sendable, Identifiable {
+struct SectionDeadline: Equatable, Sendable, Identifiable, Codable {
     /// Stable identity within the section, e.g. "weekly-reset".
     let id: String
     let label: String
