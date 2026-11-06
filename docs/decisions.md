@@ -4,6 +4,50 @@ Durable, project-specific decisions. Newest first.
 
 ---
 
+## 2026-11-06 — Partial cost sums replace the all-or-nothing Vibe cost line; rate card goes multi-vendor
+
+**Choice:** The Vibe section's cost line (and 24-hour glance line) sums sessions whose model price
+resolves from the bundled rate card and labels the remainder: a partial sum renders as
+`<priced total>+ · N sessions unpriced`, the glance as `≈ $X+`; a fully priced sum renders as today.
+The budget percent-left headline still requires a fully priced sum — a floor would overstate the
+money left, and a percent meter cannot carry the "+ · N unpriced" qualifier. When no used session
+is priced, the row stays hidden (a "$0.00+" floor says nothing).
+
+The rate card is renamed `MistralRateCard` → `VibeRateCard` and extended beyond Mistral models:
+`zai-glm-5-3` added at Z.ai's published GLM-5.3 rates ($1.40 input / $0.26 cached / $4.40 output
+per 1M tokens, verified 2026-11-06 against the vendor's pricing page via two independent
+sources). This is the model this machine's Vibe sessions actually run, which is why the cost line
+had disappeared entirely (Backlog 10).
+
+**Why:** the all-or-nothing rule (any unpriced session suppresses the whole line) meant real
+mixed-model usage showed no spend at all — the user rejected that on 2026-11-06 after the
+post-notarization smoke test. A visibly labeled floor is honest under the project's estimate rule;
+honest competitor pricing belongs in a Vibe-scoped rate card, not one named after a single vendor.
+
+**Consequences:** pricing values are bundled literals that need hand-updating when vendors change
+prices (record verification dates beside entries); unknown models still contribute to token counts
+and the unpriced-session count, never to the sum. Reasoning tokens remain excluded from cost
+(billed as part of output by vendors; they are counted separately in token rows).
+
+---
+
+## 2026-11-06 — Claude local fallback carries a glance line and sign-in-state hint
+
+**Choice:** The Claude fallback (endpoint token missing/rejected/out-of-scope) now builds a
+visible one-line glance — `Sign-in expired · N sessions · X tokens · 7 days`, or
+`... · no local usage (7 days)` when the store is silent — estimate-labeled, shown collapsed and
+expanded. The reason prefix maps from the closed `FetchError` cases, never raw error text.
+
+**Why:** collapsed sections hide rows, and the fallback had no headline, so the degraded section
+rendered nothing but its timestamp and looked broken — reported during the 2026-11-06 smoke test.
+This stays inside the 2026-10-29 no-in-app-refresh decision: the app still never writes the
+Keychain item; the hint only says why the section is local.
+
+**Consequences:** the collapsed Claude section always shows its state; the token-staleness root
+cause is unchanged and resolves only by running Claude Code.
+
+---
+
 ## 2026-10-29 — No in-app Claude token refresh; stale tokens degrade to labeled local estimates
 
 **Choice:** The app reads the Claude OAuth token from the Keychain item Claude Code owns but never

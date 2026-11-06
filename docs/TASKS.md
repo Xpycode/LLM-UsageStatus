@@ -24,10 +24,12 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
    local fallback engaged exactly as specified. Endpoint stays primary. Remaining E1 check: run
    Claude Code once to refresh the sign-in, then confirm the HUD's Claude section shows endpoint
    utilization (2xx) instead of estimates.
-10. **Vibe cost line with mixed/unresolved models** (2026-10-29): the cost row suppresses entirely
-    when any used session's model is not in the rate card (currently only mistral-medium-3.5), so
-    real mixed-model usage never shows a cost line. Possible alternative: a per-model or partial
-    sum visibly labeled. Scope decision before/with E1.
+10. **Vibe cost line with mixed/unresolved models** (2026-10-29; resolved 2026-11-06): the
+    all-or-nothing rule had suppressed the cost line for real mixed-model usage (this machine's
+    sessions run `zai-glm-5-3`). Resolved by decision 2026-11-06: `MistralRateCard` renamed
+    multi-vendor `VibeRateCard` (Z.ai GLM-5.3 rates added), and partial sums render visibly
+    labeled (`total+ · N sessions unpriced`); the budget headline still requires full pricing.
+    Rate-card prices are bundled literals needing hand-updates when vendors change them.
 
 ## Inbox
 

@@ -35,7 +35,7 @@ struct VibeWindowTotals: Sendable, Equatable {
     var attributed = VibeTokenTotals.zero
     var unattributed = VibeTokenTotals.zero
     /// Per-session contributions inside the window (model binding retained),
-    /// so window-scoped cost can apply the same all-or-nothing price rule.
+    /// so window-scoped cost can apply the same partial-sum price rule.
     var sessionTotals: [VibeWindowSessionTotals] = []
 
     var combined: VibeTokenTotals { attributed + unattributed }

@@ -96,7 +96,46 @@ final class ClaudeUsageProviderTests: XCTestCase {
             SectionRow(id: "cache-read-tokens", label: "Cache read (7 days)", value: "5", isEstimate: true),
             SectionRow(id: "malformed-lines", label: "Skipped malformed lines", value: "1", isEstimate: true),
         ])
+        // Collapsed sections hide rows, so the fallback must carry its own
+        // visible line: the reason plus top-line local facts, estimate-labeled.
+        XCTAssertEqual(section.glanceLine,
+                       SectionGlanceLine("No Claude sign-in · 1 session · 225 tokens · 7 days",
+                                         isEstimate: true))
         XCTAssertEqual(section.lastUpdated, Self.now.addingTimeInterval(-3_600))
+    }
+
+    func testUnauthorizedFallsBackWithExpiredSignInGlanceLine() async throws {
+        try writeTranscript("session-401.jsonl", lines: [transcriptLine(hoursAgo: 2, input: 10)])
+        let provider = ClaudeUsageProvider(
+            oauthService: oauth(transport: .status(401), token: "synthetic-claude-token"),
+            logAggregator: ClaudeLogAggregator(root: transcriptsRoot, now: { Self.now }))
+
+        let state = await provider.refresh()
+
+        guard case .populated(let section) = state else {
+            return XCTFail("Expected populated, got \(state)")
+        }
+        XCTAssertEqual(section.glanceLine,
+                       SectionGlanceLine("Sign-in expired · 1 session · 10 tokens · 7 days",
+                                         isEstimate: true))
+    }
+
+    func testFallbackWithoutLocalUsageSaysNoLocalUsage() async throws {
+        // The directory exists but carries no in-window usage: the fallback
+        // stays populated and honest rather than looking broken.
+        try FileManager.default.createDirectory(at: transcriptsRoot, withIntermediateDirectories: true)
+        let provider = ClaudeUsageProvider(
+            oauthService: oauth(transport: .success(Data()), token: nil),
+            logAggregator: ClaudeLogAggregator(root: transcriptsRoot, now: { Self.now }))
+
+        let state = await provider.refresh()
+
+        guard case .populated(let section) = state else {
+            return XCTFail("Expected populated, got \(state)")
+        }
+        XCTAssertEqual(section.glanceLine,
+                       SectionGlanceLine("No Claude sign-in · no local usage (7 days)", isEstimate: true))
+        XCTAssertTrue(section.rows.allSatisfy { $0.value == "0" })
     }
 
     func testMissingTokenWithoutTranscriptsIsNotDetected() async {
@@ -122,6 +161,9 @@ final class ClaudeUsageProviderTests: XCTestCase {
         }
         XCTAssertEqual(section.rows.first, SectionRow(id: "sessions", label: "Sessions (7 days)",
                                                       value: "1", isEstimate: true))
+        XCTAssertEqual(section.glanceLine,
+                       SectionGlanceLine("Sign-in lacks usage scope · 1 session · 10 tokens · 7 days",
+                                         isEstimate: true))
     }
 
     func testRateLimitedDoesNotFallBackAndRetainsUnavailable() async throws {

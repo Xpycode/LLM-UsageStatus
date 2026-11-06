@@ -38,8 +38,8 @@ final class VibeUsageProviderTests: XCTestCase {
         guard case .populated(let section) = state else {
             return XCTFail("Expected populated, got \(state)")
         }
-        let cost = MistralRateCard.cost(inputTokens: 100, cachedTokens: 5_000, outputTokens: 200,
-                                        prices: MistralRateCard.resolve("mistral-medium-3.5")!)
+        let cost = VibeRateCard.cost(inputTokens: 100, cachedTokens: 5_000, outputTokens: 200,
+                                        prices: VibeRateCard.resolve("mistral-medium-3.5")!)
         let tokenTotal = 5_300.formatted()
         XCTAssertEqual(section.rows, [
             SectionRow(id: "sessions", label: "Sessions", value: "1"),
@@ -54,7 +54,7 @@ final class VibeUsageProviderTests: XCTestCase {
         XCTAssertEqual(section.lastUpdated, Self.now)
     }
 
-    func testCostLineOmittedWhenModelPriceDoesNotResolve() async throws {
+    func testCostLineSuppressesWhenNoUsedSessionIsPriced() async throws {
         try writeSession("session-unknown", journal: [
             usageRecord(sequence: 1, actionID: "u1", input: 100, output: 10),
             coreInputRecord(sequence: 2, actionID: "u1", timeUnixMs: milliseconds(Self.now)),
@@ -66,7 +66,41 @@ final class VibeUsageProviderTests: XCTestCase {
         guard case .populated(let section) = state else {
             return XCTFail("Expected populated, got \(state)")
         }
+        // A floor of zero over an empty priced set says nothing; no row.
         XCTAssertFalse(section.rows.contains { $0.id == "estimated-cost" })
+    }
+
+    func testMixedModelsShowPartialCostFloorLabeledWithUnpricedCount() async throws {
+        try writeSession("session-priced", journal: [
+            usageRecord(sequence: 1, actionID: "p1", input: 500_000, output: 100_000),
+            coreInputRecord(sequence: 2, actionID: "p1", timeUnixMs: milliseconds(Self.now)),
+        ], modelName: "mistral-medium-3.5")
+        try writeSession("session-unpriced", journal: [
+            usageRecord(sequence: 1, actionID: "u1", input: 999, output: 999),
+            coreInputRecord(sequence: 2, actionID: "u1", timeUnixMs: milliseconds(Self.now)),
+        ], modelName: "some-unknown-model")
+        let provider = VibeUsageProvider(
+            aggregator: aggregator(modelName: { sessionID, _ in
+                sessionID == "session-priced" ? "mistral-medium-3.5" : "some-unknown-model"
+            }))
+
+        let state = await provider.refresh()
+
+        guard case .populated(let section) = state else {
+            return XCTFail("Expected populated, got \(state)")
+        }
+        // 500k input + 100k output on medium-3.5 = $0.75 + $0.75 = $1.50.
+        // The floor is a partial sum: "+" plus the unpriced-session count,
+        // never presented as the complete spend. Expected formatting mirrors
+        // the production formatter, since currency output is locale-dependent.
+        let pricedCost = VibeRateCard.cost(inputTokens: 500_000, cachedTokens: 0, outputTokens: 100_000,
+                                           prices: VibeRateCard.resolve("mistral-medium-3.5")!)
+        let costRow = section.rows.first { $0.id == "estimated-cost" }
+        XCTAssertEqual(costRow, SectionRow(id: "estimated-cost", label: "Estimated cost",
+                                           value: pricedCost.formatted(.currency(code: "USD")) + "+ · 1 session unpriced",
+                                           isEstimate: true))
+        // A partial floor is not good enough for the budget headline.
+        XCTAssertNil(section.headline)
     }
 
     func testUnattributedWindowsAreLabeledAsEstimates() async throws {
@@ -153,8 +187,8 @@ final class VibeUsageProviderTests: XCTestCase {
                                                 budget: VibeBudget(amountUSD: 300, resetDay: 15),
                                                 now: now, calendar: calendar)
 
-        let cost = MistralRateCard.cost(inputTokens: 100, cachedTokens: 5_000, outputTokens: 200,
-                                        prices: MistralRateCard.resolve("mistral-medium-3.5")!)
+        let cost = VibeRateCard.cost(inputTokens: 100, cachedTokens: 5_000, outputTokens: 200,
+                                        prices: VibeRateCard.resolve("mistral-medium-3.5")!)
         let expectedHeadline = SectionHeadline(
             windowLabel: "Monthly budget",
             fractionLeft: 1 - Double(truncating: cost as NSDecimalNumber) / 300,
@@ -194,9 +228,31 @@ final class VibeUsageProviderTests: XCTestCase {
 
         let section = VibeUsageProvider.section(for: report, budget: nil)
 
-        let cost = MistralRateCard.cost(inputTokens: 100, cachedTokens: 5_000, outputTokens: 200,
-                                        prices: MistralRateCard.resolve("mistral-medium-3.5")!)
+        let cost = VibeRateCard.cost(inputTokens: 100, cachedTokens: 5_000, outputTokens: 200,
+                                        prices: VibeRateCard.resolve("mistral-medium-3.5")!)
         let expected = "≈ \(cost.formatted(.currency(code: "USD"))) · \(5_300.formatted(.number.notation(.compactName).locale(.current))) tokens · 24 hours"
+        XCTAssertEqual(section.glanceLine, SectionGlanceLine(expected, isEstimate: true))
+    }
+
+    func testGlanceLineMarksPartialCostWithFloorMarker() async throws {
+        try writeSession("session-glance-priced", journal: [
+            usageRecord(sequence: 1, actionID: "g1", input: 100, cached: 5_000, output: 200),
+            coreInputRecord(sequence: 2, actionID: "g1", timeUnixMs: milliseconds(Self.now)),
+        ], modelName: "mistral-medium-3.5")
+        try writeSession("session-glance-unpriced", journal: [
+            usageRecord(sequence: 1, actionID: "u1", input: 4_900, output: 100),
+            coreInputRecord(sequence: 2, actionID: "u1", timeUnixMs: milliseconds(Self.now)),
+        ], modelName: "some-unknown-model")
+        let report = await aggregator(modelName: { sessionID, _ in
+            sessionID == "session-glance-priced" ? "mistral-medium-3.5" : "some-unknown-model"
+        }).scan()
+
+        let section = VibeUsageProvider.section(for: report, budget: nil)
+
+        let pricedCost = VibeRateCard.cost(inputTokens: 100, cachedTokens: 5_000, outputTokens: 200,
+                                           prices: VibeRateCard.resolve("mistral-medium-3.5")!)
+        let tokens = 10_300.formatted(.number.notation(.compactName).locale(.current))
+        let expected = "≈ \(pricedCost.formatted(.currency(code: "USD")))+ · \(tokens) tokens · 24 hours"
         XCTAssertEqual(section.glanceLine, SectionGlanceLine(expected, isEstimate: true))
     }
 

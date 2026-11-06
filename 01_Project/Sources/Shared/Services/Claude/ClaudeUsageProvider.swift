@@ -25,19 +25,33 @@ struct ClaudeUsageProvider: Provider {
         } catch is CancellationError {
             return .unavailable
         } catch let error as ClaudeOAuthUsageService.FetchError where error.isLocalOnly {
-            return await localFallback()
+            return await localFallback(reason: Self.fallbackHint(for: error))
         } catch {
             // Rate limiting, transport, and decode failures retain prior values.
             return .unavailable
         }
     }
 
-    private func localFallback() async -> ProviderSectionState {
+    private func localFallback(reason hint: String) async -> ProviderSectionState {
         switch await logAggregator.aggregate() {
         case .notDetected:
             return .notDetected
         case .summarized(let summary):
-            return .populated(Self.section(for: summary))
+            return .populated(Self.section(for: summary, fallbackHint: hint))
+        }
+    }
+
+    /// Why the endpoint path degraded to local data, phrased for the fallback
+    /// glance line. The closed error type keeps the mapping beside the cases
+    /// it summarizes; raw error text never crosses the seam.
+    private static func fallbackHint(for error: ClaudeOAuthUsageService.FetchError) -> String {
+        switch error {
+        case .missingToken: "No Claude sign-in"
+        case .unauthorized: "Sign-in expired"
+        case .insufficientScope: "Sign-in lacks usage scope"
+        // Rate limiting and endpoint outages do not degrade to local data;
+        // callers only reach localFallback with `isLocalOnly` errors.
+        case .rateLimited, .usageUnavailable: "Local data only"
         }
     }
 
@@ -91,8 +105,10 @@ struct ClaudeUsageProvider: Provider {
                                headline: headline, lastUpdated: usage.fetchedAt)
     }
 
-    /// Local transcript aggregates are estimates; every row is labeled as one.
-    static func section(for summary: ClaudeLogSummary) -> ProviderSection {
+    /// Local transcript aggregates are estimates; every row and the glance
+    /// line are labeled as ones. The glance line exists because collapsed
+    /// sections hide rows: without it the fallback looks blank.
+    static func section(for summary: ClaudeLogSummary, fallbackHint hint: String) -> ProviderSection {
         var rows = [
             SectionRow(id: "sessions", label: "Sessions (7 days)",
                        value: summary.sessions.count.formatted(), isEstimate: true),
@@ -113,6 +129,19 @@ struct ClaudeUsageProvider: Provider {
         // these aggregates were produced; an unused store falls back to the
         // window start.
         let lastUpdated = summary.sessions.map(\.lastActivity).max() ?? summary.windowStart
-        return ProviderSection(rows: rows, lastUpdated: lastUpdated)
+        return ProviderSection(rows: rows, glanceLine: fallbackGlanceLine(for: summary, hint: hint),
+                               lastUpdated: lastUpdated)
+    }
+
+    /// The fallback's visible one-line summary: why the endpoint path degraded
+    /// plus the top-line local facts. Always estimate-labeled.
+    private static func fallbackGlanceLine(for summary: ClaudeLogSummary, hint: String) -> SectionGlanceLine {
+        guard !summary.sessions.isEmpty else {
+            return SectionGlanceLine("\(hint) · no local usage (7 days)", isEstimate: true)
+        }
+        let sessions = summary.sessions.count == 1
+            ? "1 session" : "\(summary.sessions.count) sessions"
+        let tokens = summary.totals.totalTokens.formatted(.number.notation(.compactName).locale(.current))
+        return SectionGlanceLine("\(hint) · \(sessions) · \(tokens) tokens · 7 days", isEstimate: true)
     }
 }

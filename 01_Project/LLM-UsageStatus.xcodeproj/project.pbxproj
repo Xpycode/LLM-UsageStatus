@@ -13,7 +13,6 @@
 		1317E37CB906096E7F3F4ECF /* UsageStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5E5974951BEE5C78AC243E /* UsageStoreTests.swift */; };
 		141D2409FAB57983E555A62E /* ClaudeLogAggregatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE7383097646DBAAD3BAC40E /* ClaudeLogAggregatorTests.swift */; };
 		1E99FE25CBCF9A47B7145512 /* GlobalHotKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514EE2AF472B97AA1985CC48 /* GlobalHotKey.swift */; };
-		240C13B382E6DCAA5D0D2661 /* MistralRateCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7750712C9735A9D6EF73E4F0 /* MistralRateCard.swift */; };
 		296F51207DAB51EDB5F6A3FB /* UsageResponseDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5BEBC9BCD01682D42F37B5 /* UsageResponseDecoder.swift */; };
 		33D5EC94411959A61CAADA70 /* GlobalHotKeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F39E311E6A2612C0A467434B /* GlobalHotKeyTests.swift */; };
 		48CD3554BAAAAE0E5F2DA52F /* ClaudeTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1DA9A29E1DFD828D59DD02 /* ClaudeTokenProvider.swift */; };
@@ -22,7 +21,6 @@
 		558F53E04CD7DEEC5D3D265A /* UsageSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D86D18557950E0CAFEA9A68 /* UsageSnapshotTests.swift */; };
 		58EB06E0BC31EB981AE007E2 /* SectionFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6406DBE5BC91A2BCB8C679E /* SectionFixtures.swift */; };
 		5B221A6EB9DD838E8C805193 /* ClaudeLogAggregator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653152AA58139EA42CDC87C5 /* ClaudeLogAggregator.swift */; };
-		66F7E8F47082A19249060FAC /* MistralRateCardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C8D4F2D3B22C615F2DE2A5 /* MistralRateCardTests.swift */; };
 		69136A175B2F1E5835FDF54E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F6753BBC944B341814A3CA22 /* Assets.xcassets */; };
 		691DB206BEB7D941B2D7F81D /* VibeJournalAggregatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1962AB6F02C1A3B93B3B8A7B /* VibeJournalAggregatorTests.swift */; };
 		6AF5B6CC6BABEA3B54FB1B2C /* LLMUsageStatusApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2236B8889F6DDB2D5F356A57 /* LLMUsageStatusApp.swift */; };
@@ -33,6 +31,7 @@
 		86127BE71EECBA43DA3661DF /* CodexUsageServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C6F20829570EFFC12C69A6 /* CodexUsageServiceTests.swift */; };
 		86ACA730375860E14899199C /* CodexUsageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 223B33EEAE0FCC317DB5700A /* CodexUsageService.swift */; };
 		8BDA9FF4B2A0D4537A97EEED /* UsagePreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9247D3430094602849538A72 /* UsagePreferences.swift */; };
+		9487239880A4446AB3E9C4FE /* VibeRateCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A3AC80EDE2E2C9029CD760A /* VibeRateCard.swift */; };
 		9D2119BF6606A7A76DBC2469 /* VibeJournalAggregator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853AB380986CA290F24B25F4 /* VibeJournalAggregator.swift */; };
 		A08D526E1AEB647702D9677F /* ClaudeUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CE3D3C497CC5D32E1131CB5 /* ClaudeUsageProvider.swift */; };
 		B40C6A205FC55839BF07F058 /* CodexUsageProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C5FC1444DA093FA5FB49D8 /* CodexUsageProviderTests.swift */; };
@@ -43,6 +42,7 @@
 		C71DA81FC5D7A148750B6548 /* UsagePanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3460E4F1309B764C254CD4E /* UsagePanelController.swift */; };
 		DE343B3BF51264E678F89E4E /* UsagePreferencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBFACA8F222C460B9648EBF1 /* UsagePreferencesTests.swift */; };
 		E2B5FEB1959E9AF647649442 /* CodexUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF45307ACADAB9E1BDF5D5C6 /* CodexUsageProvider.swift */; };
+		EA56EB2DEA11B8A5D51C8899 /* VibeRateCardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0CCE6BAE057B307B9305A3B /* VibeRateCardTests.swift */; };
 		F907750B91316108497BCCA5 /* ProviderModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28627813D66FF774A5DB857E /* ProviderModels.swift */; };
 		FA376752DDC70FFA2BE8C49B /* VibeUsageProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D79B6AFFD91BA3A799CC6F8 /* VibeUsageProviderTests.swift */; };
 /* End PBXBuildFile section */
@@ -74,11 +74,11 @@
 		4544AE9F60C86AC4D81C5729 /* UsageStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageStatusView.swift; sourceTree = "<group>"; };
 		4B1DA9A29E1DFD828D59DD02 /* ClaudeTokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeTokenProvider.swift; sourceTree = "<group>"; };
 		514EE2AF472B97AA1985CC48 /* GlobalHotKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalHotKey.swift; sourceTree = "<group>"; };
+		5A3AC80EDE2E2C9029CD760A /* VibeRateCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeRateCard.swift; sourceTree = "<group>"; };
 		5A84B6F317F0425FA903EF39 /* VibeUsageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeUsageProvider.swift; sourceTree = "<group>"; };
 		653152AA58139EA42CDC87C5 /* ClaudeLogAggregator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeLogAggregator.swift; sourceTree = "<group>"; };
 		6B9B89BA65CE111B9B17F230 /* ClaudeUsageProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeUsageProviderTests.swift; sourceTree = "<group>"; };
 		6CE3D3C497CC5D32E1131CB5 /* ClaudeUsageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeUsageProvider.swift; sourceTree = "<group>"; };
-		7750712C9735A9D6EF73E4F0 /* MistralRateCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MistralRateCard.swift; sourceTree = "<group>"; };
 		7A5BEBC9BCD01682D42F37B5 /* UsageResponseDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageResponseDecoder.swift; sourceTree = "<group>"; };
 		7A91A276F08FF60DEAA238BC /* ClaudeOAuthUsageServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeOAuthUsageServiceTests.swift; sourceTree = "<group>"; };
 		7AC39F644D4F732B0A73938A /* LLM-UsageStatus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "LLM-UsageStatus.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -86,12 +86,12 @@
 		900D40998E18F3691B8C96F4 /* SectionFixtureRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionFixtureRenderTests.swift; sourceTree = "<group>"; };
 		9247D3430094602849538A72 /* UsagePreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePreferences.swift; sourceTree = "<group>"; };
 		A097E4846F5F9BA0AF0A9C2D /* LLM-UsageStatusTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "LLM-UsageStatusTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0CCE6BAE057B307B9305A3B /* VibeRateCardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeRateCardTests.swift; sourceTree = "<group>"; };
 		A6406DBE5BC91A2BCB8C679E /* SectionFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionFixtures.swift; sourceTree = "<group>"; };
 		B3460E4F1309B764C254CD4E /* UsagePanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePanelController.swift; sourceTree = "<group>"; };
 		CBFACA8F222C460B9648EBF1 /* UsagePreferencesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePreferencesTests.swift; sourceTree = "<group>"; };
 		D86AEDD7CC8C3C1D4D6E1F9D /* UsageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageStore.swift; sourceTree = "<group>"; };
 		DC5602417D4314F025F772B3 /* ProviderModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderModelsTests.swift; sourceTree = "<group>"; };
-		E2C8D4F2D3B22C615F2DE2A5 /* MistralRateCardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MistralRateCardTests.swift; sourceTree = "<group>"; };
 		F39E311E6A2612C0A467434B /* GlobalHotKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalHotKeyTests.swift; sourceTree = "<group>"; };
 		F6753BBC944B341814A3CA22 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FB5E5974951BEE5C78AC243E /* UsageStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageStoreTests.swift; sourceTree = "<group>"; };
@@ -104,8 +104,8 @@
 		0266E5528468E7A863C28F48 /* Vibe */ = {
 			isa = PBXGroup;
 			children = (
-				7750712C9735A9D6EF73E4F0 /* MistralRateCard.swift */,
 				853AB380986CA290F24B25F4 /* VibeJournalAggregator.swift */,
+				5A3AC80EDE2E2C9029CD760A /* VibeRateCard.swift */,
 				5A84B6F317F0425FA903EF39 /* VibeUsageProvider.swift */,
 			);
 			path = Vibe;
@@ -253,8 +253,8 @@
 		BC779ABECE6BEF2FFD1291B9 /* Vibe */ = {
 			isa = PBXGroup;
 			children = (
-				E2C8D4F2D3B22C615F2DE2A5 /* MistralRateCardTests.swift */,
 				1962AB6F02C1A3B93B3B8A7B /* VibeJournalAggregatorTests.swift */,
+				A0CCE6BAE057B307B9305A3B /* VibeRateCardTests.swift */,
 				3D79B6AFFD91BA3A799CC6F8 /* VibeUsageProviderTests.swift */,
 			);
 			path = Vibe;
@@ -407,7 +407,6 @@
 				B40C6A205FC55839BF07F058 /* CodexUsageProviderTests.swift in Sources */,
 				86127BE71EECBA43DA3661DF /* CodexUsageServiceTests.swift in Sources */,
 				33D5EC94411959A61CAADA70 /* GlobalHotKeyTests.swift in Sources */,
-				66F7E8F47082A19249060FAC /* MistralRateCardTests.swift in Sources */,
 				79A7E53EC8C50A8C822C428F /* ProviderModelsTests.swift in Sources */,
 				C59E4F1F9224542582C13DF0 /* SectionFixturePreviews.swift in Sources */,
 				0A20BC26DEB872327743054E /* SectionFixtureRenderTests.swift in Sources */,
@@ -417,6 +416,7 @@
 				558F53E04CD7DEEC5D3D265A /* UsageSnapshotTests.swift in Sources */,
 				1317E37CB906096E7F3F4ECF /* UsageStoreTests.swift in Sources */,
 				691DB206BEB7D941B2D7F81D /* VibeJournalAggregatorTests.swift in Sources */,
+				EA56EB2DEA11B8A5D51C8899 /* VibeRateCardTests.swift in Sources */,
 				FA376752DDC70FFA2BE8C49B /* VibeUsageProviderTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -434,7 +434,6 @@
 				86ACA730375860E14899199C /* CodexUsageService.swift in Sources */,
 				1E99FE25CBCF9A47B7145512 /* GlobalHotKey.swift in Sources */,
 				6AF5B6CC6BABEA3B54FB1B2C /* LLMUsageStatusApp.swift in Sources */,
-				240C13B382E6DCAA5D0D2661 /* MistralRateCard.swift in Sources */,
 				F907750B91316108497BCCA5 /* ProviderModels.swift in Sources */,
 				C71DA81FC5D7A148750B6548 /* UsagePanelController.swift in Sources */,
 				8BDA9FF4B2A0D4537A97EEED /* UsagePreferences.swift in Sources */,
@@ -444,6 +443,7 @@
 				85C15B1E8054471F8BF40197 /* UsageStore.swift in Sources */,
 				50E84E605C398D452D8958A8 /* VibeBudgetEditor.swift in Sources */,
 				9D2119BF6606A7A76DBC2469 /* VibeJournalAggregator.swift in Sources */,
+				9487239880A4446AB3E9C4FE /* VibeRateCard.swift in Sources */,
 				BFFE93F8A1DFA07828DBD381 /* VibeUsageProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

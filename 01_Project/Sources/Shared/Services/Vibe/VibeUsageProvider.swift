@@ -17,13 +17,32 @@ struct VibeBudget: Equatable, Sendable {
     let resetDay: Int
 }
 
+/// A budget for local spend, derived from the bundled rate card. Sessions whose
+/// model price resolves are summed; sessions with unpriced models are counted
+/// in `unpricedSessions`, so presentation can label a partial sum visibly.
+/// `total` is therefore a floor, never presented as the complete spend.
+struct VibeCostEstimate: Equatable, Sendable {
+    /// Sum over priced sessions only, USD.
+    let total: Decimal
+    /// Used sessions whose model price resolved.
+    let pricedSessions: Int
+    /// Used sessions whose model price did not resolve.
+    let unpricedSessions: Int
+
+    /// True when any used session is unpriced and the total is a floor.
+    var isPartial: Bool { unpricedSessions > 0 }
+    /// True when at least one priced session contributed cost input.
+    var hasPricedContribution: Bool { total > 0 }
+}
+
 /// Joins the local Vibe journal aggregation to the normalized provider seam.
 /// Token counts are facts read from the local store; rolling-window rows are
 /// labeled as estimates whenever unattributed session totals had to degrade
-/// into them, and the cost line appears only when every used session's model
-/// price resolves from the bundled rate card.
+/// into them, and the cost row sums priced sessions while labeling any
+/// unpriced remainder, so a mixed-model day still shows spend.
 /// With a configured monthly budget, the section leads with an estimated
-/// percent-left headline derived from the local cost estimate.
+/// percent-left headline derived from the local cost estimate; the headline
+/// requires a fully priced sum, since a floor would overstate the money left.
 struct VibeUsageProvider: Provider {
     let id = "vibe"
     let displayName = "Mistral Vibe"
@@ -59,9 +78,8 @@ struct VibeUsageProvider: Provider {
             SectionRow(id: "tokens-total", label: "Tokens (all time)",
                        value: totalAllTime.formatted()),
         ]
-        if let cost = estimatedCost(for: report.sessions) {
-            rows.append(SectionRow(id: "estimated-cost", label: "Estimated cost",
-                                  value: cost.formatted(.currency(code: "USD")), isEstimate: true))
+        if let cost = costEstimate(for: report.sessions), cost.hasPricedContribution {
+            rows.append(costRow(for: cost))
         }
         if report.skippedSessions > 0 {
             rows.append(SectionRow(id: "skipped-sessions", label: "Skipped sessions",
@@ -78,37 +96,63 @@ struct VibeUsageProvider: Provider {
     }
 
     /// Fallback glance line for sections without a headline (no budget, or a
-    /// budget whose cost cannot resolve): last-24-hours spend where the
-    /// all-or-nothing price rule resolves it, plus the window's token count.
+    /// budget whose cost cannot resolve): last-24-hours spend over priced
+    /// sessions, plus the window's token count. A partial sum carries a "+"
+    /// floor marker; the row holds the per-session breakdown.
     /// Rate-card costs are estimates, so the line is always estimate-labeled;
     /// a silent window (no tokens) has nothing to glance at.
     private static func glanceLine(for report: VibeUsageReport) -> SectionGlanceLine? {
         let tokens = Self.totalTokens(report.last24Hours.combined)
         guard tokens > 0 else { return nil }
         var parts: [String] = []
-        if let cost = estimatedCost(for: report.last24Hours.sessionTotals) {
-            parts.append("≈ " + cost.formatted(.currency(code: "USD")))
+        if let cost = costEstimate(for: report.last24Hours.sessionTotals), cost.hasPricedContribution {
+            parts.append("≈ " + cost.total.formatted(.currency(code: "USD")) + (cost.isPartial ? "+" : ""))
         }
         parts.append(tokens.formatted(.number.notation(.compactName).locale(.current)) + " tokens")
         return SectionGlanceLine(parts.joined(separator: " · ") + " · 24 hours", isEstimate: true)
     }
 
-    /// Window-scoped cost with the same all-or-nothing price rule as the
-    /// all-time line: every contributing session's model price must resolve,
-    /// otherwise nil — a partial sum is never presented.
-    static func estimatedCost(for sessions: [VibeWindowSessionTotals]) -> Decimal? {
-        var used = 0
-        var total: Decimal = 0
-        for session in sessions where !session.totals.isEmpty {
-            used += 1
-            guard let prices = MistralRateCard.resolve(session.modelName) else { return nil }
-            total += MistralRateCard.cost(inputTokens: session.totals.inputTokens,
-                                          cachedTokens: session.totals.cachedInputTokens,
-                                          outputTokens: session.totals.outputTokens,
-                                          prices: prices)
+    /// The estimated-cost row: a floor is visibly labeled with "+" and the
+    /// count of unpriced sessions, never presented as the complete spend.
+    private static func costRow(for cost: VibeCostEstimate) -> SectionRow {
+        var value = cost.total.formatted(.currency(code: "USD"))
+        if cost.isPartial {
+            let noun = cost.unpricedSessions == 1 ? "session" : "sessions"
+            value += "+ · \(cost.unpricedSessions) \(noun) unpriced"
         }
-        guard used > 0 else { return nil }
-        return total
+        return SectionRow(id: "estimated-cost", label: "Estimated cost", value: value, isEstimate: true)
+    }
+
+    /// Local cost over used sessions: priced ones are summed, unpriced ones
+    /// counted. Nil when there are no used sessions at all.
+    static func costEstimate(for sessions: [VibeSessionUsage]) -> VibeCostEstimate? {
+        costEstimate(for: sessions.filter { !$0.totals.isEmpty }
+            .map { ($0.modelName, $0.totals) })
+    }
+
+    /// Window-scoped cost with the same partial-sum rule as the all-time row.
+    static func costEstimate(for sessions: [VibeWindowSessionTotals]) -> VibeCostEstimate? {
+        costEstimate(for: sessions.filter { !$0.totals.isEmpty }
+            .map { ($0.modelName, $0.totals) })
+    }
+
+    private static func costEstimate(for usedSessions: [(modelName: String?, totals: VibeTokenTotals)]) -> VibeCostEstimate? {
+        guard !usedSessions.isEmpty else { return nil }
+        var total: Decimal = 0
+        var priced = 0
+        var unpriced = 0
+        for session in usedSessions {
+            guard let prices = VibeRateCard.resolve(session.modelName) else {
+                unpriced += 1
+                continue
+            }
+            priced += 1
+            total += VibeRateCard.cost(inputTokens: session.totals.inputTokens,
+                                       cachedTokens: session.totals.cachedInputTokens,
+                                       outputTokens: session.totals.outputTokens,
+                                       prices: prices)
+        }
+        return VibeCostEstimate(total: total, pricedSessions: priced, unpricedSessions: unpriced)
     }
 
     /// Reads the persisted budget; malformed or non-positive values mean none.
@@ -121,15 +165,17 @@ struct VibeUsageProvider: Provider {
     }
 
     /// Estimated headline from the local cost estimate against the budget.
-    /// No cost (unresolved model prices) or no budget means no headline —
-    /// the section stays token-first, never a partial guess.
+    /// Fully priced sums only: a partial floor would overstate the money left,
+    /// and a percent meter cannot carry the "+ · N unpriced" qualifier. Partial
+    /// sums stay on the cost row and glance line, where the floor is labeled.
     private static func headline(for report: VibeUsageReport, budget: VibeBudget?,
                                  now: Date, calendar: Calendar) -> SectionHeadline? {
-        guard let budget, let cost = estimatedCost(for: report.sessions) else { return nil }
+        guard let budget, let cost = costEstimate(for: report.sessions),
+              cost.pricedSessions > 0, cost.unpricedSessions == 0 else { return nil }
         let amount = Decimal(budget.amountUSD)
-        let spent = Double(truncating: cost as NSDecimalNumber)
+        let spent = Double(truncating: cost.total as NSDecimalNumber)
         let fractionLeft = min(max(1 - spent / budget.amountUSD, 0), 1)
-        let raw = amount - cost
+        let raw = amount - cost.total
         let remaining = raw < 0 ? Decimal(0) : raw
         return SectionHeadline(windowLabel: "Monthly budget",
                                fractionLeft: fractionLeft,
@@ -161,23 +207,5 @@ struct VibeUsageProvider: Provider {
     /// cache-write tokens.
     static func totalTokens(_ totals: VibeTokenTotals) -> Int {
         totals.inputTokens + totals.cachedInputTokens + totals.outputTokens + totals.reasoningTokens
-    }
-
-    /// Sums per-session list-price costs. Any used session whose model price
-    /// does not resolve suppresses the entire line: a partial sum must never be
-    /// presented as the total.
-    static func estimatedCost(for sessions: [VibeSessionUsage]) -> Decimal? {
-        var usedSessions = 0
-        var total: Decimal = 0
-        for session in sessions where !session.totals.isEmpty {
-            usedSessions += 1
-            guard let prices = MistralRateCard.resolve(session.modelName) else { return nil }
-            total += MistralRateCard.cost(inputTokens: session.totals.inputTokens,
-                                          cachedTokens: session.totals.cachedInputTokens,
-                                          outputTokens: session.totals.outputTokens,
-                                          prices: prices)
-        }
-        guard usedSessions > 0 else { return nil }
-        return total
     }
 }

@@ -1,7 +1,10 @@
 import Foundation
 
-/// Bundled Mistral list prices in USD per one million tokens.
-enum MistralRateCard {
+/// Bundled list prices in USD per one million tokens for model names Vibe
+/// sessions can carry: Mistral API models plus third-party models Vibe can
+/// be configured to use. Prices and verification dates are recorded in
+/// `docs/decisions.md`.
+enum VibeRateCard {
     struct PriceTriple: Sendable, Equatable {
         let input: Decimal
         let cached: Decimal
@@ -13,12 +16,20 @@ enum MistralRateCard {
     /// Cached prices are stored per model and never derived from the input
     /// price: the 10% ratio holds for Mistral-owned models only, not uniformly.
     private static let medium3_5 = PriceTriple(input: price("1.50"), cached: price("0.15"), output: price("7.50"))
+    /// Z.ai's published API rates for GLM-5.3, verified 2026-11-06 against
+    /// the vendor's pricing page (layer3labs summary cross-checked with
+    /// Requesty's model listing: $1.40 input / $0.26 cached / $4.40 output).
+    private static let glm5_3 = PriceTriple(input: price("1.40"), cached: price("0.26"), output: price("4.40"))
 
     private static let prices: [String: PriceTriple] = [
         "mistral-medium-3.5": medium3_5,
         "mistral-medium-3-5": medium3_5,
         "mistral-medium-3.5-latest": medium3_5,
-        "mistral-medium-3-5-latest": medium3_5
+        "mistral-medium-3-5-latest": medium3_5,
+        "zai-glm-5-3": glm5_3,
+        "zai-glm-5.3": glm5_3,
+        "zai-glm-5-3-latest": glm5_3,
+        "zai-glm-5.3-latest": glm5_3,
     ]
 
     /// Resolves the price triple for a model name as written by Vibe's session
