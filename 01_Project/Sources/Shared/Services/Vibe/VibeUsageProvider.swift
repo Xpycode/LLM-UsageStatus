@@ -106,7 +106,7 @@ struct VibeUsageProvider: Provider {
         guard tokens > 0 else { return nil }
         var parts: [String] = []
         if let cost = costEstimate(for: report.last24Hours.sessionTotals), cost.hasPricedContribution {
-            parts.append("≈ " + cost.total.formatted(.currency(code: "USD")) + (cost.isPartial ? "+" : ""))
+            parts.append("≈ " + usd(cost.total) + (cost.isPartial ? "+" : ""))
         }
         parts.append(tokens.formatted(.number.notation(.compactName).locale(.current)) + " tokens")
         return SectionGlanceLine(parts.joined(separator: " · ") + " · 24 hours", isEstimate: true)
@@ -115,12 +115,18 @@ struct VibeUsageProvider: Provider {
     /// The estimated-cost row: a floor is visibly labeled with "+" and the
     /// count of unpriced sessions, never presented as the complete spend.
     private static func costRow(for cost: VibeCostEstimate) -> SectionRow {
-        var value = cost.total.formatted(.currency(code: "USD"))
+        var value = usd(cost.total)
         if cost.isPartial {
             let noun = cost.unpricedSessions == 1 ? "session" : "sessions"
             value += "+ · \(cost.unpricedSessions) \(noun) unpriced"
         }
         return SectionRow(id: "estimated-cost", label: "Estimated cost", value: value, isEstimate: true)
+    }
+
+    /// The HUD's copy is English, so USD always renders as "$1.23" — a
+    /// non-English system locale would otherwise spell it "1,23 US$".
+    static func usd(_ amount: Decimal) -> String {
+        amount.formatted(.currency(code: "USD").locale(Locale(identifier: "en_US")))
     }
 
     /// Local cost over used sessions: priced ones are summed, unpriced ones

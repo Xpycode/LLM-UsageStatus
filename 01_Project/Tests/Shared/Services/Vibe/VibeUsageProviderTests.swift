@@ -47,7 +47,7 @@ final class VibeUsageProviderTests: XCTestCase {
             SectionRow(id: "tokens-7d", label: "Tokens (7 days)", value: tokenTotal),
             SectionRow(id: "tokens-total", label: "Tokens (all time)", value: tokenTotal),
             SectionRow(id: "estimated-cost", label: "Estimated cost",
-                       value: cost.formatted(.currency(code: "USD")), isEstimate: true),
+                       value: VibeUsageProvider.usd(cost), isEstimate: true),
         ])
         XCTAssertTrue(section.meters.isEmpty)
         XCTAssertTrue(section.deadlines.isEmpty)
@@ -97,7 +97,7 @@ final class VibeUsageProviderTests: XCTestCase {
                                            prices: VibeRateCard.resolve("mistral-medium-3.5")!)
         let costRow = section.rows.first { $0.id == "estimated-cost" }
         XCTAssertEqual(costRow, SectionRow(id: "estimated-cost", label: "Estimated cost",
-                                           value: pricedCost.formatted(.currency(code: "USD")) + "+ · 1 session unpriced",
+                                           value: VibeUsageProvider.usd(pricedCost) + "+ · 1 session unpriced",
                                            isEstimate: true))
         // A partial floor is not good enough for the budget headline.
         XCTAssertNil(section.headline)
@@ -230,7 +230,7 @@ final class VibeUsageProviderTests: XCTestCase {
 
         let cost = VibeRateCard.cost(inputTokens: 100, cachedTokens: 5_000, outputTokens: 200,
                                         prices: VibeRateCard.resolve("mistral-medium-3.5")!)
-        let expected = "≈ \(cost.formatted(.currency(code: "USD"))) · \(5_300.formatted(.number.notation(.compactName).locale(.current))) tokens · 24 hours"
+        let expected = "≈ \(VibeUsageProvider.usd(cost)) · \(5_300.formatted(.number.notation(.compactName).locale(.current))) tokens · 24 hours"
         XCTAssertEqual(section.glanceLine, SectionGlanceLine(expected, isEstimate: true))
     }
 
@@ -252,7 +252,7 @@ final class VibeUsageProviderTests: XCTestCase {
         let pricedCost = VibeRateCard.cost(inputTokens: 100, cachedTokens: 5_000, outputTokens: 200,
                                            prices: VibeRateCard.resolve("mistral-medium-3.5")!)
         let tokens = 10_300.formatted(.number.notation(.compactName).locale(.current))
-        let expected = "≈ \(pricedCost.formatted(.currency(code: "USD")))+ · \(tokens) tokens · 24 hours"
+        let expected = "≈ \(VibeUsageProvider.usd(pricedCost))+ · \(tokens) tokens · 24 hours"
         XCTAssertEqual(section.glanceLine, SectionGlanceLine(expected, isEstimate: true))
     }
 
