@@ -33,6 +33,23 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
 
 ## Inbox
 
+- Post-v1 baseline features (scoping session 2026-11-06, mapped against Directions
+  `33_app-minimums.md` HUD/agent tier; user raised these as "what next" candidates):
+  - **Settings window (Command-Comma)** including launch-at-login (`SMAppService`) — the
+    most-skipped agent-app minimum — hotkey rebinding (ShortcutKit or recorder view), and a
+    version-visible About section (version is currently nowhere in the UI). Recommended first:
+    local code only, no infrastructure.
+  - **Feedback + Donate** via `AppCitizenshipKit` (right-click menu items): needs the app slug
+    in `feedback-submit.php` allow-list and `donate.html` registration on the user's site.
+  - **In-app help** via the vendored HelpMenu approach, adapted to the dockless panel/menu
+    (document Control-Option-Command-L, the Claude sign-in refresh behavior, estimates labeling).
+  - **Sparkle auto-update** with EdDSA appcast: gated on the public-distribution go-ahead and
+    where the appcast is hosted; last in the sequence by design. Build numbers must stay
+    monotonic (`sparkle:version` = build).
+- Short-session token-lifetime question (2026-11-06): record how long the Claude OAuth access
+  token actually lives between Claude Code runs, to set expectations for seeing "Sign-in expired".
+
+
 - Provider logos/icons in the HUD sections (suggested 2026-10-29 at the Wave 4 handoff): show
   each provider's logo next to its section title to speed up visual scanning of the panel.
   Considerations before scoping: trademark/licensing of vendor marks in a published,
