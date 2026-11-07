@@ -83,3 +83,7 @@ TODO-*.md
 .env.local
 credentials.json
 secrets.json
+
+# === Local artifacts ===
+dist/
+.fastembed_cache/
