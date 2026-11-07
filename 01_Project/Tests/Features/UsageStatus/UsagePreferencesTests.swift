@@ -8,15 +8,17 @@ final class UsagePreferencesTests: XCTestCase {
     private let suiteName = "LLMUsageStatusTests.UsagePreferences-\(UUID().uuidString)"
     private var defaults: UserDefaults!
 
-    override func setUp() {
-        super.setUp()
+    // Async overrides keep main-actor isolation on every toolchain; the
+    // synchronous XCTestCase overrides are nonisolated on older SDKs.
+    override func setUp() async throws {
+        try await super.setUp()
         defaults = UserDefaults(suiteName: suiteName)
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         defaults.removePersistentDomain(forName: suiteName)
         defaults = nil
-        super.tearDown()
+        try await super.tearDown()
     }
 
     func testFiveHourToggleDefaultsToOffForNewInstalls() {

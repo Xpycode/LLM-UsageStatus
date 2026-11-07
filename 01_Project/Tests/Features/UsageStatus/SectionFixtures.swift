@@ -90,6 +90,7 @@ enum SectionFixture {
 
     /// The single-section visual used by previews and render tests alike:
     /// panel-width framing around the production `ProviderSectionView`.
+    @MainActor
     @ViewBuilder
     static func sectionView(store: UsageStore?, expanded: Bool = true) -> some View {
         if let store {

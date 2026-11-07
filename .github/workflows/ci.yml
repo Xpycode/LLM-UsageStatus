@@ -7,7 +7,7 @@ jobs:
       run:
         working-directory: 01_Project
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: brew install xcodegen
       - run: xcodegen generate
       - run: xcodebuild -project LLM-UsageStatus.xcodeproj -scheme LLM-UsageStatus -destination 'platform=macOS' test
