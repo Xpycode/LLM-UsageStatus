@@ -17,7 +17,8 @@ final class SectionFixtureRenderTests: XCTestCase {
     private var outputDirectory: URL!
 
     override func setUp() async throws {
-        try await super.setUp()
+        // XCTestCase's async setUp/tearDown are empty; calling super from a
+        // @MainActor override is a sending error on the Swift 6.1 toolchain.
         // The app-hosted test bundle lives at
         // <products>/<app>.app/Contents/PlugIns/<tests>.xctest. Walk four
         // levels up from the bundle to the derived-data build products

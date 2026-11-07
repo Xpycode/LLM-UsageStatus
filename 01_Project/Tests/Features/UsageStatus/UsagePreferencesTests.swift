@@ -11,14 +11,14 @@ final class UsagePreferencesTests: XCTestCase {
     // Async overrides keep main-actor isolation on every toolchain; the
     // synchronous XCTestCase overrides are nonisolated on older SDKs.
     override func setUp() async throws {
-        try await super.setUp()
+        // XCTestCase's async setUp/tearDown are empty; calling super from a
+        // @MainActor override is a sending error on the Swift 6.1 toolchain.
         defaults = UserDefaults(suiteName: suiteName)
     }
 
     override func tearDown() async throws {
         defaults.removePersistentDomain(forName: suiteName)
         defaults = nil
-        try await super.tearDown()
     }
 
     func testFiveHourToggleDefaultsToOffForNewInstalls() {
