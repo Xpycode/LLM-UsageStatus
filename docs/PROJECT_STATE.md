@@ -1,6 +1,6 @@
 # PROJECT_STATE — LLM-UsageStatus
 
-**Last updated:** 2026-11-07 (housekeeping; session 9 — post-v1 smoke-test fixes)
+**Last updated:** 2026-11-08 (Settings window plan; remote + CI green)
 
 ## Identity
 
@@ -15,15 +15,16 @@ Developer ID signed, notarized, zero configuration for end users.
 
 ## Now
 
-- **V1 complete, plus two post-v1 smoke-test fixes (2026-11-06).** The 17/17-task plan stays
-  retired as the permanent record. Notarized 0.1.0 shipped, but `dist/0.1.0` is now **stale vs
-  source**: the running app is a fresh Debug build carrying (a) the Claude local-fallback glance
-  line with sign-in-state hint (the collapsed degraded section previously looked blank) and
-  (b) partial Vibe cost sums under the renamed multi-vendor `VibeRateCard` (adds `zai-glm-5-3`,
-  the model this machine's sessions actually run). **Next:** user smoke-tests the two fixes in
-  the running Debug build; before any redistribution, rebuild + re-sign + re-notarize dist.
-  Remaining candidates: Inbox items (app icon, provider logos, Vibe "all time" fluctuation) and
-  public distribution (needs its own go-ahead and a remote).
+- **Planning done for the Settings window** (launch at login, shortcut rebinding, About):
+  `docs/plans/2026-11-06-settings-window/IMPLEMENTATION_PLAN.md`, 8 tasks in 3 waves + manual
+  acceptance E1. Execution not yet requested.
+- **Execution:** Wave 1 ready, no prerequisites — 1.1 shortcut model, 1.2 multi-registration
+  hotkey, 1.3 launch-at-login service, 1.4 version/About model (four parallel units). Waves 2–3
+  follow; E1 needs the user, and its launch-at-login part needs a separate go-ahead to install
+  into /Applications.
+- Still open from v1 follow-up: user smoke test of the two 2026-11-06 fixes in the running Debug
+  build; `dist/0.1.0` is stale vs source (rebuild + re-notarize before any redistribution).
+- GitHub remote (private) + CI green since 2026-11-07 (147 tests on Xcode 16.4).
 
 ## Recent
 

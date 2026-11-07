@@ -1,6 +1,7 @@
 # TASKS
 
-- **Plan (retired 2026-10-29):** `docs/plans/2026-10-29-multi-provider-hud/IMPLEMENTATION_PLAN.md` — **COMPLETE**: 17/17 code tasks, E1 passed, E2 passed (notarized 0.1.0, Apple verdict Accepted, stapled, spctl clean). It stays in place as the permanent execution record. No active plan; next work comes from Backlog/Inbox below.
+- **Plan (retired 2026-10-29):** `docs/plans/2026-10-29-multi-provider-hud/IMPLEMENTATION_PLAN.md` — **COMPLETE**: 17/17 code tasks, E1 passed, E2 passed (notarized 0.1.0, Apple verdict Accepted, stapled, spctl clean). It stays in place as the permanent execution record.
+- **Active plan (2026-11-08):** `docs/plans/2026-11-06-settings-window/IMPLEMENTATION_PLAN.md` — Settings window (launch at login, shortcut rebinding, About). 8 tasks + E1; first ready: Wave 1 tasks 1.1–1.4 (no prerequisites). Execution not yet requested.
 
 ## Backlog
 
@@ -35,7 +36,7 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
 
 - Post-v1 baseline features (scoping session 2026-11-06, mapped against Directions
   `33_app-minimums.md` HUD/agent tier; user raised these as "what next" candidates):
-  - **Settings window (Command-Comma)** including launch-at-login (`SMAppService`) — the
+  - → **Planned 2026-11-08** in the active plan above. **Settings window (Command-Comma)** including launch-at-login (`SMAppService`) — the
     most-skipped agent-app minimum — hotkey rebinding (ShortcutKit or recorder view), and a
     version-visible About section (version is currently nowhere in the UI). Recommended first:
     local code only, no infrastructure.

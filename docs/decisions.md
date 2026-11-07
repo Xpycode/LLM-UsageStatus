@@ -4,6 +4,27 @@ Durable, project-specific decisions. Newest first.
 
 ---
 
+## 2026-11-08 — Settings window: own hotkey code, self-managed window, three sections
+
+**Choice:** Hotkey rebinding extends the app's own `GlobalHotKey` (multiple ids, configurable
+chord) with a small AppKit recorder, instead of adopting the fleet's ShortcutKit package. The
+Settings window is a self-managed AppKit `NSWindow` (cookbook #71), not the SwiftUI `Settings`
+scene. It holds exactly three sections (Startup, Shortcut, About); the 5-hour toggle and Vibe
+budget stay in the right-click menu. Command-Comma is a second Carbon hotkey that exists only
+while the panel is visible. Launch at login reads `SMAppService.mainApp.status` live (never a
+stored mirror) and is withheld outside an Applications folder.
+
+**Why:** ShortcutKit is a path package outside this repo, so GitHub CI (just made green) couldn't
+resolve it. The SwiftUI Settings scene doesn't reliably front a window in a dockless app. The
+panel never becomes key, so only a Carbon registration can see Command-Comma, and holding it
+system-wide would take it from every other app. A login item registered from a build directory
+or Downloads points at a path that breaks later.
+
+**Consequences:** one more hand-rolled recorder in the fleet (revisit if zPackages gets a remote).
+Plan: `docs/plans/2026-11-06-settings-window/IMPLEMENTATION_PLAN.md`.
+
+---
+
 ## 2026-11-06 — Partial cost sums replace the all-or-nothing Vibe cost line; rate card goes multi-vendor
 
 **Choice:** The Vibe section's cost line (and 24-hour glance line) sums sessions whose model price
