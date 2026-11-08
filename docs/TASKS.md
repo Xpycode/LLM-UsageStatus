@@ -1,7 +1,7 @@
 # TASKS
 
 - **Plan (retired 2026-10-29):** `docs/plans/2026-10-29-multi-provider-hud/IMPLEMENTATION_PLAN.md` — **COMPLETE**: 17/17 code tasks, E1 passed, E2 passed (notarized 0.1.0, Apple verdict Accepted, stapled, spctl clean). It stays in place as the permanent execution record.
-- **Active plan (2026-11-08):** `docs/plans/2026-11-06-settings-window/IMPLEMENTATION_PLAN.md` — Settings window (launch at login, shortcut rebinding, About). 8 tasks + E1; Waves 1–2 done (c337166, c8d3ce7; CI 200 green); next ready: Wave 3 (3.1 ∥ 3.2), not yet requested.
+- **Plan (retired 2026-11-08):** `docs/plans/2026-11-06-settings-window/IMPLEMENTATION_PLAN.md` — **COMPLETE**: Settings window (launch at login, shortcut rebinding, About), 8/8 tasks (CI 204 green, 288f5ab), E1 passed. It stays in place as the permanent execution record.
 
 ## Backlog
 
@@ -31,12 +31,16 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
     multi-vendor `VibeRateCard` (Z.ai GLM-5.3 rates added), and partial sums render visibly
     labeled (`total+ · N sessions unpriced`); the budget headline still requires full pricing.
     Rate-card prices are bundled literals needing hand-updates when vendors change them.
+11. **Layout-aware shortcut names** (2026-11-08, from the Settings Wave 3 review; should-fix, not
+    blocking): `HotKeyShortcut.displayName` maps key codes to US-ANSI letters, so on QWERTZ/AZERTY
+    the footer and recorder name the wrong letter (Control–Command–Z shows as …–Y). Fix with
+    `UCKeyTranslate` against the current keyboard layout, keeping the US name as fallback.
 
 ## Inbox
 
 - Post-v1 baseline features (scoping session 2026-11-06, mapped against Directions
   `33_app-minimums.md` HUD/agent tier; user raised these as "what next" candidates):
-  - → **Planned 2026-11-08** in the active plan above. **Settings window (Command-Comma)** including launch-at-login (`SMAppService`) — the
+  - → **Done 2026-11-08** (Settings plan, retired). **Settings window (Command-Comma)** including launch-at-login (`SMAppService`) — the
     most-skipped agent-app minimum — hotkey rebinding (ShortcutKit or recorder view), and a
     version-visible About section (version is currently nowhere in the UI). Recommended first:
     local code only, no infrastructure.
@@ -47,6 +51,11 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
   - **Sparkle auto-update** with EdDSA appcast: gated on the public-distribution go-ahead and
     where the appcast is hosted; last in the sequence by design. Build numbers must stay
     monotonic (`sparkle:version` = build).
+- Login-item refresh at launch (2026-11-08, Settings Wave 3 review; unconfirmed):
+  `refreshRegistrationIfEnabled` calls `register()` on an already-enabled `SMAppService.mainApp`.
+  If macOS treats that as an error the launch log shows "refresh failed" every launch. Check
+  Console for category LaunchAtLogin on a launch with the login item enabled (not run during E1;
+  E1 item 5 passed otherwise).
 - Short-session token-lifetime question (2026-11-06): record how long the Claude OAuth access
   token actually lives between Claude Code runs, to set expectations for seeing "Sign-in expired".
 

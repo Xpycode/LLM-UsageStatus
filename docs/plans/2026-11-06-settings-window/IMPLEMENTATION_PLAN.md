@@ -5,7 +5,7 @@
 > Task state/evidence is authoritative here; TASKS links here and holds backlog/inbox.
 > Follow the master's `reference/task-state.md` for legacy reconciliation and archival.
 
-**Progress:** 6/8 tasks (Waves 1–2 done); external acceptance: E1 open.
+**Progress:** **COMPLETE 2026-11-08** — 8/8 tasks (Waves 1–3), **E1 passed** (items 1–6, user-confirmed). Plan retired; it stays in place as the permanent execution record. Follow-ups live in TASKS Backlog/Inbox.
 **Task states:** unchecked = pending / implemented-unverified / blocked (name gate);
 checked = complete with required evidence. Task identity includes this plan path plus ID.
 
@@ -31,37 +31,37 @@ the shortcut field, presses a new chord, and the panel now toggles with it (also
 
 ## Acceptance Criteria
 
-- [ ] **Settings…** appears in the panel's right-click menu and in the shortcut-failure status-item
+- [x] **Settings…** appears in the panel's right-click menu and in the shortcut-failure status-item
       menu, and opens the window in front with keyboard focus (dockless app; no Dock icon appears).
-- [ ] Command-Comma opens Settings while the panel is showing; it is not claimed while the panel is
+- [x] Command-Comma opens Settings while the panel is showing; it is not claimed while the panel is
       hidden (other apps keep their own Command-Comma).
-- [ ] The window is modeless: changes apply immediately, no Save/Cancel; Esc and Command-W close it;
+- [x] The window is modeless: changes apply immediately, no Save/Cancel; Esc and Command-W close it;
       reopening reuses one window.
-- [ ] **Launch at login** reflects macOS's real state (read from `SMAppService.mainApp.status`, never a
+- [x] **Launch at login** reflects macOS's real state (read from `SMAppService.mainApp.status`, never a
       stored copy) and re-reads it each time the window becomes active, so changes made in System
       Settings show up.
-- [ ] When macOS needs approval (`.requiresApproval`), the window says so and offers
+- [x] When macOS needs approval (`.requiresApproval`), the window says so and offers
       **Open Login Items…** (deep link) instead of pretending the switch worked.
-- [ ] When the app is not running from an Applications folder (build directory, Downloads, DMG,
+- [x] When the app is not running from an Applications folder (build directory, Downloads, DMG,
       translocated), the checkbox is disabled with a one-line reason; nothing is registered.
-- [ ] A failed register/unregister puts the checkbox back to the real state and shows the error.
+- [x] A failed register/unregister puts the checkbox back to the real state and shows the error.
       A status query that macOS doesn't answer within 3 seconds shows "unknown", not "off", and never
       freezes the window.
-- [ ] The shortcut field shows the current chord spelled out (`Control–Option–Command–L`). Clicking it
+- [x] The shortcut field shows the current chord spelled out (`Control–Option–Command–L`). Clicking it
       starts recording; the live hotkey is suspended while recording; Esc cancels; the next valid chord
       is committed.
-- [ ] A chord is rejected with a reason when it has no Command or Control modifier (this covers the
+- [x] A chord is rejected with a reason when it has no Command or Control modifier (this covers the
       Sequoia Shift/Option-only restriction and bare keys), or uses a key that can't be a hotkey (bare
       modifier, function/media keys). Command-Comma itself is rejected (reserved for Settings).
-- [ ] A chord another app already holds (`eventHotKeyExistsErr`) is refused with "already in use by
+- [x] A chord another app already holds (`eventHotKeyExistsErr`) is refused with "already in use by
       another app"; the previous shortcut is re-registered and stays active; nothing is persisted.
-- [ ] A committed shortcut persists (keyCode + Carbon modifiers in UserDefaults) and is used at the next
+- [x] A committed shortcut persists (keyCode + Carbon modifiers in UserDefaults) and is used at the next
       launch; **Reset to Default** restores Control-Option-Command-L.
-- [ ] Every user-visible mention of the shortcut (panel footer, failure status-item messages) shows the
+- [x] Every user-visible mention of the shortcut (panel footer, failure status-item messages) shows the
       current chord, not the hardcoded default.
-- [ ] About shows app name, `Version <short> (<build>)` from Info.plist, a one-line description and a
+- [x] About shows app name, `Version <short> (<build>)` from Info.plist, a one-line description and a
       copyright line. No dead source/licence links (no public repo yet).
-- [ ] UI conventions: AppKit controls (house rule, same as `VibeBudgetEditor`), dark appearance, title
+- [x] UI conventions: AppKit controls (house rule, same as `VibeBudgetEditor`), dark appearance, title
       "LLM Usage Status Settings", fixed size from content, `.titled + .closable` only.
 
 ## Research annex
@@ -92,7 +92,7 @@ the shortcut field, presses a new chord, and the panel now toggles with it (also
 
 ## Execution schedule and ownership
 
-- Execution scope/limits: plan written 2026-11-08; user requested **Wave 1 only** (2026-11-08); Wave 1 done (c337166). User requested **Wave 2** (2026-11-08); Wave 2 done (c8d3ce7). Wave 3 not yet requested.
+- Execution scope/limits: plan written 2026-11-08; user requested **Wave 1 only** (2026-11-08); Wave 1 done (c337166). User requested **Wave 2** (2026-11-08); Wave 2 done (c8d3ce7). User requested **Wave 3** (2026-11-08); Wave 3 done (288f5ab). Only E1 remains (user-operated).
 - Coordinator-owned files/resources: `01_Project/project.yml` + `xcodegen generate` (new files are
   picked up by the `Sources`/`Tests` globs, but regeneration is serialized), `AppDelegate.swift`,
   `LLMUsageStatusApp.swift`, `UsageStatusView.swift`, `README.md`, DerivedData, git, tracking docs.
@@ -261,7 +261,7 @@ struct AppVersion: Equatable {
 
 ### Wave 3 (verification — after 2.2; 3.1 and 3.2 parallel, different owners)
 
-- [ ] **3.1**: Full verification
+- [x] **3.1**: Full verification
   - Depends on: 2.2
   - External gates: none
   - Owns: verification evidence in the Execution Log
@@ -270,7 +270,7 @@ struct AppVersion: Equatable {
     definition and comments; no `try?` added (project rule).
   - Backpressure: `gh run view <id>` result; `xcodebuild -configuration Release build` exit 0.
 
-- [ ] **3.2**: Independent code review of the plan's diff
+- [x] **3.2**: Independent code review of the plan's diff
   - Depends on: 2.2
   - External gates: none
   - Owns: review report; findings return to the owning task, re-run 3.1 after fixes
@@ -281,7 +281,7 @@ struct AppVersion: Equatable {
 
 ## External checks
 
-- [ ] **E1**: Manual acceptance in a fresh build (user-operated)
+- [x] **E1**: Manual acceptance in a fresh build (user-operated)
   - Depends on: 3.1, 3.2
   - Requires: the user at this Mac. A fresh Debug build can be handed off under the standing
     fresh-build authorization. The launch-at-login part needs the app in `/Applications`, which
@@ -305,6 +305,10 @@ struct AppVersion: Equatable {
        untick in Settings removes it.
     6. About shows `Version 0.1.0 (100)`.
   - While unavailable: Waves 1–3 proceed; acceptance criteria stay unverified.
+  - **Result 2026-11-08 (user, build 288f5ab, PID 38110 from the build folder):** items 1, 2, 3, 4
+    and 6 **pass** (user confirmation). Item 4's "already in use" sub-check was not run live
+    (instance launched without `LUHS_HOTKEY_CONFLICT_FILE`; covered by unit tests). Item 5 open —
+    needs the `/Applications` install go-ahead. **Item 5 pass** (same day): build installed to `/Applications` (SHA matches), launched as PID 57292; tick → notice, System Settings off → Settings shows real state, untick removes (user confirmation). Launch-time refresh-log check not yet run (needs a launch with the item enabled).
 
 ---
 
@@ -335,6 +339,29 @@ struct AppVersion: Equatable {
   Command-Comma registration is logged (os `notice`) and not surfaced — Settings… stays in the menu.
   The fallback status-item hint now also suggests choosing another shortcut in Settings.
 
+## Wave 3 review triage (3.2, `/code-review high 021402b..c85859a`, 10 findings)
+
+Fixed in 288f5ab (tests added except the Restart path):
+- Standard Command(-Shift) chords (Command-C/V/Q/W/Space/Tab…) are refused as `.systemShortcut` — a
+  global toggle on them would take Copy, Quit, Spotlight from every app.
+- A stored chord that fails `validate()` falls back to the default (stored bytes untouched).
+- Recorder: only a bare, non-repeating Space/Return starts recording (holding a just-recorded
+  Control-Space no longer restarts it).
+- Settings clears a stale shortcut error when it becomes key again.
+- A failed Restart restores Command-Comma while the panel is showing.
+
+Declined / deferred, with reasons:
+- Command-Comma held while the HUD shows and the user switches apps by keyboard: by design (plan
+  criterion; any click hides the HUD and releases it). Narrow keyboard-only case → TASKS Inbox.
+- US-ANSI key names on non-US layouts: presentational, not a correctness bug → TASKS Backlog.
+- `register()` on an already-enabled login item at launch: Apple documents re-registering to
+  refresh the path; unregister-then-register risks a new approval prompt. Check the launch log in
+  E1 item 5 → TASKS Inbox.
+- Toggle registered twice per commit: idempotent; `commitShortcut`'s own restore is needed for
+  Reset to Default, which commits outside recording.
+- `HotKeyShortcutStore.reset()` (tested API, harmless) and the writable-volume guard (defence in
+  depth) kept.
+
 ## Operational Learnings
 
 - GitHub CI runs Xcode 16.4 / Swift 6.1, older than this Mac's Xcode 27.2. Main-actor test classes
@@ -352,6 +379,7 @@ None.
 | Wave / task IDs | Assignments or serial reason | Validation / evidence | Commits or exception | Remaining gates / next action or stop reason |
 |---|---|---|---|---|
 | Wave 1: 1.1, 1.2, 1.3, 1.4 | Four parallel fresh-context developer agents, disjoint files; coordinator pre-created the six files + `xcodegen generate`, each agent built into its own DerivedData | Integrated `build-for-testing` green (scratch DerivedData); CI run 42426466709 green, **189 tests, 0 failures** (was 147) | c337166 (all four — one reviewable building-block set, not wired in) | Wave 2 (2.1 window, then 2.2 integration) ready; not yet requested |
+| Wave 3: 3.1 ∥ 3.2 | 3.1 coordinator; 3.2 `/code-review high` as a forked background reviewer (independent context) on 021402b..c85859a; coordinator triaged and fixed | Release universal build exit 0 (x86_64 + arm64, scratch DerivedData, no new warnings); `Control.Option.Command.L` 0 hits in Sources; no `try?` in the plan diff; review: 5 fixed, 5 declined (see triage); post-fix `build-for-testing` green; **CI run 42437157432 green, 204 tests, 0 failures** | c85859a (Wave 2 docs), 288f5ab (review fixes) | E1 only: fresh Debug build `build/e1-2026-11-08-288f5ab/…/Debug/LLM-UsageStatus.app` launched and verified running (PID 38110); launch-at-login part needs a separate /Applications go-ahead |
 | Wave 2: 2.1 → 2.2 (serial) | 2.1: one fresh-context developer agent (owned 3 pre-created files); 2.2: coordinator (owned files + shared project) after reviewing 2.1's diff | `xcodegen generate` + integrated Debug `build-for-testing` green (no new warnings); no `try?`; `Control.Option.Command.L` no longer in Sources (only via `HotKeyShortcut` names); CI run 42433815828 green, **200 tests, 0 failures** (+11 recorder tests) | 2dbec79 (Wave 1 bookkeeping docs), c8d3ce7 (2.1 + 2.2 — one reviewable feature outcome) | Wave 3 (3.1 verification ∥ 3.2 code review) ready; not yet requested. No app build handed off (E1 waits for Wave 3) |
 
 ---
