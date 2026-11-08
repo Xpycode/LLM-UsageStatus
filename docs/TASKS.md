@@ -1,7 +1,7 @@
 # TASKS
 
 - **Plan (retired 2026-10-29):** `docs/plans/2026-10-29-multi-provider-hud/IMPLEMENTATION_PLAN.md` — **COMPLETE**: 17/17 code tasks, E1 passed, E2 passed (notarized 0.1.0, Apple verdict Accepted, stapled, spctl clean). It stays in place as the permanent execution record.
-- **Active plan (2026-11-08):** `docs/plans/2026-11-06-settings-window/IMPLEMENTATION_PLAN.md` — Settings window (launch at login, shortcut rebinding, About). 8 tasks + E1; Wave 1 done (c337166, CI 189 green); next ready: Wave 2 (2.1 → 2.2), not yet requested.
+- **Active plan (2026-11-08):** `docs/plans/2026-11-06-settings-window/IMPLEMENTATION_PLAN.md` — Settings window (launch at login, shortcut rebinding, About). 8 tasks + E1; Waves 1–2 done (c337166, c8d3ce7; CI 200 green); next ready: Wave 3 (3.1 ∥ 3.2), not yet requested.
 
 ## Backlog
 

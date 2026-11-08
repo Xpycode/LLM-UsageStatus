@@ -5,7 +5,7 @@
 > Task state/evidence is authoritative here; TASKS links here and holds backlog/inbox.
 > Follow the master's `reference/task-state.md` for legacy reconciliation and archival.
 
-**Progress:** 0/8 tasks; external acceptance: E1 open.
+**Progress:** 6/8 tasks (Waves 1–2 done); external acceptance: E1 open.
 **Task states:** unchecked = pending / implemented-unverified / blocked (name gate);
 checked = complete with required evidence. Task identity includes this plan path plus ID.
 
@@ -92,7 +92,7 @@ the shortcut field, presses a new chord, and the panel now toggles with it (also
 
 ## Execution schedule and ownership
 
-- Execution scope/limits: plan written 2026-11-08; user requested **Wave 1 only** (2026-11-08); Wave 1 done (c337166).
+- Execution scope/limits: plan written 2026-11-08; user requested **Wave 1 only** (2026-11-08); Wave 1 done (c337166). User requested **Wave 2** (2026-11-08); Wave 2 done (c8d3ce7). Wave 3 not yet requested.
 - Coordinator-owned files/resources: `01_Project/project.yml` + `xcodegen generate` (new files are
   picked up by the `Sources`/`Tests` globs, but regeneration is serialized), `AppDelegate.swift`,
   `LLMUsageStatusApp.swift`, `UsageStatusView.swift`, `README.md`, DerivedData, git, tracking docs.
@@ -208,7 +208,7 @@ struct AppVersion: Equatable {
 
 ### Wave 2 (serial — 2.1 then 2.2; both need all of Wave 1, 2.2 also needs 2.1's window API)
 
-- [ ] **2.1**: Settings window and shortcut recorder (AppKit)
+- [x] **2.1**: Settings window and shortcut recorder (AppKit)
   - Depends on: 1.1, 1.3, 1.4
   - External gates: none
   - Owns: `Sources/App/SettingsWindowController.swift`, `Sources/App/ShortcutRecorderField.swift`,
@@ -239,7 +239,7 @@ struct AppVersion: Equatable {
     synthetic `NSEvent`s (start, cancel, reject, inUse, accept, end-once); window behaviour verified
     in E1.
 
-- [ ] **2.2**: Wire Settings, Command-Comma, configurable shortcut and launch refresh (coordinator)
+- [x] **2.2**: Wire Settings, Command-Comma, configurable shortcut and launch refresh (coordinator)
   - Depends on: 1.1, 1.2, 1.3, 2.1
   - External gates: none
   - Owns: `Sources/App/AppDelegate.swift`, `Sources/App/LLMUsageStatusApp.swift`,
@@ -324,6 +324,17 @@ struct AppVersion: Equatable {
   registration behind when the user switched it off).
 - `HotKeyShortcut` accepts Escape as a key; 2.1's recorder should treat a bare Escape as cancel.
 
+## Wave 2 as-built notes (accepted at integration)
+
+- 2.1 fronts the window with `NSApp.activate()` + `makeKeyAndOrderFront` only; the `.regular`
+  activation fallback was **not** added — E1 item 1 must confirm the window comes to the front.
+- Reset to Default goes through `commitShortcut(.defaultToggle)`; the window never saves to the store.
+  `.unknown` login state leaves the checkbox enabled (off) so the user is not stuck.
+- 2.2: the temporary `register(_:)` / `unregister()` overloads now live as a `fileprivate` test-only
+  extension in `GlobalHotKeyTests.swift` (production API has only the id-based calls). A failed
+  Command-Comma registration is logged (os `notice`) and not surfaced — Settings… stays in the menu.
+  The fallback status-item hint now also suggests choosing another shortcut in Settings.
+
 ## Operational Learnings
 
 - GitHub CI runs Xcode 16.4 / Swift 6.1, older than this Mac's Xcode 27.2. Main-actor test classes
@@ -341,6 +352,7 @@ None.
 | Wave / task IDs | Assignments or serial reason | Validation / evidence | Commits or exception | Remaining gates / next action or stop reason |
 |---|---|---|---|---|
 | Wave 1: 1.1, 1.2, 1.3, 1.4 | Four parallel fresh-context developer agents, disjoint files; coordinator pre-created the six files + `xcodegen generate`, each agent built into its own DerivedData | Integrated `build-for-testing` green (scratch DerivedData); CI run 42426466709 green, **189 tests, 0 failures** (was 147) | c337166 (all four — one reviewable building-block set, not wired in) | Wave 2 (2.1 window, then 2.2 integration) ready; not yet requested |
+| Wave 2: 2.1 → 2.2 (serial) | 2.1: one fresh-context developer agent (owned 3 pre-created files); 2.2: coordinator (owned files + shared project) after reviewing 2.1's diff | `xcodegen generate` + integrated Debug `build-for-testing` green (no new warnings); no `try?`; `Control.Option.Command.L` no longer in Sources (only via `HotKeyShortcut` names); CI run 42433815828 green, **200 tests, 0 failures** (+11 recorder tests) | 2dbec79 (Wave 1 bookkeeping docs), c8d3ce7 (2.1 + 2.2 — one reviewable feature outcome) | Wave 3 (3.1 verification ∥ 3.2 code review) ready; not yet requested. No app build handed off (E1 waits for Wave 3) |
 
 ---
 *Keep active while required work or acceptance is incomplete. On completion, archive with execution
