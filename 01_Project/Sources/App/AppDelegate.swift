@@ -75,6 +75,22 @@ import os
         settings.show()
     }
 
+    // Like Settings…, these windows come to the front, so the HUD gets out of the way first.
+    @objc private func openHelp() {
+        hidePanel()
+        HelpSupport.show()
+    }
+
+    @objc private func sendFeedback() {
+        hidePanel()
+        CitizenshipSupport.shared.showFeedback()
+    }
+
+    @objc private func leaveTip() {
+        hidePanel()
+        CitizenshipSupport.shared.leaveTip()
+    }
+
     @objc private func registerHotKey() {
         let chord = shortcutStore.current
         let result = GlobalHotKey.shared.register(id: .toggle, keyCode: chord.keyCode,
@@ -151,6 +167,7 @@ import os
         menu.addItem(withTitle: "Show HUD", action: #selector(showHUD), keyEquivalent: "")
         menu.addItem(withTitle: "Retry Shortcut", action: #selector(registerHotKey), keyEquivalent: "")
         menu.addItem(withTitle: "Settings…", action: #selector(openSettings), keyEquivalent: ",")
+        menu.addItem(withTitle: "LLM Usage Status Help", action: #selector(openHelp), keyEquivalent: "")
         menu.addItem(.separator())
         menu.addItem(withTitle: "Quit LLM Usage Status", action: #selector(quit), keyEquivalent: "q")
         menu.items.forEach { $0.target = self }
@@ -164,7 +181,11 @@ import os
         menu.addItem(withTitle: "Set Vibe Monthly Budget…", action: #selector(editVibeBudget), keyEquivalent: "")
         menu.addItem(.separator())
         menu.addItem(withTitle: "Settings…", action: #selector(openSettings), keyEquivalent: ",")
+        menu.addItem(withTitle: "LLM Usage Status Help", action: #selector(openHelp), keyEquivalent: "")
         menu.addItem(withTitle: "Restart LLM Usage Status", action: #selector(restart), keyEquivalent: "")
+        menu.addItem(.separator())
+        menu.addItem(withTitle: "Send Feedback…", action: #selector(sendFeedback), keyEquivalent: "")
+        menu.addItem(withTitle: "Leave a Tip", action: #selector(leaveTip), keyEquivalent: "")
         menu.addItem(.separator())
         menu.addItem(withTitle: "Quit LLM Usage Status", action: #selector(quit), keyEquivalent: "q")
         menu.items.forEach { $0.target = self }

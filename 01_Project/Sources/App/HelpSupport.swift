@@ -23,14 +23,15 @@ enum HelpSupport {
         }
     }
 
+    /// Bundled help, loaded once and shared by the menus and `HelpMenuCommands`.
+    static var content: HelpContent {
+        if let cachedContent { return cachedContent }
+        let loaded = loadContent()
+        cachedContent = loaded
+        return loaded
+    }
+
     static func show() {
-        let content: HelpContent
-        if let cachedContent {
-            content = cachedContent
-        } else {
-            content = loadContent()
-            cachedContent = content
-        }
         HelpWindowController.showHelp(content: content)
     }
 

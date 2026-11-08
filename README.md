@@ -29,16 +29,21 @@ allowances, and renewal times are one keystroke away.
 - Refresh on open; a failed refresh retains the last successful values with a
   visible stale-data message and the last update time.
 - Hotkey fallback: when the shortcut cannot be registered, a warning menu-bar
-  item appears and offers Show HUD, Retry Shortcut, Settings, and Quit.
+  item appears and offers Show HUD, Retry Shortcut, Settings, Help, and Quit.
 - Settings window: launch at login, a rebindable show/hide shortcut, and the
   app's version.
+- Shortcut names follow your keyboard layout: on a German layout a chord
+  recorded on the key labelled Z reads "Z", not the US "Y". Function, arrow,
+  and other special keys keep their spelled-out names.
+- Built-in Help window with searchable topics, plus Send Feedback… and Leave a
+  Tip in the right-click menu.
 
 ## Quick Start
 
 Press **Control-Option-Command-L** anywhere to toggle the panel. Clicking
 anywhere else dismisses it; drag the panel to move it. Opening the panel
 refreshes usage. Right-click the panel for section preferences, Settings,
-Restart, and Quit.
+Help, Restart, Send Feedback…, Leave a Tip, and Quit.
 
 ### Settings
 
@@ -58,6 +63,24 @@ closes the window.
   refused and the previous shortcut keeps working. **Reset to Default** restores
   Control-Option-Command-L. The shortcut persists across restarts.
 - **About** — name, version and build number.
+
+Shortcut names (in the recorder, the panel footer, and the warning menu) use
+the keycap letters of your current keyboard layout, and an open recorder
+updates when you switch layouts. With a non-Latin input source such as Russian,
+names come from your last Latin layout. Only the name changes — the shortcut
+itself stays bound to the same physical key.
+
+### Help, Feedback, and Tip
+
+- **LLM Usage Status Help** — in the right-click menu (and in the warning
+  menu-bar item). Opens a Help window with topics in a sidebar and search.
+  Escape or Command-W closes it; Command-? reopens it while Help or Settings is
+  in front.
+- **Send Feedback…** — opens a short form. Your message (and the email address,
+  only if you enter one) is sent to the developer's feedback server together
+  with the app version and macOS version, only when you submit. No logs, usage
+  data, or credentials are attached.
+- **Leave a Tip** — opens the developer's tip page in your default browser.
 
 ### What each section shows
 
@@ -109,11 +132,13 @@ compiles.
 The app reads only local files owned by each CLI (`~/.codex/auth.json`,
 `~/.claude/projects/**/*.jsonl`, `~/.vibe/logs/session/unified/*/journal/*.jsonl`)
 plus the Codex and Claude usage endpoints. Tokens are read in memory and sent
-only as authentication headers to their own usage service. No credentials,
-usage history, or telemetry are logged, stored, or transmitted elsewhere;
+only as authentication headers to their own usage service. The only other
+outgoing request is a feedback message you submit yourself through Send
+Feedback…. No credentials, usage history, or telemetry are logged, stored, or
+transmitted elsewhere;
 sandboxing is disabled so the app can read these user-owned files outside an
 app container. The only saved preferences are the per-provider display
-toggles.
+toggles, the Vibe budget, the shortcut, and window positions.
 
 ## Caveats
 
@@ -132,7 +157,9 @@ LLM-UsageStatus/
 │   │   ├── App/         # Entry point, hotkey, panel controller, composition
 │   │   ├── Features/    # Usage status views and preferences
 │   │   └── Shared/      # Provider protocol, models, per-provider services
-│   ├── Resources/       # Asset catalogs, entitlements
+│   ├── Resources/       # Asset catalogs, Help topics, third-party notices, entitlements
+│   ├── HelpMenu/        # Vendored Help window package (MarkdownUI)
+│   ├── Vendor/          # Vendored feedback and tip packages
 │   └── Tests/           # Unit tests mirroring source modules
 ├── scripts/             # Release build and notarization scripts
 └── .github/workflows/   # CI: build + test on push
@@ -161,4 +188,6 @@ is expected behavior, not an error.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE). Third-party notices (MarkdownUI, NetworkImage,
+cmark) ship in the app bundle as `ThirdPartyNotices.txt` and live in
+`01_Project/Resources/Licenses/`.

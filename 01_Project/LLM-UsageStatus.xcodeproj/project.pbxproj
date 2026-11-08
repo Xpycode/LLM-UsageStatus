@@ -21,6 +21,7 @@
 		32F9904D8801808EEAFACAC9 /* ShortcutRecorderFieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2A54A04B0057EC58AC5CCE /* ShortcutRecorderFieldTests.swift */; };
 		33D5EC94411959A61CAADA70 /* GlobalHotKeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F39E311E6A2612C0A467434B /* GlobalHotKeyTests.swift */; };
 		344091B7C8C138115DF271A2 /* help-reading-the-panel.md in Resources */ = {isa = PBXBuildFile; fileRef = 5E28AA1B477A708F879D0613 /* help-reading-the-panel.md */; };
+		3A306998483488C7972C5E88 /* ThirdPartyNotices.txt in Resources */ = {isa = PBXBuildFile; fileRef = 88214827E3763CC4E7455532 /* ThirdPartyNotices.txt */; };
 		440EC10CBFBE485DC69B8A41 /* CitizenshipSupportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86039F312015B4BC640CE679 /* CitizenshipSupportTests.swift */; };
 		48CD3554BAAAAE0E5F2DA52F /* ClaudeTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1DA9A29E1DFD828D59DD02 /* ClaudeTokenProvider.swift */; };
 		50E84E605C398D452D8958A8 /* VibeBudgetEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1990B3291A76DB3D3CCFDA80 /* VibeBudgetEditor.swift */; };
@@ -124,6 +125,7 @@
 		7B080AE406F2EC0DB4A7E232 /* HotKeyShortcutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyShortcutTests.swift; sourceTree = "<group>"; };
 		853AB380986CA290F24B25F4 /* VibeJournalAggregator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeJournalAggregator.swift; sourceTree = "<group>"; };
 		86039F312015B4BC640CE679 /* CitizenshipSupportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CitizenshipSupportTests.swift; sourceTree = "<group>"; };
+		88214827E3763CC4E7455532 /* ThirdPartyNotices.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = ThirdPartyNotices.txt; sourceTree = "<group>"; };
 		8B2A54A04B0057EC58AC5CCE /* ShortcutRecorderFieldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutRecorderFieldTests.swift; sourceTree = "<group>"; };
 		8B40468CE7090F4FBBA99D35 /* AppVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersion.swift; sourceTree = "<group>"; };
 		8BC9F0AEA7FBAA60EC8C35B1 /* CitizenshipSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CitizenshipSupport.swift; sourceTree = "<group>"; };
@@ -335,6 +337,14 @@
 			path = UsageStatus;
 			sourceTree = "<group>";
 		};
+		AAAC9805B1277A0FDEB99A95 /* Licenses */ = {
+			isa = PBXGroup;
+			children = (
+				88214827E3763CC4E7455532 /* ThirdPartyNotices.txt */,
+			);
+			path = Licenses;
+			sourceTree = "<group>";
+		};
 		ADF39DDDA8F590162BF3D42F /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -401,6 +411,7 @@
 			children = (
 				F6753BBC944B341814A3CA22 /* Assets.xcassets */,
 				7939B8A9771916A8413D5619 /* Help */,
+				AAAC9805B1277A0FDEB99A95 /* Licenses */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -516,6 +527,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				69136A175B2F1E5835FDF54E /* Assets.xcassets in Resources */,
+				3A306998483488C7972C5E88 /* ThirdPartyNotices.txt in Resources */,
 				B1D7FE217EA24F5D5B295B30 /* help-authoritative-vs-estimated.md in Resources */,
 				9FFB16A4BB15C46FD1C908D6 /* help-claude-code.md in Resources */,
 				B8D1B94C662FDA44883C5E8F /* help-codex.md in Resources */,
