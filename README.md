@@ -59,7 +59,8 @@ closes the window.
   image) it is disabled with the reason.
 - **Shortcut** — click the field and press a new chord. It must include Command
   or Control; Command-Comma is reserved, and standard Command chords such as
-  Command-C or Command-Space are refused. A chord another app already holds is
+  Command-C or Command-Space are refused (matched by US key position, so on
+  other layouts a few letter chords may slip through). A chord another app already holds is
   refused and the previous shortcut keeps working. **Reset to Default** restores
   Control-Option-Command-L. The shortcut persists across restarts.
 - **About** — name, version and build number.
@@ -138,11 +139,13 @@ The app reads only local files owned by each CLI (`~/.codex/auth.json`,
 plus the Codex and Claude usage endpoints. Tokens are read in memory and sent
 only as authentication headers to their own usage service. The only other
 outgoing request is a feedback message you submit yourself through Send
-Feedback…. No credentials, usage history, or telemetry are logged, stored, or
-transmitted elsewhere;
+Feedback…. No credentials or telemetry are logged, stored, or transmitted
+elsewhere;
 sandboxing is disabled so the app can read these user-owned files outside an
-app container. The only saved preferences are the per-provider display
-toggles, the Vibe budget, the shortcut, and window positions.
+app container. Saved locally: the per-provider display toggles, the Vibe
+budget, the shortcut, window positions, and the last-seen usage values for
+each provider (`~/Library/Application Support/LLM-UsageStatus/last-sections.json`,
+so a relaunch can show them with their timestamps; no credentials).
 
 ## Caveats
 

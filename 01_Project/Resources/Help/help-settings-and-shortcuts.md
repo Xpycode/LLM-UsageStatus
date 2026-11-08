@@ -15,7 +15,7 @@ The **Show/hide shortcut** field sets the global shortcut. Click the field and p
 
 - It must include Command or Control.
 - Command-Comma is reserved for Settings.
-- Common macOS shortcuts such as Command-C or Command-Space are refused ("That shortcut is used by macOS and other apps.").
+- Common macOS shortcuts such as Command-C or Command-Space are refused ("That shortcut is used by macOS and other apps."). The check uses key positions as on a US keyboard, so on other layouts (for example QWERTZ or Dvorak) a few letter shortcuts may not be caught; avoid Command plus a single letter.
 - A combination another app already uses is refused ("Already in use by another app."). Your previous shortcut keeps working.
 - **Reset to Default** restores Control-Option-Command-L.
 

@@ -25,7 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   the sign-in.
 - Each provider's last populated section is remembered across launches, so a
   relaunch while offline or throttled shows last-known values with honest
-  timestamps.
+  timestamps (stored in `~/Library/Application Support/LLM-UsageStatus/`;
+  no credentials).
 - Third-party notices for MarkdownUI, NetworkImage and cmark ship in the app.
 
 ### Changed
@@ -43,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Fixed
 
 - Standard Command shortcuts (for example Command-C) are refused as the
-  show/hide shortcut; an unreadable stored shortcut falls back to the default.
+  show/hide shortcut (matched by US key position); an unreadable stored shortcut falls back to the default.
 
 ## [0.1.0] - 2026-10-29
 

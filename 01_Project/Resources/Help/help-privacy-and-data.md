@@ -14,7 +14,7 @@ Sign-in tokens are read in memory when needed. They are never stored, logged or 
 
 ## What is stored
 
-Only your display preferences are saved: the Codex 5-hour toggle, the Vibe budget and reset day, and your chosen shortcut. No usage history is kept.
+Your display preferences are saved: the Codex 5-hour toggle, the Vibe budget and reset day, your chosen shortcut and window positions. The app also keeps the last-seen usage values for each provider in `~/Library/Application Support/LLM-UsageStatus/last-sections.json`, so that after a relaunch the panel can show them, with their timestamps, until the next refresh. No credentials and no longer history are stored.
 
 ## What is sent over the network
 
