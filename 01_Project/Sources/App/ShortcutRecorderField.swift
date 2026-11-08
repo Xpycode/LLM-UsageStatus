@@ -43,7 +43,7 @@ final class ShortcutRecorderField: NSView {
         self.recordingChanged = recordingChanged
         self.keyName = keyName
         self.observedCenter = notificationCenter
-        super.init(frame: NSRect(x: 0, y: 0, width: 190, height: 26))
+        super.init(frame: NSRect(x: 0, y: 0, width: 240, height: 26))
         wantsLayer = true
         layer?.cornerRadius = 6
         layer?.borderWidth = 1
@@ -55,7 +55,7 @@ final class ShortcutRecorderField: NSView {
             label.centerXAnchor.constraint(equalTo: centerXAnchor),
             label.centerYAnchor.constraint(equalTo: centerYAnchor),
             label.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: 6),
-            widthAnchor.constraint(equalToConstant: 190),
+            widthAnchor.constraint(equalToConstant: 240),
             heightAnchor.constraint(equalToConstant: 26),
         ])
         setAccessibilityElement(true)

@@ -11,7 +11,7 @@ Open Settings from the right-click menu (**Settings…**), or press **Command-Co
 
 ## Shortcut
 
-The **Show/hide shortcut** field sets the global shortcut. Click the field and press the new combination.
+The field under **Show or hide the panel** sets the global shortcut. Click the field and press the new combination.
 
 - It must include Command or Control.
 - Command-Comma is reserved for Settings.

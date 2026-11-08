@@ -103,8 +103,8 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
 
     private func buildContent(version: AppVersion) {
         let resetButton = NSButton(title: "Reset to Default", target: self, action: #selector(resetShortcut))
-        let shortcutTitle = NSTextField(labelWithString: "Show/hide shortcut")
-        let shortcutRow = NSStackView(views: [shortcutTitle, recorder, resetButton])
+        let shortcutTitle = NSTextField(labelWithString: "Show or hide the panel")
+        let shortcutRow = NSStackView(views: [recorder, resetButton])
         shortcutRow.orientation = .horizontal
         shortcutRow.spacing = 8
         shortcutRow.alignment = .centerY
@@ -119,7 +119,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
 
         let sections: [NSView] = [
             section("Startup", [launchCheckbox, launchStatus, loginItemsButton]),
-            section("Shortcut", [shortcutRow, shortcutMessage]),
+            section("Shortcut", [shortcutTitle, shortcutRow, shortcutMessage]),
             section("About", [name, description, versionLabel, copyright]),
         ]
         let stack = NSStackView()
