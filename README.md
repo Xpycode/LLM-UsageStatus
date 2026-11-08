@@ -107,7 +107,11 @@ Updates are installed manually; the app has no auto-updater.
 
 ### Download
 
-1. Download the latest release zip from the repository's Releases page.
+Public downloads are not available yet; a link will appear here when a
+notarized release is published. Until then, build from source (below) or
+use a notarized `LLM-UsageStatus-<version>.zip` you received directly.
+
+1. Check the zip against its published SHA-256 checksum, if one was provided.
 2. Quit any older copy of LLM Usage Status normally.
 3. Extract the zip (in Finder, double-click it; on the command line use
    `ditto -x -k`, not `unzip`) and copy `LLM-UsageStatus.app` to
