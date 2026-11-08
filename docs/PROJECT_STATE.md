@@ -29,9 +29,6 @@ Developer ID signed, notarized, zero configuration for end users.
 - 2026-11-08: 0.2.0 planned (research by four agents) and Wave 1 built — shortcut names follow the keyboard layout, Help and feedback packages copied in, help text written; builds clean, tests await CI.
 - 2026-11-08: **Settings E1 passed** — all six manual checks, including launch at login from /Applications, plus the 2026-11-06 fixes; Command-Tab behavior judged fine (kept by design). Plan retired.
 - 2026-11-08: Settings Wave 3 — Release build and checks passed; independent code review led to five fixes (standard Command shortcuts like Command-C are now refused, a bad stored shortcut falls back to the default, three smaller recorder/restart fixes). CI 204 green. Fresh build handed off for E1.
-- 2026-11-08: Settings Wave 2 — Settings window (Startup / Shortcut / About) and shortcut recorder, wired into the app: Settings… menu items, Command-Comma while the panel shows, rebinding with restore-on-conflict, launch-at-login refresh, chord-aware footer; README updated. CI 200 green. Not yet tried by hand (E1).
-- 2026-11-08: Settings Wave 1 built — shortcut model, multi-shortcut hotkey, launch-at-login service and version info, all tested (189 tests green on CI); not wired into the app yet.
-- 2026-11-08: Repo tidied and given a private GitHub remote; CI now runs and passes (147 tests) after two test-only fixes for GitHub's older Xcode. Settings-window plan written, ready for Wave 1.
 
 ## Handoff
 
