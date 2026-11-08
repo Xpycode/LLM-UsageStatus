@@ -53,7 +53,8 @@ closes the window.
   runs from an Applications folder; elsewhere (a build folder, Downloads, a disk
   image) it is disabled with the reason.
 - **Shortcut** — click the field and press a new chord. It must include Command
-  or Control; Command-Comma is reserved. A chord another app already holds is
+  or Control; Command-Comma is reserved, and standard Command chords such as
+  Command-C or Command-Space are refused. A chord another app already holds is
   refused and the previous shortcut keeps working. **Reset to Default** restores
   Control-Option-Command-L. The shortcut persists across restarts.
 - **About** — name, version and build number.

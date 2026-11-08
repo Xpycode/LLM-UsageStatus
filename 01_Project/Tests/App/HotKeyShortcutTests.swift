@@ -88,6 +88,18 @@ final class HotKeyShortcutTests: XCTestCase {
         XCTAssertEqual(HotKeyShortcut.settings.validate(), .reserved)
     }
 
+    func testValidateRejectsStandardSystemShortcuts() {
+        let cmd = UInt32(cmdKey), cmdShift = UInt32(cmdKey | shiftKey)
+        XCTAssertEqual(HotKeyShortcut(keyCode: UInt32(kVK_ANSI_C), carbonModifiers: cmd).validate(), .systemShortcut)
+        XCTAssertEqual(HotKeyShortcut(keyCode: UInt32(kVK_ANSI_Q), carbonModifiers: cmd).validate(), .systemShortcut)
+        XCTAssertEqual(HotKeyShortcut(keyCode: UInt32(kVK_Space), carbonModifiers: cmd).validate(), .systemShortcut)
+        XCTAssertEqual(HotKeyShortcut(keyCode: UInt32(kVK_ANSI_Z), carbonModifiers: cmdShift).validate(), .systemShortcut)
+        // Adding Control or Option makes the same keys fine; other Command-only keys stay allowed.
+        XCTAssertNil(HotKeyShortcut(keyCode: UInt32(kVK_ANSI_C), carbonModifiers: UInt32(cmdKey | optionKey)).validate())
+        XCTAssertNil(HotKeyShortcut(keyCode: UInt32(kVK_ANSI_C), carbonModifiers: UInt32(controlKey)).validate())
+        XCTAssertNil(HotKeyShortcut(keyCode: UInt32(kVK_ANSI_K), carbonModifiers: cmd).validate())
+    }
+
     func testStoreDefaultsWhenMissing() {
         XCTAssertEqual(HotKeyShortcutStore(defaults: defaults).current, .defaultToggle)
     }
@@ -109,6 +121,13 @@ final class HotKeyShortcutTests: XCTestCase {
         let store = HotKeyShortcutStore(defaults: defaults)
         XCTAssertEqual(store.current, .defaultToggle)
         XCTAssertEqual(defaults.data(forKey: "hotkey.toggleShortcut"), corrupt)
+    }
+
+    func testDisallowedStoredShortcutFallsBack() throws {
+        let stored = try JSONEncoder().encode(HotKeyShortcut.settings)
+        defaults.set(stored, forKey: "hotkey.toggleShortcut")
+        XCTAssertEqual(HotKeyShortcutStore(defaults: defaults).current, .defaultToggle)
+        XCTAssertEqual(defaults.data(forKey: "hotkey.toggleShortcut"), stored)
     }
 
     func testWrongTypeDataFallsBackAndIsPreserved() {

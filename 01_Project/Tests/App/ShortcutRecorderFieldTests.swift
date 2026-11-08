@@ -34,12 +34,32 @@ final class ShortcutRecorderFieldTests: XCTestCase {
             recordingChanged: { probe.recording.append($0) })
     }
 
-    private func keyDown(_ code: Int, _ flags: NSEvent.ModifierFlags = []) throws -> NSEvent {
+    private func keyDown(_ code: Int, _ flags: NSEvent.ModifierFlags = [], repeat isRepeat: Bool = false) throws -> NSEvent {
         try XCTUnwrap(
             NSEvent.keyEvent(
                 with: .keyDown, location: .zero, modifierFlags: flags, timestamp: 0,
                 windowNumber: 0, context: nil, characters: "", charactersIgnoringModifiers: "",
-                isARepeat: false, keyCode: UInt16(code)))
+                isARepeat: isRepeat, keyCode: UInt16(code)))
+    }
+
+    func testSystemShortcutIsRejectedAndRecordingContinues() throws {
+        let recorder = makeRecorder()
+        recorder.startRecording()
+        XCTAssertTrue(recorder.handle(try keyDown(kVK_ANSI_C, [.command])))
+        XCTAssertTrue(recorder.isRecording)
+        XCTAssertTrue(probe.commits.isEmpty)
+        XCTAssertEqual(recorder.message, "That shortcut is used by macOS and other apps.")
+        recorder.endRecording()
+    }
+
+    func testOnlyBareNonRepeatingSpaceStartsRecording() throws {
+        let recorder = makeRecorder()
+        recorder.keyDown(with: try keyDown(kVK_Space, [.control]))
+        recorder.keyDown(with: try keyDown(kVK_Space, repeat: true))
+        XCTAssertFalse(recorder.isRecording)
+        recorder.keyDown(with: try keyDown(kVK_Space))
+        XCTAssertTrue(recorder.isRecording)
+        recorder.endRecording()
     }
 
     func testStartNotifiesAndShowsPlaceholder() {

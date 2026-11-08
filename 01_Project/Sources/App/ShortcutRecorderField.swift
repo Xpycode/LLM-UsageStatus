@@ -124,6 +124,7 @@ final class ShortcutRecorderField: NSView {
         case .needsCommandOrControl: "Use Command or Control in the shortcut."
         case .unsupportedKey: "That key can't be used as a shortcut."
         case .reserved: "Command-Comma is reserved for Settings."
+        case .systemShortcut: "That shortcut is used by macOS and other apps."
         }
     }
 
@@ -152,7 +153,10 @@ final class ShortcutRecorderField: NSView {
 
     override func keyDown(with event: NSEvent) {
         // Keyboard activation when focused but not recording.
-        if !isRecording, event.keyCode == UInt16(kVK_Space) || event.keyCode == UInt16(kVK_Return) {
+        // Bare, non-repeating presses only: holding a just-recorded Control-Space must not restart.
+        let bare = event.modifierFlags.intersection([.command, .option, .control, .shift]).isEmpty
+        if !isRecording, !event.isARepeat, bare,
+           event.keyCode == UInt16(kVK_Space) || event.keyCode == UInt16(kVK_Return) {
             startRecording()
         } else {
             super.keyDown(with: event)

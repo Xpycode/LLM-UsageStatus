@@ -267,7 +267,10 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     // MARK: NSWindowDelegate
 
     func windowDidBecomeKey(_ notification: Notification) {
-        if !recorder.isRecording { recorder.setShortcut(shortcuts.current) }
+        if !recorder.isRecording {
+            recorder.setShortcut(shortcuts.current)
+            recorder.message = ""  // An earlier failure is not news when the window comes back.
+        }
         refreshLoginState()
     }
 

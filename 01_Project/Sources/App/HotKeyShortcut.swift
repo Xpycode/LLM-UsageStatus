@@ -47,14 +47,26 @@ struct HotKeyShortcut: Codable, Equatable, Sendable {
         case needsCommandOrControl
         case unsupportedKey
         case reserved
+        /// Command (optionally with Shift) plus a key every app relies on: Copy, Quit, Spotlight…
+        case systemShortcut
     }
 
     func validate() -> Rejection? {
         guard Self.keyNames[keyCode] != nil else { return .unsupportedKey }
         guard carbonModifiers & UInt32(cmdKey | controlKey) != 0 else { return .needsCommandOrControl }
         if self == Self.settings { return .reserved }
+        let commandOnly = carbonModifiers & ~UInt32(shiftKey) == UInt32(cmdKey)
+        if commandOnly && Self.systemKeyCodes.contains(keyCode) { return .systemShortcut }
         return nil
     }
+
+    /// Keys whose Command (and Command-Shift) chords are standard across macOS; a global
+    /// hotkey on them would take Copy, Paste, Quit, Spotlight and the like away from every app.
+    private static let systemKeyCodes: Set<UInt32> = Set([
+        kVK_ANSI_A, kVK_ANSI_C, kVK_ANSI_F, kVK_ANSI_H, kVK_ANSI_M, kVK_ANSI_N, kVK_ANSI_O,
+        kVK_ANSI_P, kVK_ANSI_Q, kVK_ANSI_S, kVK_ANSI_T, kVK_ANSI_V, kVK_ANSI_W, kVK_ANSI_X,
+        kVK_ANSI_Z, kVK_ANSI_3, kVK_ANSI_4, kVK_ANSI_5, kVK_Space, kVK_Tab, kVK_ANSI_Grave,
+    ].map { UInt32($0) })
 
     private static let modifierKeyCodes: Set<UInt32> = [
         UInt32(kVK_Command), UInt32(kVK_RightCommand), UInt32(kVK_Shift), UInt32(kVK_RightShift),
@@ -117,7 +129,13 @@ final class HotKeyShortcutStore {
     var current: HotKeyShortcut {
         guard let data = defaults.data(forKey: Self.defaultsKey) else { return .defaultToggle }
         do {
-            return try JSONDecoder().decode(HotKeyShortcut.self, from: data)
+            let stored = try JSONDecoder().decode(HotKeyShortcut.self, from: data)
+            if let rejection = stored.validate() {
+                // A stored chord the recorder would refuse (hand edit, older rules) is not used.
+                Self.logger.error("Stored toggle shortcut is not allowed (\(String(describing: rejection), privacy: .public)); using default")
+                return .defaultToggle
+            }
+            return stored
         } catch {
             // Stored bytes are left untouched so a later build can still read them.
             Self.logger.error("Stored toggle shortcut is undecodable; using default")

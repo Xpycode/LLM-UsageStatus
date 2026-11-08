@@ -199,7 +199,9 @@ import os
         NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: configuration) { [weak self] _, error in
             Task { @MainActor in
                 if error != nil {
+                    // unregisterAll() also dropped Command-Comma; restore it while the panel shows.
                     self?.registerHotKey()
+                    if self?.panel.isVisible == true { self?.registerSettingsShortcut() }
                     return
                 }
                 NSApp.terminate(nil)
