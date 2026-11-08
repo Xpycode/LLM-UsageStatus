@@ -4,6 +4,19 @@ Durable, project-specific decisions. Newest first.
 
 ---
 
+## 2026-11-08 — Shortcut names come from the ASCII-capable keyboard layout
+
+**Choice:** `HotKeyShortcut.displayName` names single-character keys (letters, top-row digits, ANSI
+punctuation) with `UCKeyTranslate` against `TISCopyCurrentASCIICapableKeyboardLayoutInputSource`,
+uppercased, falling back to the US name; non-character keys (F-keys, arrows, Space, Return, keypad…)
+keep their spelled-out names. The hotkey binding (virtual key code) is unchanged.
+
+**Why:** the *current* input source can be Cyrillic, Greek or an IME and yields non-Latin or no
+names; the ASCII-capable layout is what macOS uses for Command chords and what KeyboardShortcuts and
+MASShortcut use (0.2.0 plan, research R1). Backlog 11 had said "current keyboard layout".
+
+---
+
 ## 2026-11-08 — Settings window: own hotkey code, self-managed window, three sections
 
 **Choice:** Hotkey rebinding extends the app's own `GlobalHotKey` (multiple ids, configurable

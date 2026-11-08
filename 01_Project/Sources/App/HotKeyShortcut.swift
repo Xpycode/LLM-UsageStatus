@@ -33,14 +33,33 @@ struct HotKeyShortcut: Codable, Equatable, Sendable {
         self.init(keyCode: code, carbonModifiers: modifiers)
     }
 
-    var displayName: String {
+    @MainActor var displayName: String {
+        displayName(keyName: KeyboardLayoutNames.current)
+    }
+
+    /// `keyName` supplies a layout-specific name for single-character keys; nil falls back to the US name.
+    /// Function keys, navigation keys, Space and keypad keys never reach `keyName`.
+    func displayName(keyName: (UInt32) -> String?) -> String {
         var parts: [String] = []
         if carbonModifiers & UInt32(controlKey) != 0 { parts.append("Control") }
         if carbonModifiers & UInt32(optionKey) != 0 { parts.append("Option") }
         if carbonModifiers & UInt32(shiftKey) != 0 { parts.append("Shift") }
         if carbonModifiers & UInt32(cmdKey) != 0 { parts.append("Command") }
-        parts.append(Self.keyNames[keyCode] ?? "Key \(keyCode)")
+        let usName = Self.keyNames[keyCode]
+        let layoutName = Self.layoutTranslatableKeyCodes.contains(keyCode)
+            ? keyName(keyCode).flatMap(Self.usableKeyName) : nil
+        parts.append(layoutName ?? usName ?? "Key \(keyCode)")
         return parts.joined(separator: "\u{2013}")
+    }
+
+    /// Uppercases a layout-supplied key name; nil when it is empty or contains whitespace or
+    /// control characters, so the caller falls back to the US name.
+    static func usableKeyName(_ raw: String) -> String? {
+        let name = raw.uppercased()
+        let unusable = name.unicodeScalars.contains {
+            CharacterSet.whitespacesAndNewlines.contains($0) || CharacterSet.controlCharacters.contains($0)
+        }
+        return name.isEmpty || unusable ? nil : name
     }
 
     enum Rejection: Equatable {
@@ -73,6 +92,11 @@ struct HotKeyShortcut: Codable, Equatable, Sendable {
         UInt32(kVK_Option), UInt32(kVK_RightOption), UInt32(kVK_Control), UInt32(kVK_RightControl),
         UInt32(kVK_CapsLock), UInt32(kVK_Function),
     ]
+
+    /// Letters, top-row digits and ANSI punctuation: the keys whose US name is one character.
+    private static let layoutTranslatableKeyCodes: Set<UInt32> = Set(
+        keyNames.filter { $0.value.count == 1 }.keys
+    )
 
     private static let keyNames: [UInt32: String] = {
         let table: [(Int, String)] = [

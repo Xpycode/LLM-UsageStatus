@@ -16,9 +16,11 @@
 		1D4E48ED1BF0E29A4BF5FF32 /* ShortcutRecorderField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5BFD88A3AD386E75BFC757A /* ShortcutRecorderField.swift */; };
 		1E99FE25CBCF9A47B7145512 /* GlobalHotKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514EE2AF472B97AA1985CC48 /* GlobalHotKey.swift */; };
 		296F51207DAB51EDB5F6A3FB /* UsageResponseDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5BEBC9BCD01682D42F37B5 /* UsageResponseDecoder.swift */; };
+		29CB2AC7FCEBCB3A7D143544 /* help-mistral-vibe.md in Resources */ = {isa = PBXBuildFile; fileRef = 583EA444B05DE318F99F8881 /* help-mistral-vibe.md */; };
 		30DA43EC14D9C2848626AE54 /* AppVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B40468CE7090F4FBBA99D35 /* AppVersion.swift */; };
 		32F9904D8801808EEAFACAC9 /* ShortcutRecorderFieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2A54A04B0057EC58AC5CCE /* ShortcutRecorderFieldTests.swift */; };
 		33D5EC94411959A61CAADA70 /* GlobalHotKeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F39E311E6A2612C0A467434B /* GlobalHotKeyTests.swift */; };
+		344091B7C8C138115DF271A2 /* help-reading-the-panel.md in Resources */ = {isa = PBXBuildFile; fileRef = 5E28AA1B477A708F879D0613 /* help-reading-the-panel.md */; };
 		48CD3554BAAAAE0E5F2DA52F /* ClaudeTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1DA9A29E1DFD828D59DD02 /* ClaudeTokenProvider.swift */; };
 		50E84E605C398D452D8958A8 /* VibeBudgetEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1990B3291A76DB3D3CCFDA80 /* VibeBudgetEditor.swift */; };
 		550A500AA648447460D4280D /* ClaudeOAuthUsageServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A91A276F08FF60DEAA238BC /* ClaudeOAuthUsageServiceTests.swift */; };
@@ -29,22 +31,30 @@
 		5B221A6EB9DD838E8C805193 /* ClaudeLogAggregator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653152AA58139EA42CDC87C5 /* ClaudeLogAggregator.swift */; };
 		69136A175B2F1E5835FDF54E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F6753BBC944B341814A3CA22 /* Assets.xcassets */; };
 		691DB206BEB7D941B2D7F81D /* VibeJournalAggregatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1962AB6F02C1A3B93B3B8A7B /* VibeJournalAggregatorTests.swift */; };
+		697D9A8B98046E2FC4AA04EE /* KeyboardLayoutNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF79556401A23B9063E8A487 /* KeyboardLayoutNames.swift */; };
 		6AF5B6CC6BABEA3B54FB1B2C /* LLMUsageStatusApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2236B8889F6DDB2D5F356A57 /* LLMUsageStatusApp.swift */; };
 		719277C80D5D2CA7980908D2 /* UsageSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC692C15F291BE643A748AB /* UsageSnapshot.swift */; };
 		78562DDA86EF40E60B3A35D4 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB84069834FDFD792E408B5 /* SettingsWindowController.swift */; };
 		79A7E53EC8C50A8C822C428F /* ProviderModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5602417D4314F025F772B3 /* ProviderModelsTests.swift */; };
+		7D391CED615097279230E792 /* help-getting-started.md in Resources */ = {isa = PBXBuildFile; fileRef = D7E26C5F20885B0DE272E3C7 /* help-getting-started.md */; };
 		80E77CD8A15B46DBDBFD2138 /* UsageResponseDecoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E513A5ED1CFC017B7335D39 /* UsageResponseDecoderTests.swift */; };
 		85C15B1E8054471F8BF40197 /* UsageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86AEDD7CC8C3C1D4D6E1F9D /* UsageStore.swift */; };
 		86127BE71EECBA43DA3661DF /* CodexUsageServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C6F20829570EFFC12C69A6 /* CodexUsageServiceTests.swift */; };
 		86ACA730375860E14899199C /* CodexUsageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 223B33EEAE0FCC317DB5700A /* CodexUsageService.swift */; };
+		8B31CD3DBFD7A5F708C1DE72 /* help-troubleshooting.md in Resources */ = {isa = PBXBuildFile; fileRef = FF9041B540F1B302EB5FF372 /* help-troubleshooting.md */; };
 		8BDA9FF4B2A0D4537A97EEED /* UsagePreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9247D3430094602849538A72 /* UsagePreferences.swift */; };
 		93C1EF80A41B6F535200E8A1 /* LaunchAtLoginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5305E17D0F550DB53E9222F /* LaunchAtLoginTests.swift */; };
 		9487239880A4446AB3E9C4FE /* VibeRateCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A3AC80EDE2E2C9029CD760A /* VibeRateCard.swift */; };
 		9D2119BF6606A7A76DBC2469 /* VibeJournalAggregator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853AB380986CA290F24B25F4 /* VibeJournalAggregator.swift */; };
+		9FFB16A4BB15C46FD1C908D6 /* help-claude-code.md in Resources */ = {isa = PBXBuildFile; fileRef = 140171B9132391F5AB3D3DBA /* help-claude-code.md */; };
 		A08D526E1AEB647702D9677F /* ClaudeUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CE3D3C497CC5D32E1131CB5 /* ClaudeUsageProvider.swift */; };
 		A0AD7EA483F9D4C78D98F1A0 /* HotKeyShortcut.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BA3EC88F24FEC338935443 /* HotKeyShortcut.swift */; };
 		A11E7AE98D21FE2B068C5E2E /* SectionStateCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3EBD71D52ED781C4EBE4566 /* SectionStateCache.swift */; };
+		A5C172413A4389DBF717D122 /* help-settings-and-shortcuts.md in Resources */ = {isa = PBXBuildFile; fileRef = 55965A610437A75A10C169DE /* help-settings-and-shortcuts.md */; };
+		B1D7FE217EA24F5D5B295B30 /* help-authoritative-vs-estimated.md in Resources */ = {isa = PBXBuildFile; fileRef = 4FF1B21E14DD67AB8AA926E0 /* help-authoritative-vs-estimated.md */; };
 		B40C6A205FC55839BF07F058 /* CodexUsageProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C5FC1444DA093FA5FB49D8 /* CodexUsageProviderTests.swift */; };
+		B8D1B94C662FDA44883C5E8F /* help-codex.md in Resources */ = {isa = PBXBuildFile; fileRef = 3F354F5B4C1191EB9D120C56 /* help-codex.md */; };
+		BCDF9D98449ADFABFB29A446 /* help-privacy-and-data.md in Resources */ = {isa = PBXBuildFile; fileRef = 4A1BB3FBFBCBAC5AD3EB163E /* help-privacy-and-data.md */; };
 		BFFE93F8A1DFA07828DBD381 /* VibeUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A84B6F317F0425FA903EF39 /* VibeUsageProvider.swift */; };
 		C14D0945F5234D3D733B1FBB /* ClaudeOAuthUsageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03BD948C67F4E923C56A9D88 /* ClaudeOAuthUsageService.swift */; };
 		C337443E92364DAFE08C1FCC /* ClaudeUsageProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B9B89BA65CE111B9B17F230 /* ClaudeUsageProviderTests.swift */; };
@@ -53,6 +63,7 @@
 		DE343B3BF51264E678F89E4E /* UsagePreferencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBFACA8F222C460B9648EBF1 /* UsagePreferencesTests.swift */; };
 		E2B5FEB1959E9AF647649442 /* CodexUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF45307ACADAB9E1BDF5D5C6 /* CodexUsageProvider.swift */; };
 		EA56EB2DEA11B8A5D51C8899 /* VibeRateCardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0CCE6BAE057B307B9305A3B /* VibeRateCardTests.swift */; };
+		EB6BC117FCD1636DB6A19809 /* help-manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DE61336767A77ADCE9D836B /* help-manifest.json */; };
 		F907750B91316108497BCCA5 /* ProviderModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28627813D66FF774A5DB857E /* ProviderModels.swift */; };
 		FA376752DDC70FFA2BE8C49B /* VibeUsageProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D79B6AFFD91BA3A799CC6F8 /* VibeUsageProviderTests.swift */; };
 		FC2AB49AEB5CC8CD5CE2B4BB /* SectionStateCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0DDF3C0803BE188EF3E2BE1 /* SectionStateCacheTests.swift */; };
@@ -72,6 +83,7 @@
 		03BD948C67F4E923C56A9D88 /* ClaudeOAuthUsageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeOAuthUsageService.swift; sourceTree = "<group>"; };
 		065A257D1883AC52B83F878E /* AppVersionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersionTests.swift; sourceTree = "<group>"; };
 		10C5FC1444DA093FA5FB49D8 /* CodexUsageProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexUsageProviderTests.swift; sourceTree = "<group>"; };
+		140171B9132391F5AB3D3DBA /* help-claude-code.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "help-claude-code.md"; sourceTree = "<group>"; };
 		145B4E2671959B566C14E361 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1962AB6F02C1A3B93B3B8A7B /* VibeJournalAggregatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeJournalAggregatorTests.swift; sourceTree = "<group>"; };
 		1990B3291A76DB3D3CCFDA80 /* VibeBudgetEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeBudgetEditor.swift; sourceTree = "<group>"; };
@@ -83,12 +95,19 @@
 		31C6F20829570EFFC12C69A6 /* CodexUsageServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexUsageServiceTests.swift; sourceTree = "<group>"; };
 		3D79B6AFFD91BA3A799CC6F8 /* VibeUsageProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeUsageProviderTests.swift; sourceTree = "<group>"; };
 		3E513A5ED1CFC017B7335D39 /* UsageResponseDecoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageResponseDecoderTests.swift; sourceTree = "<group>"; };
+		3F354F5B4C1191EB9D120C56 /* help-codex.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "help-codex.md"; sourceTree = "<group>"; };
 		4544AE9F60C86AC4D81C5729 /* UsageStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageStatusView.swift; sourceTree = "<group>"; };
 		4854E740CDD88FDCA5DE5C32 /* LaunchAtLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLogin.swift; sourceTree = "<group>"; };
+		4A1BB3FBFBCBAC5AD3EB163E /* help-privacy-and-data.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "help-privacy-and-data.md"; sourceTree = "<group>"; };
 		4B1DA9A29E1DFD828D59DD02 /* ClaudeTokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeTokenProvider.swift; sourceTree = "<group>"; };
+		4FF1B21E14DD67AB8AA926E0 /* help-authoritative-vs-estimated.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "help-authoritative-vs-estimated.md"; sourceTree = "<group>"; };
 		514EE2AF472B97AA1985CC48 /* GlobalHotKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalHotKey.swift; sourceTree = "<group>"; };
+		55965A610437A75A10C169DE /* help-settings-and-shortcuts.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "help-settings-and-shortcuts.md"; sourceTree = "<group>"; };
+		583EA444B05DE318F99F8881 /* help-mistral-vibe.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "help-mistral-vibe.md"; sourceTree = "<group>"; };
 		5A3AC80EDE2E2C9029CD760A /* VibeRateCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeRateCard.swift; sourceTree = "<group>"; };
 		5A84B6F317F0425FA903EF39 /* VibeUsageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeUsageProvider.swift; sourceTree = "<group>"; };
+		5DE61336767A77ADCE9D836B /* help-manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "help-manifest.json"; sourceTree = "<group>"; };
+		5E28AA1B477A708F879D0613 /* help-reading-the-panel.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "help-reading-the-panel.md"; sourceTree = "<group>"; };
 		653152AA58139EA42CDC87C5 /* ClaudeLogAggregator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeLogAggregator.swift; sourceTree = "<group>"; };
 		6B9B89BA65CE111B9B17F230 /* ClaudeUsageProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeUsageProviderTests.swift; sourceTree = "<group>"; };
 		6CE3D3C497CC5D32E1131CB5 /* ClaudeUsageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeUsageProvider.swift; sourceTree = "<group>"; };
@@ -107,7 +126,9 @@
 		A6406DBE5BC91A2BCB8C679E /* SectionFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionFixtures.swift; sourceTree = "<group>"; };
 		B3460E4F1309B764C254CD4E /* UsagePanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePanelController.swift; sourceTree = "<group>"; };
 		BDB84069834FDFD792E408B5 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
+		BF79556401A23B9063E8A487 /* KeyboardLayoutNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardLayoutNames.swift; sourceTree = "<group>"; };
 		CBFACA8F222C460B9648EBF1 /* UsagePreferencesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePreferencesTests.swift; sourceTree = "<group>"; };
+		D7E26C5F20885B0DE272E3C7 /* help-getting-started.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "help-getting-started.md"; sourceTree = "<group>"; };
 		D86AEDD7CC8C3C1D4D6E1F9D /* UsageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageStore.swift; sourceTree = "<group>"; };
 		DC5602417D4314F025F772B3 /* ProviderModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderModelsTests.swift; sourceTree = "<group>"; };
 		E0DDF3C0803BE188EF3E2BE1 /* SectionStateCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionStateCacheTests.swift; sourceTree = "<group>"; };
@@ -120,6 +141,7 @@
 		FD4BFCFF3361AA07A6D11521 /* SectionFixturePreviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionFixturePreviews.swift; sourceTree = "<group>"; };
 		FE7383097646DBAAD3BAC40E /* ClaudeLogAggregatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeLogAggregatorTests.swift; sourceTree = "<group>"; };
 		FF45307ACADAB9E1BDF5D5C6 /* CodexUsageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexUsageProvider.swift; sourceTree = "<group>"; };
+		FF9041B540F1B302EB5FF372 /* help-troubleshooting.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "help-troubleshooting.md"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -186,6 +208,7 @@
 				8B40468CE7090F4FBBA99D35 /* AppVersion.swift */,
 				514EE2AF472B97AA1985CC48 /* GlobalHotKey.swift */,
 				A0BA3EC88F24FEC338935443 /* HotKeyShortcut.swift */,
+				BF79556401A23B9063E8A487 /* KeyboardLayoutNames.swift */,
 				4854E740CDD88FDCA5DE5C32 /* LaunchAtLogin.swift */,
 				2236B8889F6DDB2D5F356A57 /* LLMUsageStatusApp.swift */,
 				BDB84069834FDFD792E408B5 /* SettingsWindowController.swift */,
@@ -229,6 +252,23 @@
 				FB5E5974951BEE5C78AC243E /* UsageStoreTests.swift */,
 			);
 			path = UsageStatus;
+			sourceTree = "<group>";
+		};
+		7939B8A9771916A8413D5619 /* Help */ = {
+			isa = PBXGroup;
+			children = (
+				4FF1B21E14DD67AB8AA926E0 /* help-authoritative-vs-estimated.md */,
+				140171B9132391F5AB3D3DBA /* help-claude-code.md */,
+				3F354F5B4C1191EB9D120C56 /* help-codex.md */,
+				D7E26C5F20885B0DE272E3C7 /* help-getting-started.md */,
+				5DE61336767A77ADCE9D836B /* help-manifest.json */,
+				583EA444B05DE318F99F8881 /* help-mistral-vibe.md */,
+				4A1BB3FBFBCBAC5AD3EB163E /* help-privacy-and-data.md */,
+				5E28AA1B477A708F879D0613 /* help-reading-the-panel.md */,
+				55965A610437A75A10C169DE /* help-settings-and-shortcuts.md */,
+				FF9041B540F1B302EB5FF372 /* help-troubleshooting.md */,
+			);
+			path = Help;
 			sourceTree = "<group>";
 		};
 		9A5D3A85BD93CF86C9598BF4 /* Services */ = {
@@ -318,6 +358,7 @@
 			isa = PBXGroup;
 			children = (
 				F6753BBC944B341814A3CA22 /* Assets.xcassets */,
+				7939B8A9771916A8413D5619 /* Help */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -424,6 +465,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				69136A175B2F1E5835FDF54E /* Assets.xcassets in Resources */,
+				B1D7FE217EA24F5D5B295B30 /* help-authoritative-vs-estimated.md in Resources */,
+				9FFB16A4BB15C46FD1C908D6 /* help-claude-code.md in Resources */,
+				B8D1B94C662FDA44883C5E8F /* help-codex.md in Resources */,
+				7D391CED615097279230E792 /* help-getting-started.md in Resources */,
+				EB6BC117FCD1636DB6A19809 /* help-manifest.json in Resources */,
+				29CB2AC7FCEBCB3A7D143544 /* help-mistral-vibe.md in Resources */,
+				BCDF9D98449ADFABFB29A446 /* help-privacy-and-data.md in Resources */,
+				344091B7C8C138115DF271A2 /* help-reading-the-panel.md in Resources */,
+				A5C172413A4389DBF717D122 /* help-settings-and-shortcuts.md in Resources */,
+				8B31CD3DBFD7A5F708C1DE72 /* help-troubleshooting.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -473,6 +524,7 @@
 				86ACA730375860E14899199C /* CodexUsageService.swift in Sources */,
 				1E99FE25CBCF9A47B7145512 /* GlobalHotKey.swift in Sources */,
 				A0AD7EA483F9D4C78D98F1A0 /* HotKeyShortcut.swift in Sources */,
+				697D9A8B98046E2FC4AA04EE /* KeyboardLayoutNames.swift in Sources */,
 				6AF5B6CC6BABEA3B54FB1B2C /* LLMUsageStatusApp.swift in Sources */,
 				557AAC5CE58B290D72DD68F3 /* LaunchAtLogin.swift in Sources */,
 				F907750B91316108497BCCA5 /* ProviderModels.swift in Sources */,

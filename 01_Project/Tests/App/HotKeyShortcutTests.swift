@@ -25,6 +25,8 @@ final class HotKeyShortcutTests: XCTestCase {
             isARepeat: false, keyCode: UInt16(code)))
     }
 
+    private let usOnly: (UInt32) -> String? = { _ in nil }
+
     func testEventMapsAllFourModifiers() throws {
         let event = try keyEvent(kVK_ANSI_L, [.command, .option, .control, .shift])
         let shortcut = try XCTUnwrap(HotKeyShortcut(event: event))
@@ -44,15 +46,15 @@ final class HotKeyShortcutTests: XCTestCase {
     }
 
     func testDisplayNameDefaultsAndOrdering() {
-        XCTAssertEqual(HotKeyShortcut.defaultToggle.displayName, "Control\u{2013}Option\u{2013}Command\u{2013}L")
-        XCTAssertEqual(HotKeyShortcut.settings.displayName, "Command\u{2013},")
+        XCTAssertEqual(HotKeyShortcut.defaultToggle.displayName(keyName: usOnly), "Control\u{2013}Option\u{2013}Command\u{2013}L")
+        XCTAssertEqual(HotKeyShortcut.settings.displayName(keyName: usOnly), "Command\u{2013},")
         let all = HotKeyShortcut(keyCode: UInt32(kVK_ANSI_A), carbonModifiers: UInt32(cmdKey | optionKey | controlKey | shiftKey))
-        XCTAssertEqual(all.displayName, "Control\u{2013}Option\u{2013}Shift\u{2013}Command\u{2013}A")
+        XCTAssertEqual(all.displayName(keyName: usOnly), "Control\u{2013}Option\u{2013}Shift\u{2013}Command\u{2013}A")
     }
 
     func testDisplayNameKeyTable() {
         let cmd = UInt32(cmdKey)
-        func name(_ code: Int) -> String { HotKeyShortcut(keyCode: UInt32(code), carbonModifiers: cmd).displayName }
+        func name(_ code: Int) -> String { HotKeyShortcut(keyCode: UInt32(code), carbonModifiers: cmd).displayName(keyName: usOnly) }
         XCTAssertEqual(name(kVK_ANSI_1), "Command\u{2013}1")
         XCTAssertEqual(name(kVK_ANSI_Keypad1), "Command\u{2013}Keypad 1")
         XCTAssertNotEqual(name(kVK_ANSI_1), name(kVK_ANSI_Keypad1))
@@ -63,6 +65,40 @@ final class HotKeyShortcutTests: XCTestCase {
         XCTAssertEqual(name(kVK_Tab), "Command\u{2013}Tab")
         XCTAssertEqual(name(kVK_Delete), "Command\u{2013}Delete")
         XCTAssertEqual(name(kVK_ANSI_Slash), "Command\u{2013}/")
+    }
+
+    func testLayoutNameReplacesUSName() {
+        let german: [UInt32: String] = [UInt32(kVK_ANSI_Y): "z", UInt32(kVK_ANSI_Z): "y"]
+        let shortcut = HotKeyShortcut(keyCode: UInt32(kVK_ANSI_Y), carbonModifiers: UInt32(controlKey | cmdKey))
+        XCTAssertEqual(shortcut.displayName(keyName: { german[$0] }), "Control\u{2013}Command\u{2013}Z")
+        let other = HotKeyShortcut(keyCode: UInt32(kVK_ANSI_Z), carbonModifiers: UInt32(controlKey))
+        XCTAssertEqual(other.displayName(keyName: { german[$0] }), "Control\u{2013}Y")
+        // Keys the fake does not know keep their US name.
+        XCTAssertEqual(HotKeyShortcut.defaultToggle.displayName(keyName: { german[$0] }), "Control\u{2013}Option\u{2013}Command\u{2013}L")
+    }
+
+    func testUnusableLayoutNamesFallBackToUSName() {
+        for bad in [nil, "", " ", "\u{10}"] as [String?] {
+            XCTAssertEqual(
+                HotKeyShortcut.defaultToggle.displayName(keyName: { _ in bad }),
+                "Control\u{2013}Option\u{2013}Command\u{2013}L", "layout name \(String(describing: bad))")
+        }
+    }
+
+    func testNonCharacterKeysNeverAskForLayoutName() {
+        var asked: [UInt32] = []
+        let recording: (UInt32) -> String? = { asked.append($0); return "?" }
+        for code in [kVK_F5, kVK_Space, kVK_ANSI_Keypad1, kVK_LeftArrow, kVK_RightArrow, kVK_UpArrow,
+                     kVK_DownArrow, kVK_Return, kVK_Tab, kVK_Delete, kVK_ForwardDelete, kVK_Escape,
+                     kVK_Home, kVK_End, kVK_PageUp, kVK_PageDown, kVK_Help, kVK_ANSI_KeypadPlus] {
+            _ = HotKeyShortcut(keyCode: UInt32(code), carbonModifiers: UInt32(cmdKey)).displayName(keyName: recording)
+        }
+        XCTAssertTrue(asked.isEmpty, "asked for \(asked)")
+    }
+
+    func testLiveDefaultToggleName() {
+        // L sits on the same key on US, QWERTZ and AZERTY layouts.
+        XCTAssertEqual(HotKeyShortcut.defaultToggle.displayName, "Control\u{2013}Option\u{2013}Command\u{2013}L")
     }
 
     func testValidateAcceptsDefault() {

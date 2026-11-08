@@ -5,7 +5,7 @@
 > Task state/evidence is authoritative here; TASKS links here and holds backlog/inbox.
 > Follow the master's `reference/task-state.md` for legacy reconciliation and archival.
 
-**Progress:** 0/11 tasks; external acceptance: E1 (site roster), E2 (manual, Debug), E3 (notarize),
+**Progress:** 3/11 tasks (Wave 1: 1.2–1.4 done; 1.1 implemented, awaiting CI); external acceptance: E1 (site roster), E2 (manual, Debug), E3 (notarize),
 E4 (notarized smoke test), E5 (publish — optional, decision pending).
 **Task states:** unchecked = pending / implemented-unverified / blocked (name gate);
 checked = complete with required evidence. Task identity includes this plan path plus ID.
@@ -157,7 +157,7 @@ extension HotKeyShortcut {
   - Backpressure: `xcodebuild … build-for-testing` (after coordinator `xcodegen generate` for the new
     file); CI suite at integration.
 
-- [ ] **1.2**: Vendor HelpMenu with dockless adaptations → `01_Project/HelpMenu/**`
+- [x] **1.2**: Vendor HelpMenu with dockless adaptations → `01_Project/HelpMenu/**`
   - Depends on / external gates: none
   - Owns: `01_Project/HelpMenu/**` (copy of `CountClockWise/Vendor/HelpMenu`, provenance note)
   - Interface: `HelpContent(manifest:in:)`, `HelpWindowController.showHelp(content:)` (and
@@ -168,7 +168,7 @@ extension HotKeyShortcut {
     fixes noted for upstream `appHELP/docs/TASKS.md` (coordinator records, does not edit upstream).
   - Backpressure: `swift build` in `01_Project/HelpMenu`.
 
-- [ ] **1.3**: Vendor AppCitizenshipKit + FeedbackKit → `01_Project/Vendor/**`
+- [x] **1.3**: Vendor AppCitizenshipKit + FeedbackKit → `01_Project/Vendor/**`
   - Depends on / external gates: none
   - Owns: `01_Project/Vendor/AppCitizenshipKit/**`, `01_Project/Vendor/FeedbackKit/**`,
     `01_Project/Vendor/README.md`
@@ -178,7 +178,7 @@ extension HotKeyShortcut {
     README records origin SHAs and the refresh procedure.
   - Backpressure: `swift build` in `01_Project/Vendor/AppCitizenshipKit`.
 
-- [ ] **1.4**: Help content → `01_Project/Resources/Help/**`
+- [x] **1.4**: Help content → `01_Project/Resources/Help/**`
   - Depends on / external gates: none (format from 1.2's sources, read-only: manifest schema in the
     vendored `HelpContent`)
   - Owns: `01_Project/Resources/Help/help-manifest.json`, `01_Project/Resources/Help/*.md`
@@ -321,6 +321,7 @@ extension HotKeyShortcut {
 | Wave / task IDs | Assignments or serial reason | Validation / evidence | Commits or exception | Remaining gates / next action or stop reason |
 |---|---|---|---|---|
 | — | Plan written 2026-11-08 from four parallel research agents (`research/findings.md`) | — | — | D3/D5 confirmed; user requested execution (Wave 1 first) |
+| W1: 1.1–1.4 | Four parallel fresh-context agents (developer ×3, technical-writer for 1.4); coordinator pre-created the `KeyboardLayoutNames.swift` stub + `xcodegen generate` so 1.1 needed no project edit | 1.1: agent `build-for-testing` ok; **coordinator fix** — pure `displayName(keyName:)` did not uppercase/filter (tests expecting "Z" and the US fallback would have failed); moved into `HotKeyShortcut.usableKeyName`. 1.2: `swift build` ok; 3 dockless fixes + frame autosave in `HelpWindowController.swift`; upstream `HelpContent.loadMarkdown` keeps one `try?` (vendored code, visible fallback body; accepted). 1.3: Sources byte-identical to zPackages ACK a6c06af / FK 8a240f1 and the CountClockWise copy; `swift build` ok. 1.4: 9 topics + manifest, JSON valid, no glyphs. Integrated: `xcodegen generate`, `build-for-testing` **TEST BUILD SUCCEEDED**, 10 help files flat in the bundle. D1 in `docs/decisions.md`. | Wave 1 commit | 1.1 unchecked until CI runs the suite (needs a push). Next: Wave 2 (2.1 first) — not yet requested |
 
 ---
 *Keep active while required work or acceptance is incomplete. On completion, retire in place (as the

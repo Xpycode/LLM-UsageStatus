@@ -1,0 +1,14 @@
+{
+  "windowTitle": "LLM Usage Status Help",
+  "topics": [
+    { "id": "getting-started", "title": "Getting Started", "markdownFile": "help-getting-started.md", "group": "Basics" },
+    { "id": "reading-the-panel", "title": "Reading the Panel", "markdownFile": "help-reading-the-panel.md", "group": "Basics" },
+    { "id": "authoritative-vs-estimated", "title": "Authoritative vs Estimated", "markdownFile": "help-authoritative-vs-estimated.md", "group": "Basics" },
+    { "id": "codex", "title": "Codex", "markdownFile": "help-codex.md", "group": "Providers" },
+    { "id": "claude-code", "title": "Claude Code", "markdownFile": "help-claude-code.md", "group": "Providers" },
+    { "id": "mistral-vibe", "title": "Mistral Vibe", "markdownFile": "help-mistral-vibe.md", "group": "Providers" },
+    { "id": "settings-and-shortcuts", "title": "Settings and Shortcuts", "markdownFile": "help-settings-and-shortcuts.md", "group": "Setup and Support" },
+    { "id": "troubleshooting", "title": "Troubleshooting", "markdownFile": "help-troubleshooting.md", "group": "Setup and Support" },
+    { "id": "privacy-and-data", "title": "Privacy and Data Sources", "markdownFile": "help-privacy-and-data.md", "group": "Setup and Support" }
+  ]
+}
