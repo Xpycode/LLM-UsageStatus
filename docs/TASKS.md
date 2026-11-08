@@ -2,6 +2,7 @@
 
 - **Plan (retired 2026-10-29):** `docs/plans/2026-10-29-multi-provider-hud/IMPLEMENTATION_PLAN.md` — **COMPLETE**: 17/17 code tasks, E1 passed, E2 passed (notarized 0.1.0, Apple verdict Accepted, stapled, spctl clean). It stays in place as the permanent execution record.
 - **Plan (retired 2026-11-08):** `docs/plans/2026-11-06-settings-window/IMPLEMENTATION_PLAN.md` — **COMPLETE**: Settings window (launch at login, shortcut rebinding, About), 8/8 tasks (CI 204 green, 288f5ab), E1 passed. It stays in place as the permanent execution record.
+- **Active plan (2026-11-08):** `docs/plans/2026-11-08-v0.2.0/IMPLEMENTATION_PLAN.md` — 0.2.0: layout-aware shortcut names, in-app Help, Send Feedback… / Leave a Tip, notarized release. 11 tasks, 4 waves + E1–E5; first ready: Wave 1 (1.1–1.4). D3/D5 confirmed; execution requested (Wave 1 first).
 
 ## Backlog
 
@@ -31,10 +32,14 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
     multi-vendor `VibeRateCard` (Z.ai GLM-5.3 rates added), and partial sums render visibly
     labeled (`total+ · N sessions unpriced`); the budget headline still requires full pricing.
     Rate-card prices are bundled literals needing hand-updates when vendors change them.
-11. **Layout-aware shortcut names** (2026-11-08, from the Settings Wave 3 review; should-fix, not
+11. → **Planned 2026-11-08** (0.2.0 plan, task 1.1/2.4). **Layout-aware shortcut names** (2026-11-08, from the Settings Wave 3 review; should-fix, not
     blocking): `HotKeyShortcut.displayName` maps key codes to US-ANSI letters, so on QWERTZ/AZERTY
     the footer and recorder name the wrong letter (Control–Command–Z shows as …–Y). Fix with
     `UCKeyTranslate` against the current keyboard layout, keeping the US name as fallback.
+12. **Positional shortcut refusals on non-US layouts** (2026-11-08, 0.2.0 research R1): `systemKeyCodes`
+    and the reserved Command-Comma are matched by key position, so on QWERTZ physical Command-Z
+    (Undo) is not refused while Command-Y is, and "Command-Comma" text is wrong on AZERTY. The ISO
+    `<` key (`kVK_ISO_Section`) is rejected as unsupported. Consider after 0.2.0.
 
 ## Inbox
 
@@ -44,9 +49,9 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
     most-skipped agent-app minimum — hotkey rebinding (ShortcutKit or recorder view), and a
     version-visible About section (version is currently nowhere in the UI). Recommended first:
     local code only, no infrastructure.
-  - **Feedback + Donate** via `AppCitizenshipKit` (right-click menu items): needs the app slug
+  - → **Planned 2026-11-08** (0.2.0 plan, 1.3/2.2/3.1, E1). **Feedback + Donate** via `AppCitizenshipKit` (right-click menu items): needs the app slug
     in `feedback-submit.php` allow-list and `donate.html` registration on the user's site.
-  - **In-app help** via the vendored HelpMenu approach, adapted to the dockless panel/menu
+  - → **Planned 2026-11-08** (0.2.0 plan, 1.2/1.4/2.3/3.1). **In-app help** via the vendored HelpMenu approach, adapted to the dockless panel/menu
     (document Control-Option-Command-L, the Claude sign-in refresh behavior, estimates labeling).
   - **Sparkle auto-update** with EdDSA appcast: gated on the public-distribution go-ahead and
     where the appcast is hosted; last in the sequence by design. Build numbers must stay

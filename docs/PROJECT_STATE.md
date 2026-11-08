@@ -1,6 +1,6 @@
 # PROJECT_STATE — LLM-UsageStatus
 
-**Last updated:** 2026-11-08 (Settings plan complete — E1 passed; retired)
+**Last updated:** 2026-11-08 (0.2.0 plan written; Settings plan retired)
 
 ## Identity
 
@@ -15,9 +15,10 @@ Developer ID signed, notarized, zero configuration for end users.
 
 ## Now
 
-- **Execution:** no active plan. Settings plan `docs/plans/2026-11-06-settings-window/IMPLEMENTATION_PLAN.md`
-  **COMPLETE 2026-11-08** (8/8 tasks, E1 passed) and retired in place. Next: pick from TASKS
-  Backlog/Inbox (e.g. Backlog 11 layout-aware shortcut names, Feedback/Donate, Help, Sparkle, 0.2.0).
+- **Execution:** plan `docs/plans/2026-11-08-v0.2.0/IMPLEMENTATION_PLAN.md` (0.2.0: layout-aware
+  names, Help, Feedback/Tip, notarized release) — 0/11, Wave 1 (1.1–1.4) ready; execution requested
+  2026-11-08 (D3/D5 confirmed). Settings plan
+  complete and retired 2026-11-08.
 - Installed: E1 build (288f5ab, Debug, ad-hoc) in `/Applications/LLM-UsageStatus.app`, running;
   not a release — replace with a notarized 0.2.0 before redistribution.
 - `dist/0.1.0` is stale vs source (rebuild + re-notarize before any redistribution).
@@ -36,5 +37,5 @@ Developer ID signed, notarized, zero configuration for end users.
 ## Handoff
 
 - Current handoff: `docs/sessions/2026-11-08.md` → **Resume (end of 2026-11-08, after E1)** —
-  Settings plan complete; choose the next item from TASKS.
+  Settings plan complete; 0.2.0 plan written afterwards (confirm D3/D5, then `/execute` Wave 1).
 - Decisions: `docs/decisions.md`
