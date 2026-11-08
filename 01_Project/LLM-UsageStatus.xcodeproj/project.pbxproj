@@ -21,6 +21,7 @@
 		32F9904D8801808EEAFACAC9 /* ShortcutRecorderFieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2A54A04B0057EC58AC5CCE /* ShortcutRecorderFieldTests.swift */; };
 		33D5EC94411959A61CAADA70 /* GlobalHotKeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F39E311E6A2612C0A467434B /* GlobalHotKeyTests.swift */; };
 		344091B7C8C138115DF271A2 /* help-reading-the-panel.md in Resources */ = {isa = PBXBuildFile; fileRef = 5E28AA1B477A708F879D0613 /* help-reading-the-panel.md */; };
+		440EC10CBFBE485DC69B8A41 /* CitizenshipSupportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86039F312015B4BC640CE679 /* CitizenshipSupportTests.swift */; };
 		48CD3554BAAAAE0E5F2DA52F /* ClaudeTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1DA9A29E1DFD828D59DD02 /* ClaudeTokenProvider.swift */; };
 		50E84E605C398D452D8958A8 /* VibeBudgetEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1990B3291A76DB3D3CCFDA80 /* VibeBudgetEditor.swift */; };
 		550A500AA648447460D4280D /* ClaudeOAuthUsageServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A91A276F08FF60DEAA238BC /* ClaudeOAuthUsageServiceTests.swift */; };
@@ -34,8 +35,10 @@
 		697D9A8B98046E2FC4AA04EE /* KeyboardLayoutNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF79556401A23B9063E8A487 /* KeyboardLayoutNames.swift */; };
 		6AF5B6CC6BABEA3B54FB1B2C /* LLMUsageStatusApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2236B8889F6DDB2D5F356A57 /* LLMUsageStatusApp.swift */; };
 		719277C80D5D2CA7980908D2 /* UsageSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC692C15F291BE643A748AB /* UsageSnapshot.swift */; };
+		73EA4FC8CFD0C10C34171990 /* CitizenshipSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BC9F0AEA7FBAA60EC8C35B1 /* CitizenshipSupport.swift */; };
 		78562DDA86EF40E60B3A35D4 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB84069834FDFD792E408B5 /* SettingsWindowController.swift */; };
 		79A7E53EC8C50A8C822C428F /* ProviderModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5602417D4314F025F772B3 /* ProviderModelsTests.swift */; };
+		7A02EC576E0B9FFCF167DC0B /* HelpSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA1AA0B5A00277E1B5A99C4 /* HelpSupport.swift */; };
 		7D391CED615097279230E792 /* help-getting-started.md in Resources */ = {isa = PBXBuildFile; fileRef = D7E26C5F20885B0DE272E3C7 /* help-getting-started.md */; };
 		80E77CD8A15B46DBDBFD2138 /* UsageResponseDecoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E513A5ED1CFC017B7335D39 /* UsageResponseDecoderTests.swift */; };
 		85C15B1E8054471F8BF40197 /* UsageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86AEDD7CC8C3C1D4D6E1F9D /* UsageStore.swift */; };
@@ -51,8 +54,11 @@
 		A0AD7EA483F9D4C78D98F1A0 /* HotKeyShortcut.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BA3EC88F24FEC338935443 /* HotKeyShortcut.swift */; };
 		A11E7AE98D21FE2B068C5E2E /* SectionStateCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3EBD71D52ED781C4EBE4566 /* SectionStateCache.swift */; };
 		A5C172413A4389DBF717D122 /* help-settings-and-shortcuts.md in Resources */ = {isa = PBXBuildFile; fileRef = 55965A610437A75A10C169DE /* help-settings-and-shortcuts.md */; };
+		A97FB8287595283CB4BC41C7 /* HelpSupportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F30A41F6F2C68A3AC78020 /* HelpSupportTests.swift */; };
+		AABE5867B6BBED0512B6EDE8 /* HelpMenu in Frameworks */ = {isa = PBXBuildFile; productRef = 61FB8CF4A35A815B99845FC5 /* HelpMenu */; };
 		B1D7FE217EA24F5D5B295B30 /* help-authoritative-vs-estimated.md in Resources */ = {isa = PBXBuildFile; fileRef = 4FF1B21E14DD67AB8AA926E0 /* help-authoritative-vs-estimated.md */; };
 		B40C6A205FC55839BF07F058 /* CodexUsageProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C5FC1444DA093FA5FB49D8 /* CodexUsageProviderTests.swift */; };
+		B737170558EE34AED41AA8CC /* AppCitizenshipKit in Frameworks */ = {isa = PBXBuildFile; productRef = 29862628904A19EAAEBA8059 /* AppCitizenshipKit */; };
 		B8D1B94C662FDA44883C5E8F /* help-codex.md in Resources */ = {isa = PBXBuildFile; fileRef = 3F354F5B4C1191EB9D120C56 /* help-codex.md */; };
 		BCDF9D98449ADFABFB29A446 /* help-privacy-and-data.md in Resources */ = {isa = PBXBuildFile; fileRef = 4A1BB3FBFBCBAC5AD3EB163E /* help-privacy-and-data.md */; };
 		BFFE93F8A1DFA07828DBD381 /* VibeUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A84B6F317F0425FA903EF39 /* VibeUsageProvider.swift */; };
@@ -62,6 +68,7 @@
 		C71DA81FC5D7A148750B6548 /* UsagePanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3460E4F1309B764C254CD4E /* UsagePanelController.swift */; };
 		DE343B3BF51264E678F89E4E /* UsagePreferencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBFACA8F222C460B9648EBF1 /* UsagePreferencesTests.swift */; };
 		E2B5FEB1959E9AF647649442 /* CodexUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF45307ACADAB9E1BDF5D5C6 /* CodexUsageProvider.swift */; };
+		E8B201E64D9D0C13634F3387 /* FeedbackKit in Frameworks */ = {isa = PBXBuildFile; productRef = E94D3BCB48AD178C4B2E9021 /* FeedbackKit */; };
 		EA56EB2DEA11B8A5D51C8899 /* VibeRateCardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0CCE6BAE057B307B9305A3B /* VibeRateCardTests.swift */; };
 		EB6BC117FCD1636DB6A19809 /* help-manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DE61336767A77ADCE9D836B /* help-manifest.json */; };
 		F907750B91316108497BCCA5 /* ProviderModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28627813D66FF774A5DB857E /* ProviderModels.swift */; };
@@ -116,17 +123,24 @@
 		7AC39F644D4F732B0A73938A /* LLM-UsageStatus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "LLM-UsageStatus.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B080AE406F2EC0DB4A7E232 /* HotKeyShortcutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyShortcutTests.swift; sourceTree = "<group>"; };
 		853AB380986CA290F24B25F4 /* VibeJournalAggregator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeJournalAggregator.swift; sourceTree = "<group>"; };
+		86039F312015B4BC640CE679 /* CitizenshipSupportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CitizenshipSupportTests.swift; sourceTree = "<group>"; };
 		8B2A54A04B0057EC58AC5CCE /* ShortcutRecorderFieldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutRecorderFieldTests.swift; sourceTree = "<group>"; };
 		8B40468CE7090F4FBBA99D35 /* AppVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersion.swift; sourceTree = "<group>"; };
+		8BC9F0AEA7FBAA60EC8C35B1 /* CitizenshipSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CitizenshipSupport.swift; sourceTree = "<group>"; };
 		900D40998E18F3691B8C96F4 /* SectionFixtureRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionFixtureRenderTests.swift; sourceTree = "<group>"; };
 		9247D3430094602849538A72 /* UsagePreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePreferences.swift; sourceTree = "<group>"; };
+		96E3D88EC2A8722D4554D631 /* HelpMenu */ = {isa = PBXFileReference; lastKnownFileType = folder; name = HelpMenu; path = HelpMenu; sourceTree = SOURCE_ROOT; };
 		A097E4846F5F9BA0AF0A9C2D /* LLM-UsageStatusTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "LLM-UsageStatusTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0BA3EC88F24FEC338935443 /* HotKeyShortcut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyShortcut.swift; sourceTree = "<group>"; };
 		A0CCE6BAE057B307B9305A3B /* VibeRateCardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeRateCardTests.swift; sourceTree = "<group>"; };
 		A6406DBE5BC91A2BCB8C679E /* SectionFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionFixtures.swift; sourceTree = "<group>"; };
+		A9C198FC97BA7F2CC97787B9 /* AppCitizenshipKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AppCitizenshipKit; path = Vendor/AppCitizenshipKit; sourceTree = SOURCE_ROOT; };
+		ABF16087F8B36543496470B5 /* FeedbackKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FeedbackKit; path = Vendor/FeedbackKit; sourceTree = SOURCE_ROOT; };
 		B3460E4F1309B764C254CD4E /* UsagePanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePanelController.swift; sourceTree = "<group>"; };
+		BBA1AA0B5A00277E1B5A99C4 /* HelpSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpSupport.swift; sourceTree = "<group>"; };
 		BDB84069834FDFD792E408B5 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		BF79556401A23B9063E8A487 /* KeyboardLayoutNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardLayoutNames.swift; sourceTree = "<group>"; };
+		C9F30A41F6F2C68A3AC78020 /* HelpSupportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpSupportTests.swift; sourceTree = "<group>"; };
 		CBFACA8F222C460B9648EBF1 /* UsagePreferencesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePreferencesTests.swift; sourceTree = "<group>"; };
 		D7E26C5F20885B0DE272E3C7 /* help-getting-started.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "help-getting-started.md"; sourceTree = "<group>"; };
 		D86AEDD7CC8C3C1D4D6E1F9D /* UsageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageStore.swift; sourceTree = "<group>"; };
@@ -143,6 +157,19 @@
 		FF45307ACADAB9E1BDF5D5C6 /* CodexUsageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexUsageProvider.swift; sourceTree = "<group>"; };
 		FF9041B540F1B302EB5FF372 /* help-troubleshooting.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "help-troubleshooting.md"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2ED5DA815D7A1228B7D5410D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AABE5867B6BBED0512B6EDE8 /* HelpMenu in Frameworks */,
+				B737170558EE34AED41AA8CC /* AppCitizenshipKit in Frameworks */,
+				E8B201E64D9D0C13634F3387 /* FeedbackKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		0266E5528468E7A863C28F48 /* Vibe */ = {
@@ -163,11 +190,23 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		270282F51C7D3A24F7D252DE /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				A9C198FC97BA7F2CC97787B9 /* AppCitizenshipKit */,
+				ABF16087F8B36543496470B5 /* FeedbackKit */,
+				96E3D88EC2A8722D4554D631 /* HelpMenu */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
 		2D642342F6EB0C5CA7010158 /* App */ = {
 			isa = PBXGroup;
 			children = (
 				065A257D1883AC52B83F878E /* AppVersionTests.swift */,
+				86039F312015B4BC640CE679 /* CitizenshipSupportTests.swift */,
 				F39E311E6A2612C0A467434B /* GlobalHotKeyTests.swift */,
+				C9F30A41F6F2C68A3AC78020 /* HelpSupportTests.swift */,
 				7B080AE406F2EC0DB4A7E232 /* HotKeyShortcutTests.swift */,
 				E5305E17D0F550DB53E9222F /* LaunchAtLoginTests.swift */,
 				8B2A54A04B0057EC58AC5CCE /* ShortcutRecorderFieldTests.swift */,
@@ -206,7 +245,9 @@
 			children = (
 				145B4E2671959B566C14E361 /* AppDelegate.swift */,
 				8B40468CE7090F4FBBA99D35 /* AppVersion.swift */,
+				8BC9F0AEA7FBAA60EC8C35B1 /* CitizenshipSupport.swift */,
 				514EE2AF472B97AA1985CC48 /* GlobalHotKey.swift */,
+				BBA1AA0B5A00277E1B5A99C4 /* HelpSupport.swift */,
 				A0BA3EC88F24FEC338935443 /* HotKeyShortcut.swift */,
 				BF79556401A23B9063E8A487 /* KeyboardLayoutNames.swift */,
 				4854E740CDD88FDCA5DE5C32 /* LaunchAtLogin.swift */,
@@ -336,6 +377,7 @@
 		CDF2DF933F31954A1C58E66E = {
 			isa = PBXGroup;
 			children = (
+				270282F51C7D3A24F7D252DE /* Packages */,
 				D4D8C6E49A0D9FBE60E54ABF /* Resources */,
 				AEC47E8FC71FC084F73FEFC4 /* Sources */,
 				BC3491F46A5D8DE8CFC8D10F /* Tests */,
@@ -416,6 +458,7 @@
 			buildPhases = (
 				E43A9BAD4B78D4EF30A0A1D1 /* Sources */,
 				826AB634BBD3EF6CE9E47EA8 /* Resources */,
+				2ED5DA815D7A1228B7D5410D /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -423,6 +466,9 @@
 			);
 			name = "LLM-UsageStatus";
 			packageProductDependencies = (
+				61FB8CF4A35A815B99845FC5 /* HelpMenu */,
+				29862628904A19EAAEBA8059 /* AppCitizenshipKit */,
+				E94D3BCB48AD178C4B2E9021 /* FeedbackKit */,
 			);
 			productName = "LLM-UsageStatus";
 			productReference = 7AC39F644D4F732B0A73938A /* LLM-UsageStatus.app */;
@@ -448,6 +494,11 @@
 			);
 			mainGroup = CDF2DF933F31954A1C58E66E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				8415512DB2D2C7BC95C06F49 /* XCLocalSwiftPackageReference "Vendor/AppCitizenshipKit" */,
+				7DB34D27D18EF9D294FF9103 /* XCLocalSwiftPackageReference "Vendor/FeedbackKit" */,
+				B70AB641F688B8392DC2B8A9 /* XCLocalSwiftPackageReference "HelpMenu" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EAB30DF3ECF3F8CC04415FCB /* Products */;
 			projectDirPath = "";
@@ -486,12 +537,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				09C96577CD723EB282A8C805 /* AppVersionTests.swift in Sources */,
+				440EC10CBFBE485DC69B8A41 /* CitizenshipSupportTests.swift in Sources */,
 				141D2409FAB57983E555A62E /* ClaudeLogAggregatorTests.swift in Sources */,
 				550A500AA648447460D4280D /* ClaudeOAuthUsageServiceTests.swift in Sources */,
 				C337443E92364DAFE08C1FCC /* ClaudeUsageProviderTests.swift in Sources */,
 				B40C6A205FC55839BF07F058 /* CodexUsageProviderTests.swift in Sources */,
 				86127BE71EECBA43DA3661DF /* CodexUsageServiceTests.swift in Sources */,
 				33D5EC94411959A61CAADA70 /* GlobalHotKeyTests.swift in Sources */,
+				A97FB8287595283CB4BC41C7 /* HelpSupportTests.swift in Sources */,
 				5588004976C8171D5B310086 /* HotKeyShortcutTests.swift in Sources */,
 				93C1EF80A41B6F535200E8A1 /* LaunchAtLoginTests.swift in Sources */,
 				79A7E53EC8C50A8C822C428F /* ProviderModelsTests.swift in Sources */,
@@ -516,6 +569,7 @@
 			files = (
 				08D12EE3A38C73CF510ECF1C /* AppDelegate.swift in Sources */,
 				30DA43EC14D9C2848626AE54 /* AppVersion.swift in Sources */,
+				73EA4FC8CFD0C10C34171990 /* CitizenshipSupport.swift in Sources */,
 				5B221A6EB9DD838E8C805193 /* ClaudeLogAggregator.swift in Sources */,
 				C14D0945F5234D3D733B1FBB /* ClaudeOAuthUsageService.swift in Sources */,
 				48CD3554BAAAAE0E5F2DA52F /* ClaudeTokenProvider.swift in Sources */,
@@ -523,6 +577,7 @@
 				E2B5FEB1959E9AF647649442 /* CodexUsageProvider.swift in Sources */,
 				86ACA730375860E14899199C /* CodexUsageService.swift in Sources */,
 				1E99FE25CBCF9A47B7145512 /* GlobalHotKey.swift in Sources */,
+				7A02EC576E0B9FFCF167DC0B /* HelpSupport.swift in Sources */,
 				A0AD7EA483F9D4C78D98F1A0 /* HotKeyShortcut.swift in Sources */,
 				697D9A8B98046E2FC4AA04EE /* KeyboardLayoutNames.swift in Sources */,
 				6AF5B6CC6BABEA3B54FB1B2C /* LLMUsageStatusApp.swift in Sources */,
@@ -791,6 +846,36 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		7DB34D27D18EF9D294FF9103 /* XCLocalSwiftPackageReference "Vendor/FeedbackKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Vendor/FeedbackKit;
+		};
+		8415512DB2D2C7BC95C06F49 /* XCLocalSwiftPackageReference "Vendor/AppCitizenshipKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Vendor/AppCitizenshipKit;
+		};
+		B70AB641F688B8392DC2B8A9 /* XCLocalSwiftPackageReference "HelpMenu" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = HelpMenu;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		29862628904A19EAAEBA8059 /* AppCitizenshipKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AppCitizenshipKit;
+		};
+		61FB8CF4A35A815B99845FC5 /* HelpMenu */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = HelpMenu;
+		};
+		E94D3BCB48AD178C4B2E9021 /* FeedbackKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FeedbackKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 83FC9CB3EAF47DC63722A4E6 /* Project object */;
 }

@@ -159,6 +159,53 @@ final class ShortcutRecorderFieldTests: XCTestCase {
         XCTAssertTrue(probe.recording.isEmpty)
     }
 
+    private final class NameSource {
+        var name = "Y"
+    }
+
+    private func makeLayoutRecorder(
+        center: NotificationCenter, source: NameSource
+    ) -> ShortcutRecorderField {
+        ShortcutRecorderField(
+            shortcut: HotKeyShortcut(keyCode: UInt32(kVK_ANSI_Z), carbonModifiers: UInt32(cmdKey | shiftKey)),
+            notificationCenter: center,
+            keyName: { _ in source.name },
+            commit: { _ in .accepted },
+            recordingChanged: { _ in })
+    }
+
+    func testLayoutChangeRefreshesDisplay() {
+        let center = NotificationCenter()
+        let source = NameSource()
+        let recorder = makeLayoutRecorder(center: center, source: source)
+        XCTAssertEqual(recorder.accessibilityValue() as? String, HotKeyShortcut(
+            keyCode: UInt32(kVK_ANSI_Z), carbonModifiers: UInt32(cmdKey | shiftKey)
+        ).displayName(keyName: { _ in "Y" }))
+        XCTAssertTrue((recorder.accessibilityValue() as? String)?.hasSuffix("Y") == true)
+        source.name = "Z"
+        center.post(name: KeyboardLayoutNames.changedNotification, object: nil)
+        XCTAssertTrue((recorder.accessibilityValue() as? String)?.hasSuffix("Z") == true)
+    }
+
+    func testLayoutChangeWhileRecordingKeepsPlaceholder() {
+        let center = NotificationCenter()
+        let source = NameSource()
+        let recorder = makeLayoutRecorder(center: center, source: source)
+        recorder.startRecording()
+        source.name = "Z"
+        center.post(name: KeyboardLayoutNames.changedNotification, object: nil)
+        XCTAssertEqual(recorder.accessibilityValue() as? String, "Type shortcut\u{2026}")
+        recorder.endRecording()
+    }
+
+    func testPostAfterDeallocationIsSafe() {
+        let center = NotificationCenter()
+        var recorder: ShortcutRecorderField? = makeLayoutRecorder(center: center, source: NameSource())
+        XCTAssertNotNil(recorder)
+        recorder = nil
+        center.post(name: KeyboardLayoutNames.changedNotification, object: nil)
+    }
+
     func testWindowControllerSmoke() {
         let defaults = UserDefaults(suiteName: suiteName) ?? .standard
         let controller = SettingsWindowController(

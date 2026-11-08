@@ -4,6 +4,19 @@ Durable, project-specific decisions. Newest first.
 
 ---
 
+## 2026-11-08 — Help, AppCitizenshipKit and FeedbackKit are vendored in-repo
+
+**Choice:** `01_Project/HelpMenu/`, `01_Project/Vendor/AppCitizenshipKit/` and
+`01_Project/Vendor/FeedbackKit/` are local copies wired in `project.yml` as path packages and linked
+into the app target only. Provenance and the refresh procedure live in `01_Project/Vendor/README.md`
+and `HelpMenu/VENDORED.md`. MarkdownUI is the only remote dependency (pinned `exact: "2.4.1"`).
+
+**Why:** the citizenship repos are private and CI has no token; a path package keeps CI and a fresh
+clone self-contained (same reasoning as the earlier ShortcutKit rejection). HelpMenu also needed
+dockless-app fixes that upstream does not have yet.
+
+---
+
 ## 2026-11-08 — Shortcut names come from the ASCII-capable keyboard layout
 
 **Choice:** `HotKeyShortcut.displayName` names single-character keys (letters, top-row digits, ANSI

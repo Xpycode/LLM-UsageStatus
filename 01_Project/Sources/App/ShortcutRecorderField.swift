@@ -23,15 +23,26 @@ final class ShortcutRecorderField: NSView {
     private let label = NSTextField(labelWithString: "")
     // Only written on the main actor; nonisolated(unsafe) lets deinit remove the monitor.
     nonisolated(unsafe) private var monitor: Any?
+    private let keyName: @MainActor (UInt32) -> String?
+    // Same reasoning as `monitor`: written once in init, read by deinit to unregister.
+    nonisolated(unsafe) private var layoutObserver: (any NSObjectProtocol)?
+    nonisolated(unsafe) private let observedCenter: NotificationCenter
 
+    /// `notificationCenter` is typed as the superclass so tests can inject a plain
+    /// `NotificationCenter` and post synchronously; production uses the distributed center
+    /// because the input-source-changed notification is distributed.
     init(
         shortcut: HotKeyShortcut,
+        notificationCenter: NotificationCenter = DistributedNotificationCenter.default(),
+        keyName: @escaping @MainActor (UInt32) -> String? = KeyboardLayoutNames.current,
         commit: @escaping (HotKeyShortcut) -> ShortcutCommitResult,
         recordingChanged: @escaping (Bool) -> Void
     ) {
         self.shortcut = shortcut
         self.commit = commit
         self.recordingChanged = recordingChanged
+        self.keyName = keyName
+        self.observedCenter = notificationCenter
         super.init(frame: NSRect(x: 0, y: 0, width: 190, height: 26))
         wantsLayer = true
         layer?.cornerRadius = 6
@@ -51,6 +62,11 @@ final class ShortcutRecorderField: NSView {
         setAccessibilityRole(.button)
         setAccessibilityLabel("Show/hide shortcut")
         refreshDisplay()
+        layoutObserver = notificationCenter.addObserver(
+            forName: KeyboardLayoutNames.changedNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated { self?.refreshDisplay() }
+        }
     }
 
     required init?(coder: NSCoder) {
@@ -59,6 +75,7 @@ final class ShortcutRecorderField: NSView {
 
     deinit {
         if let monitor { NSEvent.removeMonitor(monitor) }
+        if let layoutObserver { observedCenter.removeObserver(layoutObserver) }
     }
 
     // MARK: Public seams
@@ -182,7 +199,9 @@ final class ShortcutRecorderField: NSView {
     }
 
     private func refreshDisplay() {
-        label.stringValue = isRecording ? "Type shortcut\u{2026}" : shortcut.displayName
+        label.stringValue = isRecording
+            ? "Type shortcut\u{2026}"
+            : shortcut.displayName(keyName: { [keyName] in keyName($0) })
         label.textColor = isRecording ? .secondaryLabelColor : .labelColor
         setAccessibilityValue(label.stringValue)
         needsDisplay = true

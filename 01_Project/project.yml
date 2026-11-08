@@ -3,6 +3,13 @@ options:
   bundleIdPrefix: com.sim
   deploymentTarget:
     macOS: "15.0"
+packages:
+  HelpMenu:
+    path: HelpMenu
+  AppCitizenshipKit:
+    path: Vendor/AppCitizenshipKit
+  FeedbackKit:
+    path: Vendor/FeedbackKit
 settings:
   base:
     SWIFT_VERSION: "6.0"
@@ -19,6 +26,10 @@ targets:
         buildPhase: resources
         excludes:
           - LLM-UsageStatus.entitlements
+    dependencies:
+      - package: HelpMenu
+      - package: AppCitizenshipKit
+      - package: FeedbackKit
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.sim.LLM-UsageStatus

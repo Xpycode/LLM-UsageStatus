@@ -5,7 +5,7 @@
 > Task state/evidence is authoritative here; TASKS links here and holds backlog/inbox.
 > Follow the master's `reference/task-state.md` for legacy reconciliation and archival.
 
-**Progress:** 3/11 tasks (Wave 1: 1.2–1.4 done; 1.1 implemented, awaiting CI); external acceptance: E1 (site roster), E2 (manual, Debug), E3 (notarize),
+**Progress:** 3/11 tasks (Wave 1: 1.2–1.4 done; 1.1 implemented, awaiting CI; Wave 2: 2.1–2.4 implemented, awaiting CI); external acceptance: E1 (site roster), E2 (manual, Debug), E3 (notarize),
 E4 (notarized smoke test), E5 (publish — optional, decision pending).
 **Task states:** unchecked = pending / implemented-unverified / blocked (name gate);
 checked = complete with required evidence. Task identity includes this plan path plus ID.
@@ -322,6 +322,7 @@ extension HotKeyShortcut {
 |---|---|---|---|---|
 | — | Plan written 2026-11-08 from four parallel research agents (`research/findings.md`) | — | — | D3/D5 confirmed; user requested execution (Wave 1 first) |
 | W1: 1.1–1.4 | Four parallel fresh-context agents (developer ×3, technical-writer for 1.4); coordinator pre-created the `KeyboardLayoutNames.swift` stub + `xcodegen generate` so 1.1 needed no project edit | 1.1: agent `build-for-testing` ok; **coordinator fix** — pure `displayName(keyName:)` did not uppercase/filter (tests expecting "Z" and the US fallback would have failed); moved into `HotKeyShortcut.usableKeyName`. 1.2: `swift build` ok; 3 dockless fixes + frame autosave in `HelpWindowController.swift`; upstream `HelpContent.loadMarkdown` keeps one `try?` (vendored code, visible fallback body; accepted). 1.3: Sources byte-identical to zPackages ACK a6c06af / FK 8a240f1 and the CountClockWise copy; `swift build` ok. 1.4: 9 topics + manifest, JSON valid, no glyphs. Integrated: `xcodegen generate`, `build-for-testing` **TEST BUILD SUCCEEDED**, 10 help files flat in the bundle. D1 in `docs/decisions.md`. | Wave 1 commit | 1.1 unchecked until CI runs the suite (needs a push). Next: Wave 2 (2.1 first) — not yet requested |
+| W2: 2.1–2.4 | 2.1 coordinator (shared `project.yml`; also pre-created the 2.2/2.3 source + test placeholders and regenerated so agents needed no project edit); 2.2–2.4 three parallel fresh-context developer agents, each with its own DerivedData | 2.1: three path packages linked to the app target only, `xcodegen generate`, `build-for-testing` ok (MarkdownUI 2.4.1 resolves locally); D2 recorded in `docs/decisions.md`. 2.2: `CitizenshipSupport` (`init(config:openURL:presentAlert:)` seams, `FeedbackView.onClose` closes the window), 4 tests. 2.3: `HelpSupport` + `fallbackTopicID`, content cached after first load, 2 tests (bundled 9 topics without the package's missing-file placeholder; test bundle → fallback). 2.4: center typed `NotificationCenter` (default distributed) + injectable `keyName`, observer removed in `deinit`, 3 tests. Coordinator review: no `try?`, no log provider. Integrated `build-for-testing` **TEST BUILD SUCCEEDED**, no warnings in app/test sources. | Wave 2 commit | 2.1–2.4 unchecked until CI runs the suite (needs a push; 2.1 also needs CI to resolve MarkdownUI). Next: Wave 3 (3.1, coordinator) — not yet requested |
 
 ---
 *Keep active while required work or acceptance is incomplete. On completion, retire in place (as the
