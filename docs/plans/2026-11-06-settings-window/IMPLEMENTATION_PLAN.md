@@ -92,7 +92,7 @@ the shortcut field, presses a new chord, and the panel now toggles with it (also
 
 ## Execution schedule and ownership
 
-- Execution scope/limits: plan written 2026-11-08; **execution not yet requested**.
+- Execution scope/limits: plan written 2026-11-08; user requested **Wave 1 only** (2026-11-08); Wave 1 done (c337166).
 - Coordinator-owned files/resources: `01_Project/project.yml` + `xcodegen generate` (new files are
   picked up by the `Sources`/`Tests` globs, but regeneration is serialized), `AppDelegate.swift`,
   `LLMUsageStatusApp.swift`, `UsageStatusView.swift`, `README.md`, DerivedData, git, tracking docs.
@@ -154,7 +154,7 @@ struct AppVersion: Equatable {
 
 ### Wave 1 (parallel — four independent units, disjoint files)
 
-- [ ] **1.1**: Shortcut model, validation, display name and persistence
+- [x] **1.1**: Shortcut model, validation, display name and persistence
   - Depends on / external gates: none
   - Owns: `Sources/App/HotKeyShortcut.swift`, `Tests/App/HotKeyShortcutTests.swift`
   - Interface: `HotKeyShortcut`, `HotKeyShortcutStore` as above → consumed by 2.1, 2.2
@@ -168,7 +168,7 @@ struct AppVersion: Equatable {
   - Backpressure: `xcodebuild … build-for-testing` green; unit tests cover mapping, labels,
     every rejection and corrupt-data fallback (run on CI).
 
-- [ ] **1.2**: Multi-registration `GlobalHotKey` with safe rebind
+- [x] **1.2**: Multi-registration `GlobalHotKey` with safe rebind
   - Depends on / external gates: none
   - Owns: `Sources/App/GlobalHotKey.swift`, `Tests/App/GlobalHotKeyTests.swift`
   - Interface: `HotKeyID`, `register(id:keyCode:modifiers:_:)`, `unregister(id:)`, `unregisterAll()`
@@ -182,7 +182,7 @@ struct AppVersion: Equatable {
   - Backpressure: build-for-testing green; tests with the fake backend for two ids, per-id
     unregister, re-register order, failure cleanup and the conflict marker (run on CI).
 
-- [ ] **1.3**: Launch-at-login service with location guard and timeout
+- [x] **1.3**: Launch-at-login service with location guard and timeout
   - Depends on / external gates: none
   - Owns: `Sources/App/LaunchAtLogin.swift`, `Tests/App/LaunchAtLoginTests.swift`
   - Interface: `LaunchAtLogin`, `LaunchAtLoginState` as above → consumed by 2.1, 2.2
@@ -198,7 +198,7 @@ struct AppVersion: Equatable {
     accept/reject paths (DerivedData, Downloads, `/Volumes/…`, translocated, `/Applications/X/App.app`),
     thrown errors, and a hung backend hitting the timeout (run on CI).
 
-- [ ] **1.4**: Version/About model
+- [x] **1.4**: Version/About model
   - Depends on / external gates: none
   - Owns: `Sources/App/AppVersion.swift`, `Tests/App/AppVersionTests.swift`
   - Interface: `AppVersion` as above → consumed by 2.1
@@ -308,6 +308,22 @@ struct AppVersion: Equatable {
 
 ---
 
+## Wave 1 as-built deviations (accepted at integration)
+
+- `HotKeyID` is nested: `GlobalHotKey.HotKeyID` (avoids a top-level name clash). 1.2 also kept a
+  temporary `unregister()` (toggle only) next to `register(_:)`; 2.2 removes both. `dispatch(id:)` /
+  `dispatch(rawID:)` are internal test seams. A failed re-register leaves the id unbound — 2.2's
+  `commitShortcut` re-registers the stored chord, as planned.
+- `LaunchAtLogin.Backend` also carries `isWritableVolume`, `homeDirectory` and `timeout` (3 s live);
+  `LaunchAtLoginError` = `.unavailable(reason:)`, `.failed(message:state:)`, `.timedOut(state:)`, each
+  with `.state`. Backend calls race a `DispatchQueue.global` block against a timer (a hung
+  synchronous SMAppService call can't pin a cooperative thread). An `.unknown` initial read blocks
+  `setEnabled` with `.timedOut`.
+- Coordinator fix: `.requiresApproval` counts as registered — enabling is a no-op, disabling
+  unregisters (the plan's "no unregister when not `.enabled`" would have left a pending
+  registration behind when the user switched it off).
+- `HotKeyShortcut` accepts Escape as a key; 2.1's recorder should treat a bare Escape as cancel.
+
 ## Operational Learnings
 
 - GitHub CI runs Xcode 16.4 / Swift 6.1, older than this Mac's Xcode 27.2. Main-actor test classes
@@ -324,6 +340,7 @@ None.
 
 | Wave / task IDs | Assignments or serial reason | Validation / evidence | Commits or exception | Remaining gates / next action or stop reason |
 |---|---|---|---|---|
+| Wave 1: 1.1, 1.2, 1.3, 1.4 | Four parallel fresh-context developer agents, disjoint files; coordinator pre-created the six files + `xcodegen generate`, each agent built into its own DerivedData | Integrated `build-for-testing` green (scratch DerivedData); CI run 42426466709 green, **189 tests, 0 failures** (was 147) | c337166 (all four — one reviewable building-block set, not wired in) | Wave 2 (2.1 window, then 2.2 integration) ready; not yet requested |
 
 ---
 *Keep active while required work or acceptance is incomplete. On completion, archive with execution
