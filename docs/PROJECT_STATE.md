@@ -1,6 +1,6 @@
 # PROJECT_STATE — LLM-UsageStatus
 
-**Last updated:** 2026-11-08 (0.2.0 Wave 4 done)
+**Last updated:** 2026-11-08 (0.2.0 code complete, CI green)
 
 ## Identity
 
@@ -15,24 +15,23 @@ Developer ID signed, notarized, zero configuration for end users.
 
 ## Now
 
-- **Execution:** `docs/plans/2026-11-08-v0.2.0/IMPLEMENTATION_PLAN.md` — 4/11; all code waves implemented;
-  **blocked on CI** for 1.1, 2.1–2.4, 3.1, 4.2 (needs a push — user go-ahead). Then E2 manual (Debug
-  build in `04_Exports/0.2.0-E2-Debug/`), E1 site roster, E3 notarize.
+- **Execution:** `docs/plans/2026-11-08-v0.2.0/IMPLEMENTATION_PLAN.md` — 11/11 tasks; CI green on 7a092d0
+  (217 tests). Next: E2 manual (Debug build in `04_Exports/0.2.0-E2-Debug/`), E1 site roster, then E3 notarize.
 - Installed: E1 build (288f5ab, Debug, ad-hoc) in `/Applications/LLM-UsageStatus.app`, running;
   not a release — replace with a notarized 0.2.0 before redistribution.
 - `dist/0.1.0` is stale vs source (rebuild + re-notarize before any redistribution).
-- GitHub remote (private) + CI green since 2026-11-07 (now 204 tests on Xcode 16.4).
+- GitHub remote (private) + CI green since 2026-11-07 (now 217 tests on Xcode 16.4).
 
 ## Recent
 
+- 2026-11-08: 0.2.0 pushed (9 commits) — CI green, 217 tests; all 11 plan tasks checked. Manual check (E2) next.
 - 2026-11-08: 0.2.0 Wave 4 — version 0.2.0 (200), changelog, release scripts refuse uncommitted changes and record the source commit; universal Release build passes; independent review → README/Help now admit the last-seen usage cache and the US-position shortcut check. Fresh Debug build ready for manual testing (not launched).
 - 2026-11-08: 0.2.0 Wave 3 — Help, Send Feedback… and Leave a Tip are now in the right-click menu (Help also in the shortcut-warning menu), Command-? reopens Help while Help or Settings is in front, license notices for the Help window's open-source parts ship in the app, README updated. Builds clean; tests await CI; not yet tried by hand (E2).
 - 2026-11-08: 0.2.0 Wave 2 built — the Help, Feedback and Tip packages are wired into the project; Feedback/Tip and Help window support code plus the recorder now updates when the keyboard layout changes; builds clean, tests await CI. Not in the menus yet (Wave 3).
 - 2026-11-08: 0.2.0 planned (research by four agents) and Wave 1 built — shortcut names follow the keyboard layout, Help and feedback packages copied in, help text written; builds clean, tests await CI.
-- 2026-11-08: **Settings E1 passed** — all six manual checks, including launch at login from /Applications, plus the 2026-11-06 fixes; Command-Tab behavior judged fine (kept by design). Plan retired.
 
 ## Handoff
 
 - Current handoff: `docs/sessions/2026-11-08.md` → **Resume (end of 2026-11-08, after 0.2.0 Wave 4)** —
-  push for CI (1.1, 2.1–2.4, 3.1, 4.2), then E2 with the build in `04_Exports/0.2.0-E2-Debug/`.
+  CI done (green, 217 tests); next E2 with the build in `04_Exports/0.2.0-E2-Debug/`.
 - Decisions: `docs/decisions.md`

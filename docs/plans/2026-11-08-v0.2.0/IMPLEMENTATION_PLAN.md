@@ -5,7 +5,7 @@
 > Task state/evidence is authoritative here; TASKS links here and holds backlog/inbox.
 > Follow the master's `reference/task-state.md` for legacy reconciliation and archival.
 
-**Progress:** 4/11 tasks (Wave 1: 1.2–1.4 done; 1.1 implemented, awaiting CI; Wave 2: 2.1–2.4 implemented, awaiting CI; Wave 3: 3.1 implemented, awaiting CI; Wave 4: 4.1 done, 4.2 done except CI on the release candidate — needs a push); external acceptance: E1 (site roster), E2 (manual, Debug), E3 (notarize),
+**Progress:** 11/11 tasks (Waves 1–4 done; CI green on 7a092d0, run 42518020439, 217 tests, 2026-11-08); external acceptance: E1 (site roster), E2 (manual, Debug), E3 (notarize),
 E4 (notarized smoke test), E5 (publish — optional, decision pending).
 **Task states:** unchecked = pending / implemented-unverified / blocked (name gate);
 checked = complete with required evidence. Task identity includes this plan path plus ID.
@@ -145,7 +145,7 @@ extension HotKeyShortcut {
 
 ### Wave 1 (parallel — no mutual dependencies; disjoint ownership)
 
-- [ ] **1.1**: Layout-aware shortcut names (Backlog 11) → `HotKeyShortcut.swift`, new `KeyboardLayoutNames.swift`
+- [x] **1.1**: Layout-aware shortcut names (Backlog 11) → `HotKeyShortcut.swift`, new `KeyboardLayoutNames.swift`
   - Depends on / external gates: none
   - Owns: `01_Project/Sources/App/HotKeyShortcut.swift`, `01_Project/Sources/App/KeyboardLayoutNames.swift`,
     `01_Project/Tests/App/HotKeyShortcutTests.swift`
@@ -191,7 +191,7 @@ extension HotKeyShortcut {
 
 ### Wave 2 (integration of project wiring + dependent code; 2.1 first, then 2.2–2.4 in parallel)
 
-- [ ] **2.1**: Wire vendored packages into the project → `project.yml` (coordinator, serial)
+- [x] **2.1**: Wire vendored packages into the project → `project.yml` (coordinator, serial)
   - Depends on: 1.2, 1.3 (and 1.1 for one regeneration)
   - Owns: `01_Project/project.yml`, `.xcodeproj`, `docs/decisions.md` (D1, D2)
   - Success: `packages:` HelpMenu, AppCitizenshipKit, FeedbackKit (paths); app target links all three
@@ -199,7 +199,7 @@ extension HotKeyShortcut {
     project file.
   - Backpressure: `xcodebuild -scheme LLM-UsageStatus -configuration Debug build` + `build-for-testing`.
 
-- [ ] **2.2**: Feedback + Tip support → `CitizenshipSupport.swift`
+- [x] **2.2**: Feedback + Tip support → `CitizenshipSupport.swift`
   - Depends on: 2.1
   - Owns: `01_Project/Sources/App/CitizenshipSupport.swift`, `01_Project/Tests/App/CitizenshipSupportTests.swift`
   - Success: interface above; feedback window 460×540, reused, delegate clears reference,
@@ -207,7 +207,7 @@ extension HotKeyShortcut {
     + log. Tests: `donateURL` contains `app=llm-usagestatus`; `feedbackConfig.appID` equals the slug.
   - Backpressure: `build-for-testing`.
 
-- [ ] **2.3**: Help support → `HelpSupport.swift`
+- [x] **2.3**: Help support → `HelpSupport.swift`
   - Depends on: 2.1, 1.4
   - Owns: `01_Project/Sources/App/HelpSupport.swift`, `01_Project/Tests/App/HelpSupportTests.swift`
   - Success: interface above; load error → single "Help unavailable" topic (logged); test loads the
@@ -215,7 +215,7 @@ extension HotKeyShortcut {
     yields the fallback.
   - Backpressure: `build-for-testing`.
 
-- [ ] **2.4**: Recorder refreshes on layout change → `ShortcutRecorderField.swift`
+- [x] **2.4**: Recorder refreshes on layout change → `ShortcutRecorderField.swift`
   - Depends on: 1.1 (integrated in 2.1's regeneration)
   - Owns: `01_Project/Sources/App/ShortcutRecorderField.swift`, `01_Project/Tests/App/ShortcutRecorderFieldTests.swift`
   - Success: observes `KeyboardLayoutNames.changedNotification` on an injectable
@@ -225,7 +225,7 @@ extension HotKeyShortcut {
 
 ### Wave 3 (serial integration — shared app files)
 
-- [ ] **3.1**: Menu + commands wiring, notices, README → `AppDelegate.swift`, `LLMUsageStatusApp.swift` (coordinator)
+- [x] **3.1**: Menu + commands wiring, notices, README → `AppDelegate.swift`, `LLMUsageStatusApp.swift` (coordinator)
   - Depends on: 2.2, 2.3, 2.4 (D3 confirmed 2026-11-08)
   - Owns: `AppDelegate.swift`, `LLMUsageStatusApp.swift`, `01_Project/Resources/Licenses/**`, `README.md`
   - Success: menus exactly as D3; `openHelp`/`sendFeedback`/`leaveTip` hide the panel first (like
@@ -247,7 +247,7 @@ extension HotKeyShortcut {
   - Backpressure: `bash -n scripts/*.sh`; dirty-tree refusal tried on a scratch change (then
     reverted); Debug build shows `Version 0.2.0 (200)` in About.
 
-- [ ] **4.2**: Final verification + independent review — all but CI done (awaiting push)
+- [x] **4.2**: Final verification + independent review (CI green 2026-11-08, run 42518020439, 217 tests)
   - Depends on: 4.1
   - Owns: review report; findings return to the owning task
   - Success: unsigned universal Release build (`release.sh`-equivalent into scratch, not `dist/`)
@@ -327,6 +327,7 @@ extension HotKeyShortcut {
 | W2: 2.1–2.4 | 2.1 coordinator (shared `project.yml`; also pre-created the 2.2/2.3 source + test placeholders and regenerated so agents needed no project edit); 2.2–2.4 three parallel fresh-context developer agents, each with its own DerivedData | 2.1: three path packages linked to the app target only, `xcodegen generate`, `build-for-testing` ok (MarkdownUI 2.4.1 resolves locally); D2 recorded in `docs/decisions.md`. 2.2: `CitizenshipSupport` (`init(config:openURL:presentAlert:)` seams, `FeedbackView.onClose` closes the window), 4 tests. 2.3: `HelpSupport` + `fallbackTopicID`, content cached after first load, 2 tests (bundled 9 topics without the package's missing-file placeholder; test bundle → fallback). 2.4: center typed `NotificationCenter` (default distributed) + injectable `keyName`, observer removed in `deinit`, 3 tests. Coordinator review: no `try?`, no log provider. Integrated `build-for-testing` **TEST BUILD SUCCEEDED**, no warnings in app/test sources. | Wave 2 commit | 2.1–2.4 unchecked until CI runs the suite (needs a push; 2.1 also needs CI to resolve MarkdownUI). Next: Wave 3 (3.1, coordinator) — not yet requested |
 | W3: 3.1 | Coordinator, serial (shared app-entry files `AppDelegate.swift`, `LLMUsageStatusApp.swift`); no agents | Right-click menu now matches D3 exactly; shortcut-failure menu gains **LLM Usage Status Help** after Settings…; `openHelp`/`sendFeedback`/`leaveTip` call `hidePanel()` first. `HelpMenuCommands(content: HelpSupport.content, appName: "LLM Usage Status")` in `.commands` (Command-? replaces the Help group; no global hotkey). **Integration adapter on 2.3's file:** `HelpSupport.content` (cached load) shared by commands and menus; `show()` uses it. Notices: `Resources/Licenses/ThirdPartyNotices.txt` (MarkdownUI 2.4.1 / NetworkImage 6.0.1 / swift-cmark 0.9.0 licenses, taken from checkouts at the `Package.resolved` revisions) — present in the built bundle. README: features, Quick Start, Help/Feedback/Tip section (feedback sends message, optional email, app + macOS version), layout-aware names, privacy outgoing-request line, architecture, notices. `xcodegen generate`; `build-for-testing` **TEST BUILD SUCCEEDED**, no errors/warnings in app sources. | Wave 3 commit | 3.1 unchecked until CI green (needs a push; with 1.1, 2.1–2.4). Manual menu check is E2. Next: Wave 4 (4.1) — not yet requested |
 | W4: 4.1–4.2 | Coordinator, serial (4.1 owns shared `project.yml`/scripts/README/CHANGELOG; 4.2 depends on 4.1); one fresh-context `feature-dev:code-reviewer` agent for the independent review | 4.1: `MARKETING_VERSION` 0.2.0 / `CURRENT_PROJECT_VERSION` 200; CHANGELOG `[0.2.0] - Unreleased`; README download text says public downloads are not available yet (no Releases link; E5 pending). `release.sh` refuses a dirty tree (incl. untracked) before building and again after `xcodegen generate` (before creating `dist/<v>`), writes `SOURCE_COMMIT.txt`; `notarize-release.sh` refuses before touching credentials. `zsh -n` ok on both; dirty-tree refusal tried on the uncommitted 4.1 edits (both exit 1, no `dist/9.9.9` created). Debug `build-for-testing` ok; built Info.plist 0.2.0 / 200 (About renders `AppVersion.displayString`, unit-tested; visual check is E2 item 6). 4.2: unsigned universal Release build into scratch **BUILD SUCCEEDED**, `lipo` x86_64 arm64, 0.2.0/200, notices + help manifest in bundle. Review: no crash/concurrency/leak/privacy bugs; **2 doc fixes applied** — README + privacy help claimed no usage history stored (SectionStateCache keeps `last-sections.json`); shortcut-refusal claims now say "US key position". Rebuilt `build-for-testing` ok. Pre-existing `try?` in `SectionStateCache` → Backlog 13. Fresh Debug build for E2: `04_Exports/0.2.0-E2-Debug/…/Debug/LLM-UsageStatus.app` (not launched). | e497d36 (4.1), da93b10 (4.2 review fixes) | 4.2 + 1.1, 2.1–2.4, 3.1 need CI → **push needs user go-ahead**. Then E2 (manual), E1 any time, E3 after E1+E2. |
+| CI | Push of 9 commits (288f5ab..7a092d0) with user go-ahead | GitHub Actions run 42518020439 on macos-15 / Xcode 16.4: **TEST SUCCEEDED**, 217 tests, 0 failures. Checked 1.1, 2.1–2.4, 3.1, 4.2. | 7a092d0 | Next: E2 (manual, build in `04_Exports/0.2.0-E2-Debug/`), E1 any time, E3 after E1 + E2. |
 
 ---
 *Keep active while required work or acceptance is incomplete. On completion, retire in place (as the
