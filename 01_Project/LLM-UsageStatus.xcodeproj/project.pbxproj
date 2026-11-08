@@ -13,9 +13,11 @@
 		0F540680EC4CA9DDA014B9AF /* UsageStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4544AE9F60C86AC4D81C5729 /* UsageStatusView.swift */; };
 		1317E37CB906096E7F3F4ECF /* UsageStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5E5974951BEE5C78AC243E /* UsageStoreTests.swift */; };
 		141D2409FAB57983E555A62E /* ClaudeLogAggregatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE7383097646DBAAD3BAC40E /* ClaudeLogAggregatorTests.swift */; };
+		1D4E48ED1BF0E29A4BF5FF32 /* ShortcutRecorderField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5BFD88A3AD386E75BFC757A /* ShortcutRecorderField.swift */; };
 		1E99FE25CBCF9A47B7145512 /* GlobalHotKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514EE2AF472B97AA1985CC48 /* GlobalHotKey.swift */; };
 		296F51207DAB51EDB5F6A3FB /* UsageResponseDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5BEBC9BCD01682D42F37B5 /* UsageResponseDecoder.swift */; };
 		30DA43EC14D9C2848626AE54 /* AppVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B40468CE7090F4FBBA99D35 /* AppVersion.swift */; };
+		32F9904D8801808EEAFACAC9 /* ShortcutRecorderFieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2A54A04B0057EC58AC5CCE /* ShortcutRecorderFieldTests.swift */; };
 		33D5EC94411959A61CAADA70 /* GlobalHotKeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F39E311E6A2612C0A467434B /* GlobalHotKeyTests.swift */; };
 		48CD3554BAAAAE0E5F2DA52F /* ClaudeTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1DA9A29E1DFD828D59DD02 /* ClaudeTokenProvider.swift */; };
 		50E84E605C398D452D8958A8 /* VibeBudgetEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1990B3291A76DB3D3CCFDA80 /* VibeBudgetEditor.swift */; };
@@ -29,6 +31,7 @@
 		691DB206BEB7D941B2D7F81D /* VibeJournalAggregatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1962AB6F02C1A3B93B3B8A7B /* VibeJournalAggregatorTests.swift */; };
 		6AF5B6CC6BABEA3B54FB1B2C /* LLMUsageStatusApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2236B8889F6DDB2D5F356A57 /* LLMUsageStatusApp.swift */; };
 		719277C80D5D2CA7980908D2 /* UsageSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC692C15F291BE643A748AB /* UsageSnapshot.swift */; };
+		78562DDA86EF40E60B3A35D4 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB84069834FDFD792E408B5 /* SettingsWindowController.swift */; };
 		79A7E53EC8C50A8C822C428F /* ProviderModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5602417D4314F025F772B3 /* ProviderModelsTests.swift */; };
 		80E77CD8A15B46DBDBFD2138 /* UsageResponseDecoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E513A5ED1CFC017B7335D39 /* UsageResponseDecoderTests.swift */; };
 		85C15B1E8054471F8BF40197 /* UsageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86AEDD7CC8C3C1D4D6E1F9D /* UsageStore.swift */; };
@@ -94,6 +97,7 @@
 		7AC39F644D4F732B0A73938A /* LLM-UsageStatus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "LLM-UsageStatus.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B080AE406F2EC0DB4A7E232 /* HotKeyShortcutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyShortcutTests.swift; sourceTree = "<group>"; };
 		853AB380986CA290F24B25F4 /* VibeJournalAggregator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeJournalAggregator.swift; sourceTree = "<group>"; };
+		8B2A54A04B0057EC58AC5CCE /* ShortcutRecorderFieldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutRecorderFieldTests.swift; sourceTree = "<group>"; };
 		8B40468CE7090F4FBBA99D35 /* AppVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersion.swift; sourceTree = "<group>"; };
 		900D40998E18F3691B8C96F4 /* SectionFixtureRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionFixtureRenderTests.swift; sourceTree = "<group>"; };
 		9247D3430094602849538A72 /* UsagePreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePreferences.swift; sourceTree = "<group>"; };
@@ -102,11 +106,13 @@
 		A0CCE6BAE057B307B9305A3B /* VibeRateCardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeRateCardTests.swift; sourceTree = "<group>"; };
 		A6406DBE5BC91A2BCB8C679E /* SectionFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionFixtures.swift; sourceTree = "<group>"; };
 		B3460E4F1309B764C254CD4E /* UsagePanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePanelController.swift; sourceTree = "<group>"; };
+		BDB84069834FDFD792E408B5 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		CBFACA8F222C460B9648EBF1 /* UsagePreferencesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePreferencesTests.swift; sourceTree = "<group>"; };
 		D86AEDD7CC8C3C1D4D6E1F9D /* UsageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageStore.swift; sourceTree = "<group>"; };
 		DC5602417D4314F025F772B3 /* ProviderModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderModelsTests.swift; sourceTree = "<group>"; };
 		E0DDF3C0803BE188EF3E2BE1 /* SectionStateCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionStateCacheTests.swift; sourceTree = "<group>"; };
 		E5305E17D0F550DB53E9222F /* LaunchAtLoginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginTests.swift; sourceTree = "<group>"; };
+		E5BFD88A3AD386E75BFC757A /* ShortcutRecorderField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutRecorderField.swift; sourceTree = "<group>"; };
 		F39E311E6A2612C0A467434B /* GlobalHotKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalHotKeyTests.swift; sourceTree = "<group>"; };
 		F3EBD71D52ED781C4EBE4566 /* SectionStateCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionStateCache.swift; sourceTree = "<group>"; };
 		F6753BBC944B341814A3CA22 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -142,6 +148,7 @@
 				F39E311E6A2612C0A467434B /* GlobalHotKeyTests.swift */,
 				7B080AE406F2EC0DB4A7E232 /* HotKeyShortcutTests.swift */,
 				E5305E17D0F550DB53E9222F /* LaunchAtLoginTests.swift */,
+				8B2A54A04B0057EC58AC5CCE /* ShortcutRecorderFieldTests.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -181,6 +188,8 @@
 				A0BA3EC88F24FEC338935443 /* HotKeyShortcut.swift */,
 				4854E740CDD88FDCA5DE5C32 /* LaunchAtLogin.swift */,
 				2236B8889F6DDB2D5F356A57 /* LLMUsageStatusApp.swift */,
+				BDB84069834FDFD792E408B5 /* SettingsWindowController.swift */,
+				E5BFD88A3AD386E75BFC757A /* ShortcutRecorderField.swift */,
 				B3460E4F1309B764C254CD4E /* UsagePanelController.swift */,
 				1990B3291A76DB3D3CCFDA80 /* VibeBudgetEditor.swift */,
 			);
@@ -439,6 +448,7 @@
 				0A20BC26DEB872327743054E /* SectionFixtureRenderTests.swift in Sources */,
 				58EB06E0BC31EB981AE007E2 /* SectionFixtures.swift in Sources */,
 				FC2AB49AEB5CC8CD5CE2B4BB /* SectionStateCacheTests.swift in Sources */,
+				32F9904D8801808EEAFACAC9 /* ShortcutRecorderFieldTests.swift in Sources */,
 				DE343B3BF51264E678F89E4E /* UsagePreferencesTests.swift in Sources */,
 				80E77CD8A15B46DBDBFD2138 /* UsageResponseDecoderTests.swift in Sources */,
 				558F53E04CD7DEEC5D3D265A /* UsageSnapshotTests.swift in Sources */,
@@ -467,6 +477,8 @@
 				557AAC5CE58B290D72DD68F3 /* LaunchAtLogin.swift in Sources */,
 				F907750B91316108497BCCA5 /* ProviderModels.swift in Sources */,
 				A11E7AE98D21FE2B068C5E2E /* SectionStateCache.swift in Sources */,
+				78562DDA86EF40E60B3A35D4 /* SettingsWindowController.swift in Sources */,
+				1D4E48ED1BF0E29A4BF5FF32 /* ShortcutRecorderField.swift in Sources */,
 				C71DA81FC5D7A148750B6548 /* UsagePanelController.swift in Sources */,
 				8BDA9FF4B2A0D4537A97EEED /* UsagePreferences.swift in Sources */,
 				296F51207DAB51EDB5F6A3FB /* UsageResponseDecoder.swift in Sources */,

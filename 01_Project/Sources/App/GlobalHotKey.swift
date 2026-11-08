@@ -107,13 +107,6 @@ import os
         return .success(())
     }
 
-    /// Temporary call shape for AppDelegate: the toggle with the original default shortcut.
-    @discardableResult
-    func register(_ action: @escaping () -> Void) -> Result<Void, RegistrationFailure> {
-        register(id: .toggle, keyCode: UInt32(kVK_ANSI_L),
-                 modifiers: UInt32(cmdKey | optionKey | controlKey), action)
-    }
-
     func unregister(id: HotKeyID) {
         if let registration = registrations.removeValue(forKey: id.rawValue) {
             backend.unregister(registration.reference)
@@ -124,9 +117,6 @@ import os
         for registration in registrations.values { backend.unregister(registration.reference) }
         registrations.removeAll()
     }
-
-    /// Temporary call shape for AppDelegate: releases the toggle registration.
-    func unregister() { unregister(id: .toggle) }
 
     /// Events for an id with no live registration are dropped.
     func dispatch(id: HotKeyID) { dispatch(rawID: id.rawValue) }

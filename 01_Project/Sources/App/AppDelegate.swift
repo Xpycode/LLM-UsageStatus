@@ -1,12 +1,20 @@
 import AppKit
 import Carbon.HIToolbox
 import SwiftUI
+import os
 
 @MainActor final class AppDelegate: NSObject, NSApplicationDelegate {
+    private static let logger = Logger(subsystem: "com.sim.LLM-UsageStatus", category: "App")
     private let stores: [UsageStore]
     private let preferences = UsagePreferences()
     private let panel = UsagePanelController(); private var clickAway: Any?
     private var shortcutFallback: NSStatusItem?
+    private let shortcutStore = HotKeyShortcutStore()
+    private let launchAtLogin = LaunchAtLogin()
+    private lazy var settings = SettingsWindowController(
+        shortcuts: shortcutStore, launchAtLogin: launchAtLogin, version: .current,
+        commitShortcut: { [unowned self] in self.commitShortcut($0) },
+        recordingChanged: { [unowned self] in self.shortcutRecordingChanged($0) })
 
     override init() {
         // Composition root: services conforming to `Provider`, one store per section.
@@ -22,29 +30,95 @@ import SwiftUI
 
     func applicationDidFinishLaunching(_: Notification) {
         registerHotKey()
+        // After an app update the login item can point at the old copy; re-registering fixes it.
+        Task { [launchAtLogin] in await launchAtLogin.refreshRegistrationIfEnabled() }
         panel.menuProvider = { [weak self] in self?.makeMenu() ?? NSMenu() }
-        clickAway = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in Task { @MainActor in self?.panel.hide() } }
+        clickAway = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in Task { @MainActor in self?.hidePanel() } }
         // A Dockless agent otherwise offers no confirmation that it launched.
         // A failed hotkey registration also exposes a menu-bar fallback.
         toggle()
     }
-    func applicationWillTerminate(_: Notification) { GlobalHotKey.shared.unregister(); if let clickAway { NSEvent.removeMonitor(clickAway) } }
-    private func toggle() { if panel.isVisible { panel.hide() } else { showHUD() } }
+    func applicationWillTerminate(_: Notification) { GlobalHotKey.shared.unregisterAll(); if let clickAway { NSEvent.removeMonitor(clickAway) } }
+    private func toggle() { if panel.isVisible { hidePanel() } else { showHUD() } }
 
     @objc private func showHUD() {
-        panel.show { [stores, preferences] in UsageStatusView(stores: stores, preferences: preferences) }
+        let shortcutName = shortcutStore.current.displayName
+        panel.show { [stores, preferences] in
+            UsageStatusView(stores: stores, preferences: preferences, shortcutName: shortcutName)
+        }
         // Refresh on open: every provider fetches current values independently.
         stores.forEach { $0.refresh() }
+        registerSettingsShortcut()
+    }
+
+    /// The panel never becomes key, so Command-Comma is a Carbon hotkey that exists only
+    /// while the panel is showing; other apps keep their own Command-Comma otherwise.
+    private func registerSettingsShortcut() {
+        let chord = HotKeyShortcut.settings
+        let result = GlobalHotKey.shared.register(id: .settings, keyCode: chord.keyCode,
+                                                  modifiers: chord.carbonModifiers) { [weak self] in
+            self?.openSettings()
+        }
+        if case .failure(let failure) = result {
+            // Not fatal: Settings… stays reachable from the right-click menu.
+            Self.logger.notice("Settings shortcut unavailable: \(String(describing: failure), privacy: .public)")
+        }
+    }
+
+    private func hidePanel() {
+        panel.hide()
+        GlobalHotKey.shared.unregister(id: .settings)
+    }
+
+    @objc private func openSettings() {
+        hidePanel()
+        settings.show()
     }
 
     @objc private func registerHotKey() {
-        switch GlobalHotKey.shared.register({ [weak self] in self?.toggle() }) {
+        let chord = shortcutStore.current
+        let result = GlobalHotKey.shared.register(id: .toggle, keyCode: chord.keyCode,
+                                                  modifiers: chord.carbonModifiers) { [weak self] in
+            self?.toggle()
+        }
+        applyToggleRegistration(result)
+    }
+
+    private func applyToggleRegistration(_ result: Result<Void, GlobalHotKey.RegistrationFailure>) {
+        switch result {
         case .success:
             if let shortcutFallback { NSStatusBar.system.removeStatusItem(shortcutFallback) }
             shortcutFallback = nil
         case .failure(let failure):
             showShortcutFallback(for: failure)
         }
+    }
+
+    /// Registers `chord` as the toggle; only a successful registration is persisted.
+    /// On failure the stored chord is registered again so the previous shortcut keeps working.
+    private func commitShortcut(_ chord: HotKeyShortcut) -> ShortcutCommitResult {
+        let result = GlobalHotKey.shared.register(id: .toggle, keyCode: chord.keyCode,
+                                                  modifiers: chord.carbonModifiers) { [weak self] in
+            self?.toggle()
+        }
+        switch result {
+        case .success:
+            shortcutStore.save(chord)
+            applyToggleRegistration(result)
+            return .accepted
+        case .failure(let failure):
+            registerHotKey()
+            switch failure {
+            case .shortcut(let status) where status == eventHotKeyExistsErr: return .inUse
+            case .shortcut(let status), .eventHandler(let status): return .failed(status)
+            }
+        }
+    }
+
+    /// The live toggle is suspended while the recorder listens, so pressing the current
+    /// chord records it instead of hiding/showing the panel.
+    private func shortcutRecordingChanged(_ recording: Bool) {
+        if recording { GlobalHotKey.shared.unregister(id: .toggle) } else { registerHotKey() }
     }
 
     private func showShortcutFallback(for failure: GlobalHotKey.RegistrationFailure) {
@@ -60,12 +134,13 @@ import SwiftUI
         let menu = NSMenu()
         menu.autoenablesItems = false
         let messages: [String]
+        let chordName = shortcutStore.current.displayName
         switch failure {
         case .shortcut(let status) where status == eventHotKeyExistsErr:
-            messages = ["Control–Option–Command–L is already in use.",
-                        "Free this shortcut in the other app, then retry."]
+            messages = ["\(chordName) is already in use.",
+                        "Free this shortcut in the other app, or choose another in Settings."]
         default:
-            messages = ["macOS could not enable Control–Option–Command–L.",
+            messages = ["macOS could not enable \(chordName).",
                         "Use Show HUD below, or try Retry Shortcut."]
         }
         for message in messages {
@@ -75,6 +150,7 @@ import SwiftUI
         menu.addItem(.separator())
         menu.addItem(withTitle: "Show HUD", action: #selector(showHUD), keyEquivalent: "")
         menu.addItem(withTitle: "Retry Shortcut", action: #selector(registerHotKey), keyEquivalent: "")
+        menu.addItem(withTitle: "Settings…", action: #selector(openSettings), keyEquivalent: ",")
         menu.addItem(.separator())
         menu.addItem(withTitle: "Quit LLM Usage Status", action: #selector(quit), keyEquivalent: "q")
         menu.items.forEach { $0.target = self }
@@ -87,6 +163,7 @@ import SwiftUI
         displayOption.state = preferences.showCodexFiveHourLimit ? .on : .off
         menu.addItem(withTitle: "Set Vibe Monthly Budget…", action: #selector(editVibeBudget), keyEquivalent: "")
         menu.addItem(.separator())
+        menu.addItem(withTitle: "Settings…", action: #selector(openSettings), keyEquivalent: ",")
         menu.addItem(withTitle: "Restart LLM Usage Status", action: #selector(restart), keyEquivalent: "")
         menu.addItem(.separator())
         menu.addItem(withTitle: "Quit LLM Usage Status", action: #selector(quit), keyEquivalent: "q")
@@ -118,7 +195,7 @@ import SwiftUI
         // Reusing this process would make Restart merely quit. Release the hotkey
         // before the replacement starts so its registration cannot collide.
         configuration.createsNewApplicationInstance = true
-        GlobalHotKey.shared.unregister()
+        GlobalHotKey.shared.unregisterAll()
         NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: configuration) { [weak self] _, error in
             Task { @MainActor in
                 if error != nil {

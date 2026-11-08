@@ -239,3 +239,15 @@ final class GlobalHotKeyTests: XCTestCase {
         }
     }
 }
+
+/// Test-only shorthand for the toggle with the default chord (the app registers from
+/// `HotKeyShortcutStore` instead).
+extension GlobalHotKey {
+    @discardableResult
+    fileprivate func register(_ action: @escaping () -> Void) -> Result<Void, RegistrationFailure> {
+        register(id: .toggle, keyCode: UInt32(kVK_ANSI_L),
+                 modifiers: UInt32(cmdKey | optionKey | controlKey), action)
+    }
+
+    fileprivate func unregister() { unregister(id: .toggle) }
+}

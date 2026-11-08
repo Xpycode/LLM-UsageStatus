@@ -29,14 +29,34 @@ allowances, and renewal times are one keystroke away.
 - Refresh on open; a failed refresh retains the last successful values with a
   visible stale-data message and the last update time.
 - Hotkey fallback: when the shortcut cannot be registered, a warning menu-bar
-  item appears and offers Show HUD, Retry Shortcut, and Quit.
+  item appears and offers Show HUD, Retry Shortcut, Settings, and Quit.
+- Settings window: launch at login, a rebindable show/hide shortcut, and the
+  app's version.
 
 ## Quick Start
 
 Press **Control-Option-Command-L** anywhere to toggle the panel. Clicking
 anywhere else dismisses it; drag the panel to move it. Opening the panel
-refreshes usage. Right-click the panel for section preferences, Restart, and
-Quit.
+refreshes usage. Right-click the panel for section preferences, Settings,
+Restart, and Quit.
+
+### Settings
+
+Open Settings from the panel's right-click menu, or press **Command-Comma**
+while the panel is showing (the app does not take Command-Comma from other apps
+while the panel is hidden). Changes apply immediately; Escape or Command-W
+closes the window.
+
+- **Launch at login** — shows the real state from macOS, including changes made
+  in System Settings → General → Login Items. If macOS asks for approval, the
+  window offers **Open Login Items…**. The option is available only when the app
+  runs from an Applications folder; elsewhere (a build folder, Downloads, a disk
+  image) it is disabled with the reason.
+- **Shortcut** — click the field and press a new chord. It must include Command
+  or Control; Command-Comma is reserved. A chord another app already holds is
+  refused and the previous shortcut keeps working. **Reset to Default** restores
+  Control-Option-Command-L. The shortcut persists across restarts.
+- **About** — name, version and build number.
 
 ### What each section shows
 
@@ -123,9 +143,10 @@ section per provider, so adding a provider is a contained change.
 ## Troubleshooting
 
 ### Problem: Nothing appears when pressing the shortcut
-**Solution:** Another application may own Control-Option-Command-L. A warning
-menu-bar item appears in that case; free the shortcut in the other app, then
-choose Retry Shortcut. The item disappears once registration succeeds.
+**Solution:** Another application may own the shortcut (Control-Option-Command-L
+by default). A warning menu-bar item appears in that case; free the shortcut in
+the other app and choose Retry Shortcut, or pick a different shortcut in
+Settings. The item disappears once registration succeeds.
 
 ### Problem: A section shows "not detected"
 **Solution:** The CLI is not installed, or its local data files are missing.

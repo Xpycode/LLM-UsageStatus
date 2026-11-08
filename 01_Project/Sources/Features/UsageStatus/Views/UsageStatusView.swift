@@ -7,6 +7,8 @@ import SwiftUI
 struct UsageStatusView: View {
     let stores: [UsageStore]
     @ObservedObject var preferences: UsagePreferences
+    /// Spelled-out toggle chord, passed in by the app so the view never reads the store.
+    let shortcutName: String
     @State private var now = Date()
     @State private var requestedRenewals: Set<String> = []
 
@@ -15,7 +17,7 @@ struct UsageStatusView: View {
             VStack(spacing: 6) {
                 Text("LLM Usage Status")
                     .font(.title2.weight(.semibold))
-                Text("Control–Option–Command–L to toggle · click elsewhere to dismiss")
+                Text("\(shortcutName) to toggle · click elsewhere to dismiss")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
