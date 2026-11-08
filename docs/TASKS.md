@@ -2,7 +2,7 @@
 
 - **Plan (retired 2026-10-29):** `docs/plans/2026-10-29-multi-provider-hud/IMPLEMENTATION_PLAN.md` — **COMPLETE**: 17/17 code tasks, E1 passed, E2 passed (notarized 0.1.0, Apple verdict Accepted, stapled, spctl clean). It stays in place as the permanent execution record.
 - **Plan (retired 2026-11-08):** `docs/plans/2026-11-06-settings-window/IMPLEMENTATION_PLAN.md` — **COMPLETE**: Settings window (launch at login, shortcut rebinding, About), 8/8 tasks (CI 204 green, 288f5ab), E1 passed. It stays in place as the permanent execution record.
-- **Active plan (2026-11-08):** `docs/plans/2026-11-08-v0.2.0/IMPLEMENTATION_PLAN.md` — 0.2.0: layout-aware shortcut names, in-app Help, Send Feedback… / Leave a Tip, notarized release. 11 tasks, 4 waves + E1–E5; first ready: Wave 1 (1.1–1.4). D3/D5 confirmed; execution requested (Wave 1 first).
+- **Active plan (2026-11-08):** `docs/plans/2026-11-08-v0.2.0/IMPLEMENTATION_PLAN.md` — 0.2.0: layout-aware shortcut names, in-app Help, Send Feedback… / Leave a Tip, notarized release. 11 tasks, 4 waves + E1–E5; Waves 1–4 implemented (2026-11-08); CI (needs push), then E1–E5.
 
 ## Backlog
 
@@ -39,7 +39,12 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
 12. **Positional shortcut refusals on non-US layouts** (2026-11-08, 0.2.0 research R1): `systemKeyCodes`
     and the reserved Command-Comma are matched by key position, so on QWERTZ physical Command-Z
     (Undo) is not refused while Command-Y is, and "Command-Comma" text is wrong on AZERTY. The ISO
-    `<` key (`kVK_ISO_Section`) is rejected as unsupported. Consider after 0.2.0.
+    `<` key (`kVK_ISO_Section`) is rejected as unsupported. Consider after 0.2.0. (0.2.0 review:
+    on Dvorak, Command plus the key labelled C is accepted and would take Copy from every app; docs
+    now say "US key position". Fix: derive the blocked codes from `KeyboardLayoutNames` at validation.)
+13. **`try?` in `SectionStateCache`** (2026-11-08, 0.2.0 review; predates the plan, from 834d404):
+    lines 28, 29, 42–44 swallow read/decode/write errors, against the project's no-`try?` rule; a
+    failed cache write is silent. Log via `Logger` and keep the empty-cache fallback.
 
 ## Inbox
 
