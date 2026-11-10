@@ -1,6 +1,6 @@
 # PROJECT_STATE — LLM-UsageStatus
 
-**Last updated:** 2026-11-10 (0.2.2 planned; Wave 1 ready)
+**Last updated:** 2026-11-10 (0.2.2 Wave 1 done; Wave 2 ready)
 
 ## Identity
 
@@ -15,19 +15,18 @@ Developer ID signed, notarized, zero configuration for end users.
 
 ## Now
 
-- **Funnel:** plan → validation gate passed; ready for `build`.
-- **Execution:** `docs/plans/2026-11-10-v0.2.2/IMPLEMENTATION_PLAN.md` — 0.2.2 (202), 8 tasks / 3 waves + E1–E4.
-  Wave 1 (1.1 cache logging, 1.2 layout-aware refusals, 1.3 Vibe inclusive tokens/cost, 1.4 provider
-  on/off) is ready with no prerequisites; **execution not yet requested**.
-  Research found Vibe totals double-count cached/reasoning tokens (cost ~7–8× high) and lose rotated
-  journal segments — fixed by reading per-session `tokenUsage` snapshots (R2).
-- **Next:** `/execute` Wave 1. After 0.2.2: Sparkle; provider logos last. Deferred: Backlog #14 (budget since reset day), #15 (system hotkeys).
+- **Funnel:** build — 0.2.2 Wave 1 of 3 done.
+- **Execution:** `docs/plans/2026-11-10-v0.2.2/IMPLEMENTATION_PLAN.md` — 0.2.2 (202). Wave 1 done
+  (1.1, 1.2, 1.3 complete; 1.4 implemented, Settings screenshot open); 4 commits, not pushed.
+  **Wave 2 (2.1 Settings hotkey follows layout, 2.2 Vibe session snapshots) is ready.**
+- **Next:** `/execute` Wave 2. After 0.2.2: Sparkle; provider logos last. Deferred: Backlog #14 (budget since reset day), #15 (system hotkeys).
 - Installed: notarized 0.2.1 (201) in `/Applications/LLM-UsageStatus.app` (user-installed, acceptance passed).
 - `dist/` holds only 0.2.1 (0.1.0 and 0.2.0 moved to the Trash 2026-11-10).
 - GitHub remote (private) + CI green since 2026-11-07 (now 217 tests on Xcode 16.4).
 
 ## Recent
 
+- 2026-11-10: **0.2.2 Wave 1 done** — cache logging, layout-aware refusals + ISO key, Vibe inclusive tokens/cost, provider on/off (4 commits, build-for-testing green, not pushed).
 - 2026-11-10: **0.2.2 planned** — Vibe number fix, layout-aware shortcut refusals, provider on/off in Settings (user request), cache logging.
 - 2026-11-10: **0.2.1 shipped and accepted** — the app now has its icon; installed, all checks passed; 0.2.0 plan retired; next release (0.2.2 maintenance) agreed.
 - 2026-11-10: **0.2.0 fully published** — notarized download and its own page on the apps website.
@@ -37,5 +36,5 @@ Developer ID signed, notarized, zero configuration for end users.
 
 ## Handoff
 
-- Current handoff: `docs/sessions/2026-11-10.md` → last **Resume** — plan 0.2.2.
+- Current handoff: `docs/sessions/2026-11-10.md` → last **Resume** (night) — 0.2.2 Wave 1 done, Wave 2 next.
 - Decisions: `docs/decisions.md`

@@ -5,7 +5,7 @@
 > Task state/evidence is authoritative here; TASKS links here and holds backlog/inbox.
 > Follow the master's `reference/task-state.md` for legacy reconciliation and archival.
 
-**Progress:** 0/8 tasks; external checks E1–E4 pending.
+**Progress:** 3/8 tasks complete (1.1, 1.2, 1.3); 1.4 implemented, Settings screenshot pending; external checks E1–E4 pending.
 **Task states:** unchecked = pending / implemented-unverified / blocked (name gate);
 checked = complete with required evidence. Task identity includes this plan path plus ID.
 
@@ -188,7 +188,7 @@ Wave 1 ownership (exclusive):
 
 ### Wave 1 (parallel — no mutual dependencies; disjoint ownership)
 
-- [ ] **1.1**: Log `SectionStateCache` failures (Backlog #13)
+- [x] **1.1**: Log `SectionStateCache` failures (Backlog #13) — `c5fc548`
   - Depends on: none. External gates: none.
   - Owns: see table.
   - Success:
@@ -202,7 +202,7 @@ Wave 1 ownership (exclusive):
       directory (no crash; the next load still works).
   - Backpressure: `build-for-testing`; `grep -n 'try?' Sources/Features/UsageStatus/SectionStateCache.swift` is empty.
 
-- [ ] **1.2**: Layout-aware shortcut refusals and ISO key (Backlog #12, D4)
+- [x] **1.2**: Layout-aware shortcut refusals and ISO key (Backlog #12, D4) — `4421c67` (real-layout behaviour still gated by E1)
   - Depends on: none. External gates: E1 (real QWERTZ, AZERTY and Dvorak behaviour).
   - Owns: see table. Interfaces: `LayoutTranslator`, the two-level `validate`, `settings(using:)`.
   - Success:
@@ -222,7 +222,7 @@ Wave 1 ownership (exclusive):
       `HotKeyShortcutTests` and `ShortcutRecorderFieldTests` do not shrink.
   - Backpressure: `build-for-testing`; the test list is reported to the coordinator.
 
-- [ ] **1.3**: Inclusive Vibe token semantics and cost (D2)
+- [x] **1.3**: Inclusive Vibe token semantics and cost (D2) — `7175c92`
   - Depends on: none. External gates: none.
   - Owns: see table.
   - Success:
@@ -238,7 +238,7 @@ Wave 1 ownership (exclusive):
     - **New tests:** inclusive totals, single cached charge, and a clamp when cached > input.
   - Backpressure: `build-for-testing`.
 
-- [ ] **1.4**: Provider on/off — preferences, Settings section, panel and menu (D6)
+- [ ] **1.4**: Provider on/off — preferences, Settings section, panel and menu (D6) — implemented in `2c11dbe`; **open:** fresh Debug build screenshot of Settings (take it at the 3.2 handoff; visual check E1)
   - Depends on: none. External gates: E1 (visual check of Settings and the panel).
   - Owns: see table (`AppDelegate.swift` only in this wave).
   - Success:
@@ -382,6 +382,7 @@ Wave 1 ownership (exclusive):
 | Wave / task IDs | Assignments or serial reason | Validation / evidence | Commits or exception | Remaining gates / next action or stop reason |
 |---|---|---|---|---|
 | — | Plan written 2026-11-10 from two parallel research agents plus coordinator on-disk checks (`research/findings.md`); D3, D6 and the two deferrals decided by the user | — | — | Next: Wave 1 (1.1–1.4), once execution is requested |
+| Wave 1 (1.1, 1.2, 1.3, 1.4), 2026-11-10 | 4 parallel `developer` agents with fresh context, exclusive file ownership, separate scratch DerivedData folders. Coordinator handled one cross-owner fix: 1.4's new `SettingsWindowController(preferences:)` argument in `ShortcutRecorderFieldTests.testWindowControllerSmoke` was made by the 1.2 owner and committed with 1.4 | Integrated `build-for-testing` **TEST BUILD SUCCEEDED**, no warnings. 237 test functions (217 + 20 new: 1.1 +2, 1.2 +11 (35 → 46), 1.3 +3, 1.4 +4). `grep 'try?' SectionStateCache.swift` empty. Tests not run locally (app-hosted; CI at 3.2). 1.3 finding: mistral-vibe `formats.py` (`TokenCounts`: "the cached and cache-written input are part of the input") → `cache_write_tokens` is no longer added. Source: https://github.com/mistralai/mistral-vibe/blob/main/harness/runtimes/python/python/mistralai_vibe_local_harness/vibe/completion_profile/formats.py | `2c11dbe` 1.4 · `c5fc548` 1.1 · `7175c92` 1.3 · `4421c67` 1.2 (each builds alone). Not pushed | 1.4: the Settings screenshot is still open. API notes for later waves: the failure type is `HotKeyShortcut.Rejection`; extras are `LayoutTranslator.init(map:)`, `.unavailable` and `ShortcutRecorderField(translator:)`; `UsagePreferences.providerIDs` and `enabledStores(_:enabled:)`. Next: Wave 2 (2.1 coordinator, 2.2 agent) |
 
 ---
 *Keep active while required work or acceptance is incomplete. On completion, retire in place with
