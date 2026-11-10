@@ -3,7 +3,7 @@
 - **Plan (retired 2026-10-29):** `docs/plans/2026-10-29-multi-provider-hud/IMPLEMENTATION_PLAN.md` — **COMPLETE**: 17/17 code tasks, E1 passed, E2 passed (notarized 0.1.0, Apple verdict Accepted, stapled, spctl clean). It stays in place as the permanent execution record.
 - **Plan (retired 2026-11-08):** `docs/plans/2026-11-06-settings-window/IMPLEMENTATION_PLAN.md` — **COMPLETE**: Settings window (launch at login, shortcut rebinding, About), 8/8 tasks (CI 204 green, 288f5ab), E1 passed. It stays in place as the permanent execution record.
 - **Plan (retired 2026-11-10):** `docs/plans/2026-11-08-v0.2.0/IMPLEMENTATION_PLAN.md` — **COMPLETE**: 0.2.0 (layout-aware shortcut names, in-app Help, Send Feedback… / Leave a Tip), 11/11 tasks, E1–E5 passed; notarized DMG + detail page live. Follow-up 0.2.1 (app icon) shipped the same day, user acceptance passed. It stays in place as the permanent execution record.
-- **Active plan:** none — pick the next backlog item (`/spec` or `/make-plan`).
+- **Active plan:** `docs/plans/2026-11-10-v0.2.2/IMPLEMENTATION_PLAN.md` — 0.2.2 (202): Vibe totals fix (snapshot source, no double count, children fold), layout-aware shortcut refusals + AZERTY Settings key + ISO key, provider on/off in Settings, `SectionStateCache` logging. First ready: Wave 1 (1.1–1.4), no prerequisites; execution not yet requested.
 
 ## Backlog
 
@@ -37,15 +37,22 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
     blocking): `HotKeyShortcut.displayName` maps key codes to US-ANSI letters, so on QWERTZ/AZERTY
     the footer and recorder name the wrong letter (Control–Command–Z shows as …–Y). Fix with
     `UCKeyTranslate` against the current keyboard layout, keeping the US name as fallback.
-12. **Positional shortcut refusals on non-US layouts** (2026-11-08, 0.2.0 research R1): `systemKeyCodes`
+12. → **Planned 2026-11-10** (0.2.2 plan, 1.2/2.1). **Positional shortcut refusals on non-US layouts** (2026-11-08, 0.2.0 research R1): `systemKeyCodes`
     and the reserved Command-Comma are matched by key position, so on QWERTZ physical Command-Z
     (Undo) is not refused while Command-Y is, and "Command-Comma" text is wrong on AZERTY. The ISO
     `<` key (`kVK_ISO_Section`) is rejected as unsupported. Consider after 0.2.0. (0.2.0 review:
     on Dvorak, Command plus the key labelled C is accepted and would take Copy from every app; docs
     now say "US key position". Fix: derive the blocked codes from `KeyboardLayoutNames` at validation.)
-13. **`try?` in `SectionStateCache`** (2026-11-08, 0.2.0 review; predates the plan, from 834d404):
+13. → **Planned 2026-11-10** (0.2.2 plan, 1.1). **`try?` in `SectionStateCache`** (2026-11-08, 0.2.0 review; predates the plan, from 834d404):
     lines 28, 29, 42–44 swallow read/decode/write errors, against the project's no-`try?` rule; a
     failed cache write is silent. Log via `Logger` and keep the empty-cache fallback.
+14. **Vibe monthly budget counts all stored usage** (2026-11-10, 0.2.2 research R2; deferred by user):
+    the headline compares the budget against cost of every session in the store
+    (`VibeUsageProvider.swift:179`), not usage since the reset day. Needs a time-window design —
+    session snapshots carry no per-day split; journal rows do but rotate away.
+15. **Refuse macOS system hotkeys in the recorder** (2026-11-10, 0.2.2 research R1; deferred by user):
+    check enabled `CopySymbolicHotKeys` entries (Spotlight, screenshots, Mission Control, user
+    customisations) by key code + modifiers, as sindresorhus/KeyboardShortcuts and ShortcutRecorder do.
 
 ## Inbox
 
@@ -65,6 +72,8 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
   - **Sparkle auto-update** with EdDSA appcast: gated on the public-distribution go-ahead and
     where the appcast is hosted; last in the sequence by design. Build numbers must stay
     monotonic (`sparkle:version` = build).
+- → **Planned 2026-11-10** (0.2.2 plan): Backlog #12 and #13 (above) and the Vibe all-time tokens item (below).
+- → **Planned 2026-11-10** (0.2.2 plan, 1.4, D6). Provider on/off in Settings (user request 2026-11-10): Providers section first, three checkboxes; off = hidden + never read; all-off hint; menu items hide.
 - Short-session token-lifetime question (2026-11-06): record how long the Claude OAuth access
   token actually lives between Claude Code runs, to set expectations for seeing "Sign-in expired".
 
@@ -75,8 +84,8 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
   notarized app; monochrome/template rendering to fit the HUD aesthetic (and dark material);
   sourcing simple official marks vs. custom glyphs; asset size overhead. Related existing
   Inbox item: app icon design in `02_Design/`.
-- Icon design in `02_Design/` (independent of plan waves; does not gate E1/E2 — default Xcode icon acceptable for 0.1.0).
-- Vibe "Tokens (all time)" fluctuated across consecutive HUD refreshes (46.9M → 35.2M → 36.8M while
+- → **Done 2026-11-10 (0.2.1).** Icon design in `02_Design/` (independent of plan waves; does not gate E1/E2 — default Xcode icon acceptable for 0.1.0).
+- → **Planned 2026-11-10** (0.2.2 plan, 1.3/2.2; root cause found: journal rotation + double-counted cached/reasoning tokens, research R2). Vibe "Tokens (all time)" fluctuated across consecutive HUD refreshes (46.9M → 35.2M → 36.8M while
   session count stayed 14, observed 2026-10-29 via user screenshots): the unified store appears to
   rotate/compact sessions, so "all time" may be a mislabel for "all sessions currently in the
   store". Unconfirmed — investigate per-session totals across scans, then consider relabeling.
