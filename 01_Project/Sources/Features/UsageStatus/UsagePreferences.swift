@@ -10,7 +10,23 @@ import Foundation
 final class UsagePreferences: ObservableObject {
     private static let codexFiveHourKey = "codex.showFiveHourLimit"
 
+    /// Provider ids owned by the providers themselves (`Provider.id`); the
+    /// on/off toggles are keyed by these.
+    static let providerIDs = ["codex", "claude", "vibe"]
+
     private let defaults: UserDefaults
+
+    private static func enabledKey(_ providerID: String) -> String { "\(providerID).enabled" }
+
+    /// Providers shown and refreshed. A provider that is off is never read or fetched.
+    @Published var enabledProviderIDs: Set<String> {
+        didSet {
+            guard enabledProviderIDs != oldValue else { return }
+            for id in Self.providerIDs where enabledProviderIDs.contains(id) != oldValue.contains(id) {
+                defaults.set(enabledProviderIDs.contains(id), forKey: Self.enabledKey(id))
+            }
+        }
+    }
 
     @Published var showCodexFiveHourLimit: Bool {
         didSet {
@@ -42,8 +58,28 @@ final class UsagePreferences: ObservableObject {
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
+        enabledProviderIDs = Set(Self.providerIDs.filter {
+            defaults.object(forKey: Self.enabledKey($0)) as? Bool ?? true
+        })
         showCodexFiveHourLimit = defaults.object(forKey: Self.codexFiveHourKey) as? Bool ?? false
         vibeMonthlyBudgetUSD = defaults.object(forKey: UsagePreferenceKeys.vibeMonthlyBudgetUSD) as? Double
         vibeBudgetResetDay = min(max(defaults.object(forKey: UsagePreferenceKeys.vibeBudgetResetDay) as? Int ?? 1, 1), 31)
+    }
+
+    func isEnabled(_ providerID: String) -> Bool {
+        enabledProviderIDs.contains(providerID)
+    }
+
+    func setEnabled(_ enabled: Bool, for providerID: String) {
+        if enabled {
+            enabledProviderIDs.insert(providerID)
+        } else {
+            enabledProviderIDs.remove(providerID)
+        }
+    }
+
+    /// Stores whose provider is enabled, in the original order.
+    static func enabledStores(_ stores: [UsageStore], enabled: Set<String>) -> [UsageStore] {
+        stores.filter { enabled.contains($0.providerID) }
     }
 }

@@ -1,4 +1,5 @@
 import AppKit
+import Combine
 import Carbon.HIToolbox
 import SwiftUI
 import os
@@ -11,8 +12,10 @@ import os
     private var shortcutFallback: NSStatusItem?
     private let shortcutStore = HotKeyShortcutStore()
     private let launchAtLogin = LaunchAtLogin()
+    private var enabledObservation: AnyCancellable?
+    private var knownEnabled: Set<String> = []
     private lazy var settings = SettingsWindowController(
-        shortcuts: shortcutStore, launchAtLogin: launchAtLogin, version: .current,
+        preferences: preferences, shortcuts: shortcutStore, launchAtLogin: launchAtLogin, version: .current,
         commitShortcut: { [unowned self] in self.commitShortcut($0) },
         recordingChanged: { [unowned self] in self.shortcutRecordingChanged($0) })
 
@@ -30,6 +33,12 @@ import os
 
     func applicationDidFinishLaunching(_: Notification) {
         registerHotKey()
+        knownEnabled = preferences.enabledProviderIDs
+        // The sink receives the new value (willSet timing), so it diffs against `knownEnabled`
+        // rather than reading the property back.
+        enabledObservation = preferences.$enabledProviderIDs.sink { [weak self] enabled in
+            self?.enabledProvidersChanged(enabled)
+        }
         // After an app update the login item can point at the old copy; re-registering fixes it.
         Task { [launchAtLogin] in await launchAtLogin.refreshRegistrationIfEnabled() }
         panel.menuProvider = { [weak self] in self?.makeMenu() ?? NSMenu() }
@@ -41,13 +50,26 @@ import os
     func applicationWillTerminate(_: Notification) { GlobalHotKey.shared.unregisterAll(); if let clickAway { NSEvent.removeMonitor(clickAway) } }
     private func toggle() { if panel.isVisible { hidePanel() } else { showHUD() } }
 
+    /// A provider turned on while the panel is open shows its cached section at once and refreshes.
+    private func enabledProvidersChanged(_ enabled: Set<String>) {
+        let added = enabled.subtracting(knownEnabled)
+        knownEnabled = enabled
+        guard panel.isVisible, !added.isEmpty else { return }
+        enabledStores(in: added).forEach { $0.refresh() }
+    }
+
+    private func enabledStores(in enabled: Set<String>) -> [UsageStore] {
+        UsagePreferences.enabledStores(stores, enabled: enabled)
+    }
+
     @objc private func showHUD() {
         let shortcutName = shortcutStore.current.displayName
         panel.show { [stores, preferences] in
             UsageStatusView(stores: stores, preferences: preferences, shortcutName: shortcutName)
         }
-        // Refresh on open: every provider fetches current values independently.
-        stores.forEach { $0.refresh() }
+        // Refresh on open: every enabled provider fetches current values independently;
+        // a disabled provider is never read or fetched.
+        enabledStores(in: preferences.enabledProviderIDs).forEach { $0.refresh() }
         registerSettingsShortcut()
     }
 
@@ -176,10 +198,18 @@ import os
 
     private func makeMenu() -> NSMenu {
         let menu = NSMenu()
-        let displayOption = menu.addItem(withTitle: "Show 5-hour limit", action: #selector(toggleCodexFiveHourLimit), keyEquivalent: "")
-        displayOption.state = preferences.showCodexFiveHourLimit ? .on : .off
-        menu.addItem(withTitle: "Set Vibe Monthly Budget…", action: #selector(editVibeBudget), keyEquivalent: "")
-        menu.addItem(.separator())
+        // Rebuilt on every right-click (menuProvider), so provider toggles apply immediately.
+        var providerItems = 0
+        if preferences.isEnabled("codex") {
+            let displayOption = menu.addItem(withTitle: "Show 5-hour limit", action: #selector(toggleCodexFiveHourLimit), keyEquivalent: "")
+            displayOption.state = preferences.showCodexFiveHourLimit ? .on : .off
+            providerItems += 1
+        }
+        if preferences.isEnabled("vibe") {
+            menu.addItem(withTitle: "Set Vibe Monthly Budget…", action: #selector(editVibeBudget), keyEquivalent: "")
+            providerItems += 1
+        }
+        if providerItems > 0 { menu.addItem(.separator()) }
         menu.addItem(withTitle: "Settings…", action: #selector(openSettings), keyEquivalent: ",")
         menu.addItem(withTitle: "LLM Usage Status Help", action: #selector(openHelp), keyEquivalent: "")
         menu.addItem(withTitle: "Restart LLM Usage Status", action: #selector(restart), keyEquivalent: "")
@@ -206,7 +236,7 @@ import os
             self.preferences.vibeMonthlyBudgetUSD = amount
             self.preferences.vibeBudgetResetDay = resetDay
             // The open panel picks the new headline up through the stores.
-            self.stores.forEach { $0.refresh() }
+            self.enabledStores(in: self.preferences.enabledProviderIDs).forEach { $0.refresh() }
         }
     }
 

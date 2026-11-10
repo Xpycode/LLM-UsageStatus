@@ -90,4 +90,42 @@ final class UsagePreferencesTests: XCTestCase {
         preferences.vibeMonthlyBudgetUSD = -10
         XCTAssertNil(defaults.object(forKey: UsagePreferenceKeys.vibeMonthlyBudgetUSD))
     }
+
+    // MARK: - Provider on/off
+
+    func testAllProvidersEnabledByDefault() {
+        let preferences = UsagePreferences(defaults: defaults)
+        XCTAssertEqual(preferences.enabledProviderIDs, ["codex", "claude", "vibe"])
+        XCTAssertTrue(preferences.isEnabled("claude"))
+    }
+
+    func testProviderEnabledPersistsAcrossInstances() {
+        let first = UsagePreferences(defaults: defaults)
+        first.setEnabled(false, for: "vibe")
+        XCTAssertEqual(defaults.object(forKey: "vibe.enabled") as? Bool, false)
+        XCTAssertNil(defaults.object(forKey: "codex.enabled"))
+
+        let reloaded = UsagePreferences(defaults: defaults)
+        XCTAssertFalse(reloaded.isEnabled("vibe"))
+        XCTAssertEqual(reloaded.enabledProviderIDs, ["codex", "claude"])
+    }
+
+    func testProviderToggleOffAndBackOn() {
+        let preferences = UsagePreferences(defaults: defaults)
+        preferences.setEnabled(false, for: "codex")
+        XCTAssertFalse(preferences.isEnabled("codex"))
+        preferences.setEnabled(true, for: "codex")
+        XCTAssertTrue(preferences.isEnabled("codex"))
+        XCTAssertEqual(defaults.object(forKey: "codex.enabled") as? Bool, true)
+        XCTAssertTrue(UsagePreferences(defaults: defaults).isEnabled("codex"))
+    }
+
+    func testEnabledStoresFilterKeepsOrderAndExcludesDisabled() {
+        let stores = ["codex", "claude", "vibe"].map {
+            UsageStore(providerID: $0, displayName: $0, fetch: { .unavailable })
+        }
+        let filtered = UsagePreferences.enabledStores(stores, enabled: ["vibe", "codex"])
+        XCTAssertEqual(filtered.map(\.providerID), ["codex", "vibe"])
+        XCTAssertEqual(UsagePreferences.enabledStores(stores, enabled: []).count, 0)
+    }
 }

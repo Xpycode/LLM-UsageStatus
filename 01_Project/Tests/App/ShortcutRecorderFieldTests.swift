@@ -209,6 +209,7 @@ final class ShortcutRecorderFieldTests: XCTestCase {
     func testWindowControllerSmoke() {
         let defaults = UserDefaults(suiteName: suiteName) ?? .standard
         let controller = SettingsWindowController(
+            preferences: UsagePreferences(defaults: defaults),
             shortcuts: HotKeyShortcutStore(defaults: defaults),
             launchAtLogin: LaunchAtLogin(),
             version: AppVersion(infoDictionary: nil),

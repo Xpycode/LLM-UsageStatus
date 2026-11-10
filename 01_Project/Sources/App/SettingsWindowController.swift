@@ -26,7 +26,7 @@ private final class SettingsWindow: NSWindow {
     }
 }
 
-/// Self-managed settings window (Startup, Shortcut, About) built from AppKit controls.
+/// Self-managed settings window (Providers, Startup, Shortcut, About) built from AppKit controls.
 ///
 /// Shortcut contract: the window never saves to `HotKeyShortcutStore`. Recording a chord and
 /// "Reset to Default" both go through `commitShortcut`; the caller registers the hotkey and
@@ -36,6 +36,7 @@ private final class SettingsWindow: NSWindow {
 final class SettingsWindowController: NSObject, NSWindowDelegate {
     let window: NSWindow
 
+    private let preferences: UsagePreferences
     private let shortcuts: HotKeyShortcutStore
     private let launchAtLogin: LaunchAtLogin
     private let commitShortcut: (HotKeyShortcut) -> ShortcutCommitResult
@@ -57,12 +58,14 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     private static let contentWidth: CGFloat = 380
 
     init(
+        preferences: UsagePreferences,
         shortcuts: HotKeyShortcutStore,
         launchAtLogin: LaunchAtLogin,
         version: AppVersion,
         commitShortcut: @escaping (HotKeyShortcut) -> ShortcutCommitResult,
         recordingChanged: @escaping (Bool) -> Void
     ) {
+        self.preferences = preferences
         self.shortcuts = shortcuts
         self.launchAtLogin = launchAtLogin
         self.commitShortcut = commitShortcut
@@ -117,7 +120,17 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         let copyright = NSTextField(labelWithString: version.copyright)
         copyright.textColor = .secondaryLabelColor
 
+        let providerRows: [NSView] = [
+            ("codex", "Codex"), ("claude", "Claude Code"), ("vibe", "Mistral Vibe"),
+        ].map { id, title in
+            let checkbox = NSButton(checkboxWithTitle: title, target: self, action: #selector(toggleProvider))
+            checkbox.identifier = NSUserInterfaceItemIdentifier(id)
+            checkbox.state = preferences.isEnabled(id) ? .on : .off
+            return checkbox
+        }
+
         let sections: [NSView] = [
+            section("Providers", providerRows),
             section("Startup", [launchCheckbox, launchStatus, loginItemsButton]),
             section("Shortcut", [shortcutTitle, shortcutRow, shortcutMessage]),
             section("About", [name, description, versionLabel, copyright]),
@@ -181,6 +194,13 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         case let result:
             recorder.message = ShortcutRecorderField.message(for: result)
         }
+    }
+
+    // MARK: Providers
+
+    @objc private func toggleProvider(_ sender: NSButton) {
+        guard let id = sender.identifier?.rawValue else { return }
+        preferences.setEnabled(sender.state == .on, for: id)
     }
 
     // MARK: Launch at login

@@ -23,7 +23,13 @@ struct UsageStatusView: View {
             }
             .frame(maxWidth: .infinity)
 
-            ForEach(stores, id: \.providerID) { store in
+            if enabledStores.isEmpty {
+                Text("All providers are off. Turn them on in Settings.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity)
+            }
+            ForEach(enabledStores, id: \.providerID) { store in
                 ProviderSectionView(store: store, now: now,
                                     showFiveHourLimit: preferences.showCodexFiveHourLimit)
             }
@@ -46,8 +52,12 @@ struct UsageStatusView: View {
     /// When any provider's deadline passes, request one refresh per passed
     /// deadline — even if the provider keeps returning an old window or the
     /// refresh fails. Reopening the HUD also refreshes normally.
+    private var enabledStores: [UsageStore] {
+        UsagePreferences.enabledStores(stores, enabled: preferences.enabledProviderIDs)
+    }
+
     private func refreshPassedRenewals() {
-        for store in stores {
+        for store in enabledStores {
             guard let section = store.section else { continue }
             let passed = section.deadlines.map(\.date).filter { date in
                 date <= now && !requestedRenewals.contains(Self.renewalKey(provider: store.providerID, date: date))
