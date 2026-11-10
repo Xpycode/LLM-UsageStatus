@@ -3,11 +3,15 @@ import Foundation
 import os
 
 /// Token counters summed from per-response journal usage rows.
-/// `inputTokens` already folds in `cache_write_tokens`, which are never counted twice.
+/// Counts are inclusive, as the journal reports them (`total_tokens == input + output`).
 struct VibeTokenTotals: Sendable, Equatable {
+    /// All input tokens, INCLUDING `cachedInputTokens` and any cache-write tokens.
     var inputTokens = 0
+    /// The cached subset of `inputTokens`; never additive to it.
     var cachedInputTokens = 0
+    /// All output tokens, INCLUDING `reasoningTokens`.
     var outputTokens = 0
+    /// The reasoning subset of `outputTokens`; never additive to it.
     var reasoningTokens = 0
 
     static let zero = VibeTokenTotals()
@@ -281,9 +285,11 @@ struct VibeJournalAggregator: Sendable {
     }
 
     /// Usage rows live at payload.result.result.usage on action_result records.
-    /// `total_tokens` is deliberately ignored: its components are summed here,
-    /// so using it would double-count. Cache-write tokens fold into the input
-    /// total and are never counted separately.
+    /// `total_tokens` is deliberately ignored: input and output are summed here.
+    /// Cached tokens stay inside input and reasoning inside output. Vibe's
+    /// harness counts cache-write tokens as part of `input_tokens` already
+    /// (TokenCounts docstring in mistral-vibe formats.py), so the separate
+    /// `cache_write_tokens` field is not added again.
     private static func extractUsage(_ record: [String: Any]) -> UsageExtraction {
         guard let payload = record["payload"] as? [String: Any],
               let outer = payload["result"] as? [String: Any],
@@ -293,7 +299,7 @@ struct VibeJournalAggregator: Sendable {
         var recognized = false
         for (key, value) in usage {
             switch key {
-            case "input_tokens", "cache_write_tokens":
+            case "input_tokens":
                 guard let tokens = nonnegativeInt(value) else { return .malformed }
                 totals.inputTokens += tokens
                 recognized = true

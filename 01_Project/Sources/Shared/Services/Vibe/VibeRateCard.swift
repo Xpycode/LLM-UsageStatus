@@ -39,10 +39,13 @@ enum VibeRateCard {
         return prices[modelName.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)]
     }
 
-    /// cost = input/1M * inputPrice + cached/1M * cachedPrice + output/1M * outputPrice.
-    /// The sum is divided once so per-component rounding cannot accumulate.
+    /// `inputTokens` includes `cachedTokens`, so cached tokens are charged once, at the
+    /// cached price: cost = (input - cached)/1M * inputPrice + cached/1M * cachedPrice
+    /// + output/1M * outputPrice. The uncached share is clamped at 0. The sum is
+    /// divided once so per-component rounding cannot accumulate.
     static func cost(inputTokens: Int, cachedTokens: Int, outputTokens: Int, prices: PriceTriple) -> Decimal {
-        (Decimal(inputTokens) * prices.input
+        let uncachedInput = max(inputTokens - cachedTokens, 0)
+        return (Decimal(uncachedInput) * prices.input
             + Decimal(cachedTokens) * prices.cached
             + Decimal(outputTokens) * prices.output) / Decimal(tokensPerMillion)
     }

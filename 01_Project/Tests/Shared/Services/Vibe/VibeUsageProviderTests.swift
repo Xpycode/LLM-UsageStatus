@@ -28,7 +28,7 @@ final class VibeUsageProviderTests: XCTestCase {
 
     func testScanPopulatesRowsAndCostWhenModelResolves() async throws {
         try writeSession("session-a", journal: [
-            usageRecord(sequence: 1, actionID: "a1", input: 100, cached: 5_000, output: 200),
+            usageRecord(sequence: 1, actionID: "a1", input: 5_100, cached: 5_000, output: 200),
             coreInputRecord(sequence: 2, actionID: "a1", timeUnixMs: milliseconds(Self.now.addingTimeInterval(-3_600))),
         ], modelName: "mistral-medium-3.5")
         let provider = VibeUsageProvider(aggregator: aggregator(modelName: { _, _ in "mistral-medium-3.5" }))
@@ -38,7 +38,7 @@ final class VibeUsageProviderTests: XCTestCase {
         guard case .populated(let section) = state else {
             return XCTFail("Expected populated, got \(state)")
         }
-        let cost = VibeRateCard.cost(inputTokens: 100, cachedTokens: 5_000, outputTokens: 200,
+        let cost = VibeRateCard.cost(inputTokens: 5_100, cachedTokens: 5_000, outputTokens: 200,
                                         prices: VibeRateCard.resolve("mistral-medium-3.5")!)
         let tokenTotal = 5_300.formatted()
         XCTAssertEqual(section.rows, [
@@ -170,11 +170,17 @@ final class VibeUsageProviderTests: XCTestCase {
         XCTAssertTrue(section.rows.allSatisfy { $0.value == "0" })
     }
 
+    func testTotalTokensIsInputPlusOutputNotFourWaySum() {
+        let totals = VibeTokenTotals(inputTokens: 1_000, cachedInputTokens: 900,
+                                     outputTokens: 200, reasoningTokens: 50)
+        XCTAssertEqual(VibeUsageProvider.totalTokens(totals), 1_200)
+    }
+
     // MARK: - Monthly budget headline
 
     func testBudgetHeadlineEstimatesPercentLeftAndDailyBudget() async throws {
         try writeSession("session-budget", journal: [
-            usageRecord(sequence: 1, actionID: "b1", input: 100, cached: 5_000, output: 200),
+            usageRecord(sequence: 1, actionID: "b1", input: 5_100, cached: 5_000, output: 200),
             coreInputRecord(sequence: 2, actionID: "b1", timeUnixMs: milliseconds(Self.now)),
         ], modelName: "mistral-medium-3.5")
         let report = await aggregator(modelName: { _, _ in "mistral-medium-3.5" }).scan()
@@ -187,7 +193,7 @@ final class VibeUsageProviderTests: XCTestCase {
                                                 budget: VibeBudget(amountUSD: 300, resetDay: 15),
                                                 now: now, calendar: calendar)
 
-        let cost = VibeRateCard.cost(inputTokens: 100, cachedTokens: 5_000, outputTokens: 200,
+        let cost = VibeRateCard.cost(inputTokens: 5_100, cachedTokens: 5_000, outputTokens: 200,
                                         prices: VibeRateCard.resolve("mistral-medium-3.5")!)
         let expectedHeadline = SectionHeadline(
             windowLabel: "Monthly budget",
@@ -221,14 +227,14 @@ final class VibeUsageProviderTests: XCTestCase {
 
     func testGlanceLineShowsCostAndTokensForLast24Hours() async throws {
         try writeSession("session-glance", journal: [
-            usageRecord(sequence: 1, actionID: "g1", input: 100, cached: 5_000, output: 200),
+            usageRecord(sequence: 1, actionID: "g1", input: 5_100, cached: 5_000, output: 200),
             coreInputRecord(sequence: 2, actionID: "g1", timeUnixMs: milliseconds(Self.now)),
         ], modelName: "mistral-medium-3.5")
         let report = await aggregator(modelName: { _, _ in "mistral-medium-3.5" }).scan()
 
         let section = VibeUsageProvider.section(for: report, budget: nil)
 
-        let cost = VibeRateCard.cost(inputTokens: 100, cachedTokens: 5_000, outputTokens: 200,
+        let cost = VibeRateCard.cost(inputTokens: 5_100, cachedTokens: 5_000, outputTokens: 200,
                                         prices: VibeRateCard.resolve("mistral-medium-3.5")!)
         let expected = "≈ \(VibeUsageProvider.usd(cost)) · \(5_300.formatted(.number.notation(.compactName).locale(.current))) tokens · 24 hours"
         XCTAssertEqual(section.glanceLine, SectionGlanceLine(expected, isEstimate: true))
@@ -236,7 +242,7 @@ final class VibeUsageProviderTests: XCTestCase {
 
     func testGlanceLineMarksPartialCostWithFloorMarker() async throws {
         try writeSession("session-glance-priced", journal: [
-            usageRecord(sequence: 1, actionID: "g1", input: 100, cached: 5_000, output: 200),
+            usageRecord(sequence: 1, actionID: "g1", input: 5_100, cached: 5_000, output: 200),
             coreInputRecord(sequence: 2, actionID: "g1", timeUnixMs: milliseconds(Self.now)),
         ], modelName: "mistral-medium-3.5")
         try writeSession("session-glance-unpriced", journal: [
@@ -249,7 +255,7 @@ final class VibeUsageProviderTests: XCTestCase {
 
         let section = VibeUsageProvider.section(for: report, budget: nil)
 
-        let pricedCost = VibeRateCard.cost(inputTokens: 100, cachedTokens: 5_000, outputTokens: 200,
+        let pricedCost = VibeRateCard.cost(inputTokens: 5_100, cachedTokens: 5_000, outputTokens: 200,
                                            prices: VibeRateCard.resolve("mistral-medium-3.5")!)
         let tokens = 10_300.formatted(.number.notation(.compactName).locale(.current))
         let expected = "≈ \(VibeUsageProvider.usd(pricedCost))+ · \(tokens) tokens · 24 hours"
@@ -353,7 +359,7 @@ final class VibeUsageProviderTests: XCTestCase {
                              input: Int, cached: Int = 0, output: Int = 0) -> String {
         let usage: [String: Any] = ["input_tokens": input, "cached_input_tokens": cached,
                                     "output_tokens": output,
-                                    "total_tokens": input + cached + output]
+                                    "total_tokens": input + output]
         let record: [String: Any] = ["type": "action_result", "sequence": sequence,
                                      "payload": ["action_id": actionID,
                                                  "result": ["result": ["usage": usage]]]]

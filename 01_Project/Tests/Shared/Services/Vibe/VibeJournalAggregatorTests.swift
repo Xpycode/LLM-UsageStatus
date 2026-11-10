@@ -19,9 +19,9 @@ final class VibeJournalAggregatorTests: XCTestCase {
         super.tearDown()
     }
 
-    func testSumsAcrossSessionsFoldCacheWriteAndKeepMetalessChildSessions() async throws {
+    func testSumsInclusiveCountsDoesNotAddCacheWriteAndKeepsMetalessChildSessions() async throws {
         try writeSession("session-a", fixture: SessionFixture(journal: [[
-            usageRecord(sequence: 10, actionID: "a1", input: 100, cacheWrite: 50,
+            usageRecord(sequence: 10, actionID: "a1", input: 5_220, cacheWrite: 50,
                         cached: 5_120, output: 77, reasoning: 33),
             coreInputRecord(sequence: 11, actionID: "a1", timeUnixMs: milliseconds(now.addingTimeInterval(-3_600))),
             usageRecord(sequence: 20, actionID: "a2", input: 200, cached: 100, output: 10),
@@ -39,7 +39,7 @@ final class VibeJournalAggregatorTests: XCTestCase {
         XCTAssertEqual(report.skippedSessions, 0)
         XCTAssertEqual(report.malformedRecords, 0)
         XCTAssertEqual(report.sessions.count, 2)
-        XCTAssertEqual(report.totals, VibeTokenTotals(inputTokens: 1_350, cachedInputTokens: 5_220,
+        XCTAssertEqual(report.totals, VibeTokenTotals(inputTokens: 6_420, cachedInputTokens: 5_220,
                                                       outputTokens: 587, reasoningTokens: 133))
         let child = try XCTUnwrap(report.sessions.first { $0.id == "child-1" })
         XCTAssertNil(child.modelName)
@@ -269,7 +269,7 @@ final class VibeJournalAggregatorTests: XCTestCase {
         let usage: [String: Any] = ["input_tokens": input, "cache_write_tokens": cacheWrite,
                                     "cached_input_tokens": cached, "output_tokens": output,
                                     "reasoning_tokens": reasoning,
-                                    "total_tokens": input + cacheWrite + cached + output + reasoning]
+                                    "total_tokens": input + output]
         let record: [String: Any] = ["type": "action_result", "sequence": sequence,
                                      "payload": ["action_id": actionID, "state": "succeeded",
                                                  "result": ["result": ["usage": usage]]]]

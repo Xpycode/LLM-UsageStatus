@@ -209,9 +209,8 @@ struct VibeUsageProvider: Provider {
         return nil
     }
 
-    /// All counted token classes summed; `inputTokens` already folds in
-    /// cache-write tokens.
+    /// Input plus output; cached and reasoning tokens are already inside those.
     static func totalTokens(_ totals: VibeTokenTotals) -> Int {
-        totals.inputTokens + totals.cachedInputTokens + totals.outputTokens + totals.reasoningTokens
+        totals.inputTokens + totals.outputTokens
     }
 }
