@@ -1,5 +1,8 @@
 # Implementation Plan — 0.2.0 (layout-aware names, Help, Feedback + Tip, notarized release)
 
+> **RETIRED 2026-11-10 — COMPLETE.** 11/11 tasks, E1–E5 passed; 0.2.0 live on the apps website.
+> Follow-up 0.2.1 (app icon, 881a9c9) shipped the same day; user acceptance passed.
+
 > **Persists across sessions.** Execute using the shared `commands/execute.md` procedure.
 > Repair scheduling errors while preserving task IDs, completed evidence and approved scope.
 > Task state/evidence is authoritative here; TASKS links here and holds backlog/inbox.

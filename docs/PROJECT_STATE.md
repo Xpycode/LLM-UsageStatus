@@ -15,13 +15,12 @@ Developer ID signed, notarized, zero configuration for end users.
 
 ## Now
 
-- **Execution:** `docs/plans/2026-11-08-v0.2.0/IMPLEMENTATION_PLAN.md` — 11/11 tasks; E1–E5 done (retire it).
+- **Execution:** no active plan. 0.2.0 plan retired 2026-11-10 (COMPLETE, 11/11, E1–E5).
   Live: `apps.lucesumbrarum.com/apps/llm-usagestatus.html` (LU-021) + DMG via `dl.php?app=llm-usagestatus`.
   **0.2.1 (201)** shipped same day: app icon (padded macOS grid), notarized app + DMG (881a9c9),
-  live on the website (App-Websites 94a8150). Next: retire the 0.2.0 plan; pick the next backlog item.
-- Installed: notarized 0.2.0 (200) in `/Applications/LLM-UsageStatus.app`, running; previous ad-hoc
-  copy kept in `04_Exports/replaced-Applications-288f5ab/`.
-- `dist/0.1.0` is stale vs source (rebuild + re-notarize before any redistribution).
+  live on the website (App-Websites 94a8150). User acceptance passed; installed in /Applications. Next: pick the next backlog item.
+- Installed: notarized 0.2.1 (201) in `/Applications/LLM-UsageStatus.app` (user-installed, acceptance passed).
+- `dist/` holds only 0.2.1 (0.1.0 and 0.2.0 moved to the Trash 2026-11-10).
 - GitHub remote (private) + CI green since 2026-11-07 (now 217 tests on Xcode 16.4).
 
 ## Recent
@@ -36,5 +35,5 @@ Developer ID signed, notarized, zero configuration for end users.
 
 ## Handoff
 
-- Current handoff: 0.2.1 fully released; /Applications still has 0.2.0 until the user installs the new DMG.
+- Current handoff: 0.2.1 fully released; none open; next work starts from the backlog.
 - Decisions: `docs/decisions.md`
