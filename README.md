@@ -109,11 +109,11 @@ Updates are installed manually; the app has no auto-updater.
 ### Download
 
 Download the notarized disk image from the apps site:
-**[LLM-UsageStatus 0.2.0 (DMG)](https://apps.lucesumbrarum.com/dl.php?app=llm-usagestatus)**
+**[LLM-UsageStatus 0.2.1 (DMG)](https://apps.lucesumbrarum.com/dl.php?app=llm-usagestatus)**
 (macOS 15 or newer, Apple silicon and Intel).
 
-SHA-256 of `LLM-UsageStatus-0.2.0.dmg`:
-`380bb961435215818569e7df1f03bd6c090fa348e7b208959e4fb41288fe63e2`
+SHA-256 of `LLM-UsageStatus-0.2.1.dmg`:
+`9b42e74e78c9b593a7c654be133cb0b174927145142370c578a34f697ee2771e`
 
 1. Optionally check the download: `shasum -a 256 <file>` should print the value above.
 2. Quit any older copy of LLM Usage Status normally.

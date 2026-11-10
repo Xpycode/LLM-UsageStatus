@@ -48,7 +48,7 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
 
 ## Inbox
 
-- App icon (2026-11-10, E5): the app ships with no icon. A draft (three violet usage bars on a dark
+- → **Done 2026-11-10 (0.2.1).** App icon (2026-11-10, E5): the app ships with no icon. A draft (three violet usage bars on a dark
   tile, `02_Design/Exports/icon-draft-1024.png`) is used on the website only, pending approval.
   Adopting an icon in the app needs 0.2.1 (rebuild, notarize, DMG, site swap).
 - Post-v1 baseline features (scoping session 2026-11-06, mapped against Directions
