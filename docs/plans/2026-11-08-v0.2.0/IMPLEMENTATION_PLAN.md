@@ -297,7 +297,7 @@ extension HotKeyShortcut {
     confirm in System Settings; launch once with the login item enabled and check Console category
     LaunchAtLogin for "refresh failed" (closes that Inbox item either way); Help/Feedback/Tip spot check.
 
-- [ ] **E5**: Publish (optional; decision pending) — **in progress**: DMG live on the website 2026-11-10; detail page staged, upload pending
+- [x] **E5**: Publish — **done 2026-11-10**: notarized DMG + detail page `apps/llm-usagestatus.html` live on the apps website (App-Websites 5643984)
   - Depends on: E4
   - Requires: user decision on where 0.2.0 is downloaded (public repo + GitHub Release, or hosted on
     the website) and go-ahead for `git tag v0.2.0`, `gh release create`, visibility changes or upload.
