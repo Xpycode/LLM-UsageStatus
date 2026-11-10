@@ -257,7 +257,7 @@ extension HotKeyShortcut {
 
 ## External checks
 
-- [ ] **E1**: Site roster entry for `llm-usagestatus` (user-operated or user go-ahead)
+- [x] **E1**: Site roster entry for `llm-usagestatus` (user-operated or user go-ahead) — **done 2026-11-10**, App-Websites 06c8d1c, live `apps.json` verified
   - Depends on: none (can happen any time)
   - Requires: user go-ahead to edit `3-Websites/App-Websites/APPS/apps.lucesumbrarum.com/public/apps.json`
     (entry in R2), `DRY_RUN=1 ./deploy.sh` then `./deploy.sh`, commit to `Xpycode/App-Websites`.
@@ -330,6 +330,7 @@ extension HotKeyShortcut {
 | CI | Push of 9 commits (288f5ab..7a092d0) with user go-ahead | GitHub Actions run 42518020439 on macos-15 / Xcode 16.4: **TEST SUCCEEDED**, 217 tests, 0 failures. Checked 1.1, 2.1–2.4, 3.1, 4.2. | 7a092d0 | Next: E2 (manual, build in `04_Exports/0.2.0-E2-Debug/`), E1 any time, E3 after E1 + E2. |
 | E2 fix | Coordinator, with user approval (UI-changes protocol) | E2 partial: items 1 and 6 pass. Settings shortcut row overflowed (label "Show/hid", recorder text clipped; pre-existing). Label above the row as "Show or hide the panel", recorder 190→240 pt, Help text updated. Debug `build-for-testing` ok; CI run 42530269930 green, 217 tests. New E2 candidate `04_Exports/0.2.0-E2b-Debug/` launched. | 83a3dcd | E2 items 2–5 + Settings recheck pending. |
 | E2 | User at M1 Max, build `04_Exports/0.2.0-E2b-Debug/` (83a3dcd, running PID 88439) | User reported **all pass** (2026-11-09): Settings layout fixed, Help (front, dark, search, Esc/Command-W, Command-?), Feedback window opens, Tip opens donate page, German layout names + live recorder update + hotkey. Feedback test submission deferred to E1. | — | Next: E1 (site roster, needs go-ahead) → feedback submission check → E3 notarize (own go-ahead). |
+| E1 | Coordinator, user go-ahead (2026-11-10; Count Clock Wise activation approved) | Website repo quiet (no edits since 2026-11-09 03:00; privacy work committed d4b329b). Dry run: only real change was `apps.json` (other listed files byte-equal to live). Added `llm-usagestatus` (portalPage false, no site → not on homepage/catalogue), format preserved. `./deploy.sh` ok; 29/29 uploaded files byte-match live; live roster has `llm-usagestatus` + `count-clock-wise`; donate page 200. Committed `apps.json` only. | App-Websites 06c8d1c | Next: E2 item 3 feedback test submission (user), then E3 notarize (go-ahead). |
 
 ---
 *Keep active while required work or acceptance is incomplete. On completion, retire in place (as the
