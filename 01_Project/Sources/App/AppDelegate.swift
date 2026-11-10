@@ -14,6 +14,7 @@ import os
     private let launchAtLogin = LaunchAtLogin()
     private var enabledObservation: AnyCancellable?
     private var knownEnabled: Set<String> = []
+    private var layoutObserver: NSObjectProtocol?
     private lazy var settings = SettingsWindowController(
         preferences: preferences, shortcuts: shortcutStore, launchAtLogin: launchAtLogin, version: .current,
         commitShortcut: { [unowned self] in self.commitShortcut($0) },
@@ -47,7 +48,11 @@ import os
         // A failed hotkey registration also exposes a menu-bar fallback.
         toggle()
     }
-    func applicationWillTerminate(_: Notification) { GlobalHotKey.shared.unregisterAll(); if let clickAway { NSEvent.removeMonitor(clickAway) } }
+    func applicationWillTerminate(_: Notification) {
+        GlobalHotKey.shared.unregisterAll()
+        stopObservingLayout()
+        if let clickAway { NSEvent.removeMonitor(clickAway) }
+    }
     private func toggle() { if panel.isVisible { hidePanel() } else { showHUD() } }
 
     /// A provider turned on while the panel is open shows its cached section at once and refreshes.
@@ -75,8 +80,11 @@ import os
 
     /// The panel never becomes key, so Command-Comma is a Carbon hotkey that exists only
     /// while the panel is showing; other apps keep their own Command-Comma otherwise.
+    /// It binds the key that types "," on the current layout (on AZERTY that is the M position)
+    /// and moves with the layout while the panel shows.
     private func registerSettingsShortcut() {
-        let chord = HotKeyShortcut.settings
+        startObservingLayout()
+        let chord = HotKeyShortcut.settings(using: .current)
         let result = GlobalHotKey.shared.register(id: .settings, keyCode: chord.keyCode,
                                                   modifiers: chord.carbonModifiers) { [weak self] in
             self?.openSettings()
@@ -90,6 +98,26 @@ import os
     private func hidePanel() {
         panel.hide()
         GlobalHotKey.shared.unregister(id: .settings)
+        stopObservingLayout()
+    }
+
+    /// Same notification the shortcut recorder follows; posted on the distributed center.
+    private func startObservingLayout() {
+        guard layoutObserver == nil else { return }
+        layoutObserver = DistributedNotificationCenter.default().addObserver(
+            forName: KeyboardLayoutNames.changedNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                guard let self, self.panel.isVisible else { return }
+                self.registerSettingsShortcut()
+            }
+        }
+    }
+
+    private func stopObservingLayout() {
+        guard let layoutObserver else { return }
+        DistributedNotificationCenter.default().removeObserver(layoutObserver)
+        self.layoutObserver = nil
     }
 
     @objc private func openSettings() {
