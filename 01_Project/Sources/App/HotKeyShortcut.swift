@@ -70,21 +70,54 @@ struct HotKeyShortcut: Codable, Equatable, Sendable {
         case systemShortcut
     }
 
+    /// Structural checks only: a supported key and Command or Control. The store uses this so a
+    /// layout switch never silently resets a saved shortcut.
     func validate() -> Rejection? {
         guard Self.keyNames[keyCode] != nil else { return .unsupportedKey }
         guard carbonModifiers & UInt32(cmdKey | controlKey) != 0 else { return .needsCommandOrControl }
-        if self == Self.settings { return .reserved }
-        let commandOnly = carbonModifiers & ~UInt32(shiftKey) == UInt32(cmdKey)
-        if commandOnly && Self.systemKeyCodes.contains(keyCode) { return .systemShortcut }
         return nil
+    }
+
+    /// Structural checks plus the Settings and system-shortcut refusals, following the keys of `translator`.
+    func validate(using translator: LayoutTranslator) -> Rejection? {
+        if let failure = validate() { return failure }
+        if self == Self.settings(using: translator) { return .reserved }
+        let commandOnly = carbonModifiers & ~UInt32(shiftKey) == UInt32(cmdKey)
+        if commandOnly && Self.isSystemKey(keyCode, translator: translator) { return .systemShortcut }
+        return nil
+    }
+
+    /// Command plus the key that types ","; kVK_ANSI_Comma when the layout has no such key.
+    static func settings(using translator: LayoutTranslator) -> HotKeyShortcut {
+        HotKeyShortcut(
+            keyCode: translator.keyCode(",") ?? UInt32(kVK_ANSI_Comma),
+            carbonModifiers: UInt32(cmdKey)
+        )
     }
 
     /// Keys whose Command (and Command-Shift) chords are standard across macOS; a global
     /// hotkey on them would take Copy, Paste, Quit, Spotlight and the like away from every app.
-    private static let systemKeyCodes: Set<UInt32> = Set([
+    private static func isSystemKey(_ keyCode: UInt32, translator: LayoutTranslator) -> Bool {
+        // Positional keys: Space and Tab never change; Grave and ISO Section swap codes between
+        // ANSI and ISO hardware, so both are blocked rather than guessing which one types the backtick.
+        if positionalSystemKeyCodes.contains(keyCode) { return true }
+        guard let character = translator.character(keyCode) else {
+            return usSystemKeyCodes.contains(keyCode)
+        }
+        return systemCharacters.contains(character.lowercased())
+    }
+
+    private static let systemCharacters: Set<String> = ["a", "c", "f", "h", "m", "n", "o", "p", "q", "s", "t", "v", "w", "x", "z", "3", "4", "5"]
+
+    private static let positionalSystemKeyCodes: Set<UInt32> = Set([
+        kVK_Space, kVK_Tab, kVK_ANSI_Grave, kVK_ISO_Section,
+    ].map { UInt32($0) })
+
+    /// US positions of `systemCharacters`, used when the layout cannot name the key.
+    private static let usSystemKeyCodes: Set<UInt32> = Set([
         kVK_ANSI_A, kVK_ANSI_C, kVK_ANSI_F, kVK_ANSI_H, kVK_ANSI_M, kVK_ANSI_N, kVK_ANSI_O,
         kVK_ANSI_P, kVK_ANSI_Q, kVK_ANSI_S, kVK_ANSI_T, kVK_ANSI_V, kVK_ANSI_W, kVK_ANSI_X,
-        kVK_ANSI_Z, kVK_ANSI_3, kVK_ANSI_4, kVK_ANSI_5, kVK_Space, kVK_Tab, kVK_ANSI_Grave,
+        kVK_ANSI_Z, kVK_ANSI_3, kVK_ANSI_4, kVK_ANSI_5,
     ].map { UInt32($0) })
 
     private static let modifierKeyCodes: Set<UInt32> = [
@@ -133,7 +166,7 @@ struct HotKeyShortcut: Codable, Equatable, Sendable {
             (kVK_ANSI_Minus, "-"), (kVK_ANSI_Equal, "="), (kVK_ANSI_LeftBracket, "["),
             (kVK_ANSI_RightBracket, "]"), (kVK_ANSI_Backslash, "\\"), (kVK_ANSI_Semicolon, ";"),
             (kVK_ANSI_Quote, "'"), (kVK_ANSI_Comma, ","), (kVK_ANSI_Period, "."),
-            (kVK_ANSI_Slash, "/"), (kVK_ANSI_Grave, "`"),
+            (kVK_ANSI_Slash, "/"), (kVK_ANSI_Grave, "`"), (kVK_ISO_Section, "<"),
         ]
         return Dictionary(uniqueKeysWithValues: table.map { (UInt32($0.0), $0.1) })
     }()

@@ -120,20 +120,99 @@ final class HotKeyShortcutTests: XCTestCase {
         XCTAssertEqual(HotKeyShortcut(keyCode: 200, carbonModifiers: 0).validate(), .unsupportedKey)
     }
 
+    // MARK: Fake layouts
+
+    private func fake(_ overrides: [Int: Character]) -> LayoutTranslator {
+        var map = LayoutTranslator.usANSIMap
+        for (code, char) in overrides { map[UInt32(code)] = char }
+        return LayoutTranslator(map: map)
+    }
+
+    private var qwertz: LayoutTranslator { fake([kVK_ANSI_Y: "z", kVK_ANSI_Z: "y"]) }
+    private var azerty: LayoutTranslator {
+        fake([kVK_ANSI_A: "q", kVK_ANSI_Q: "a", kVK_ANSI_Z: "w", kVK_ANSI_W: "z",
+              kVK_ANSI_Semicolon: "m", kVK_ANSI_M: ",", kVK_ANSI_Comma: ";"])
+    }
+    private var dvorak: LayoutTranslator { fake([kVK_ANSI_I: "c", kVK_ANSI_C: "j", kVK_ANSI_J: "h"]) }
+    /// Dvorak whose Command map is QWERTY: characters are the US letters.
+    private var commandQwerty: LayoutTranslator { .usANSI }
+    private let noLayout = LayoutTranslator(character: { _ in nil }, keyCode: { _ in nil })
+
+    private func cmd(_ code: Int, shift: Bool = false) -> HotKeyShortcut {
+        HotKeyShortcut(keyCode: UInt32(code), carbonModifiers: UInt32(shift ? cmdKey | shiftKey : cmdKey))
+    }
+
     func testValidateRejectsReservedSettingsShortcut() {
-        XCTAssertEqual(HotKeyShortcut.settings.validate(), .reserved)
+        XCTAssertNil(HotKeyShortcut.settings.validate())
+        XCTAssertEqual(HotKeyShortcut.settings.validate(using: .usANSI), .reserved)
     }
 
     func testValidateRejectsStandardSystemShortcuts() {
-        let cmd = UInt32(cmdKey), cmdShift = UInt32(cmdKey | shiftKey)
-        XCTAssertEqual(HotKeyShortcut(keyCode: UInt32(kVK_ANSI_C), carbonModifiers: cmd).validate(), .systemShortcut)
-        XCTAssertEqual(HotKeyShortcut(keyCode: UInt32(kVK_ANSI_Q), carbonModifiers: cmd).validate(), .systemShortcut)
-        XCTAssertEqual(HotKeyShortcut(keyCode: UInt32(kVK_Space), carbonModifiers: cmd).validate(), .systemShortcut)
-        XCTAssertEqual(HotKeyShortcut(keyCode: UInt32(kVK_ANSI_Z), carbonModifiers: cmdShift).validate(), .systemShortcut)
+        let us = LayoutTranslator.usANSI
+        XCTAssertEqual(cmd(kVK_ANSI_C).validate(using: us), .systemShortcut)
+        XCTAssertEqual(cmd(kVK_ANSI_Q).validate(using: us), .systemShortcut)
+        XCTAssertEqual(cmd(kVK_Space).validate(using: us), .systemShortcut)
+        XCTAssertEqual(cmd(kVK_ANSI_Z, shift: true).validate(using: us), .systemShortcut)
         // Adding Control or Option makes the same keys fine; other Command-only keys stay allowed.
-        XCTAssertNil(HotKeyShortcut(keyCode: UInt32(kVK_ANSI_C), carbonModifiers: UInt32(cmdKey | optionKey)).validate())
-        XCTAssertNil(HotKeyShortcut(keyCode: UInt32(kVK_ANSI_C), carbonModifiers: UInt32(controlKey)).validate())
-        XCTAssertNil(HotKeyShortcut(keyCode: UInt32(kVK_ANSI_K), carbonModifiers: cmd).validate())
+        XCTAssertNil(HotKeyShortcut(keyCode: UInt32(kVK_ANSI_C), carbonModifiers: UInt32(cmdKey | optionKey)).validate(using: us))
+        XCTAssertNil(HotKeyShortcut(keyCode: UInt32(kVK_ANSI_C), carbonModifiers: UInt32(controlKey)).validate(using: us))
+        XCTAssertNil(cmd(kVK_ANSI_K).validate(using: us))
+    }
+
+    func testQWERTZRefusesKeyTypingZAndAcceptsKeyTypingY() {
+        // Physical Y position types "z" on QWERTZ.
+        XCTAssertEqual(cmd(kVK_ANSI_Y).validate(using: qwertz), .systemShortcut)
+        XCTAssertEqual(cmd(kVK_ANSI_Y, shift: true).validate(using: qwertz), .systemShortcut)
+        XCTAssertNil(cmd(kVK_ANSI_Z).validate(using: qwertz))
+    }
+
+    func testDvorakRefusesKeyTypingC() {
+        XCTAssertEqual(cmd(kVK_ANSI_I).validate(using: dvorak), .systemShortcut)
+        XCTAssertNil(cmd(kVK_ANSI_C).validate(using: dvorak))
+    }
+
+    func testCommandQwertyLayoutFollowsUSLetters() {
+        XCTAssertEqual(cmd(kVK_ANSI_C).validate(using: commandQwerty), .systemShortcut)
+        XCTAssertNil(cmd(kVK_ANSI_K).validate(using: commandQwerty))
+    }
+
+    func testAZERTYReservedFollowsKeyTypingComma() {
+        XCTAssertEqual(cmd(kVK_ANSI_M).validate(using: azerty), .reserved)
+        // The US comma position types ";" on AZERTY, so it is free.
+        XCTAssertNil(cmd(kVK_ANSI_Comma).validate(using: azerty))
+        // The key typing "m" is a system shortcut even at the US semicolon position.
+        XCTAssertEqual(cmd(kVK_ANSI_Semicolon).validate(using: azerty), .systemShortcut)
+    }
+
+    func testSettingsUsingTranslator() {
+        XCTAssertEqual(HotKeyShortcut.settings(using: azerty).keyCode, UInt32(kVK_ANSI_M))
+        XCTAssertEqual(HotKeyShortcut.settings(using: azerty).carbonModifiers, UInt32(cmdKey))
+        XCTAssertEqual(HotKeyShortcut.settings(using: .usANSI), .settings)
+    }
+
+    func testNilTranslatorUsesUSBehaviour() {
+        XCTAssertEqual(HotKeyShortcut.settings(using: noLayout), .settings)
+        XCTAssertEqual(HotKeyShortcut.settings.validate(using: noLayout), .reserved)
+        XCTAssertEqual(cmd(kVK_ANSI_C).validate(using: noLayout), .systemShortcut)
+        XCTAssertEqual(cmd(kVK_ANSI_Z, shift: true).validate(using: noLayout), .systemShortcut)
+        XCTAssertNil(cmd(kVK_ANSI_K).validate(using: noLayout))
+        XCTAssertNil(cmd(kVK_ANSI_Y).validate(using: noLayout))
+    }
+
+    func testISOSectionKeySupport() {
+        let iso = UInt32(kVK_ISO_Section)
+        XCTAssertNil(HotKeyShortcut(keyCode: iso, carbonModifiers: UInt32(controlKey | cmdKey)).validate())
+        XCTAssertNil(HotKeyShortcut(keyCode: iso, carbonModifiers: UInt32(controlKey | cmdKey)).validate(using: .usANSI))
+        XCTAssertNil(HotKeyShortcut(keyCode: iso, carbonModifiers: UInt32(cmdKey)).validate())
+        XCTAssertEqual(cmd(kVK_ISO_Section).validate(using: .usANSI), .systemShortcut)
+        XCTAssertEqual(cmd(kVK_ISO_Section, shift: true).validate(using: azerty), .systemShortcut)
+        XCTAssertEqual(cmd(kVK_ANSI_Grave).validate(using: azerty), .systemShortcut)
+    }
+
+    func testISOSectionDisplayNameUsesLayout() {
+        let shortcut = HotKeyShortcut(keyCode: UInt32(kVK_ISO_Section), carbonModifiers: UInt32(controlKey))
+        XCTAssertEqual(shortcut.displayName(keyName: { _ in "<" }), "Control\u{2013}<")
+        XCTAssertEqual(shortcut.displayName(keyName: { _ in "\u{00A7}" }), "Control\u{2013}\u{00A7}")
     }
 
     func testStoreDefaultsWhenMissing() {
@@ -159,8 +238,16 @@ final class HotKeyShortcutTests: XCTestCase {
         XCTAssertEqual(defaults.data(forKey: "hotkey.toggleShortcut"), corrupt)
     }
 
-    func testDisallowedStoredShortcutFallsBack() throws {
+    func testStoredShortcutTheLayoutWouldRefuseStillLoads() throws {
+        // Only the structural check applies, so switching layouts never resets a saved chord.
         let stored = try JSONEncoder().encode(HotKeyShortcut.settings)
+        defaults.set(stored, forKey: "hotkey.toggleShortcut")
+        XCTAssertEqual(HotKeyShortcutStore(defaults: defaults).current, .settings)
+        XCTAssertEqual(defaults.data(forKey: "hotkey.toggleShortcut"), stored)
+    }
+
+    func testStructurallyInvalidStoredShortcutFallsBack() throws {
+        let stored = try JSONEncoder().encode(HotKeyShortcut(keyCode: UInt32(kVK_ANSI_L), carbonModifiers: UInt32(shiftKey)))
         defaults.set(stored, forKey: "hotkey.toggleShortcut")
         XCTAssertEqual(HotKeyShortcutStore(defaults: defaults).current, .defaultToggle)
         XCTAssertEqual(defaults.data(forKey: "hotkey.toggleShortcut"), stored)

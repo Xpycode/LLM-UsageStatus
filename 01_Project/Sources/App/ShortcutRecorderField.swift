@@ -24,6 +24,7 @@ final class ShortcutRecorderField: NSView {
     // Only written on the main actor; nonisolated(unsafe) lets deinit remove the monitor.
     nonisolated(unsafe) private var monitor: Any?
     private let keyName: @MainActor (UInt32) -> String?
+    private let translator: @MainActor () -> LayoutTranslator
     // Same reasoning as `monitor`: written once in init, read by deinit to unregister.
     nonisolated(unsafe) private var layoutObserver: (any NSObjectProtocol)?
     nonisolated(unsafe) private let observedCenter: NotificationCenter
@@ -35,6 +36,7 @@ final class ShortcutRecorderField: NSView {
         shortcut: HotKeyShortcut,
         notificationCenter: NotificationCenter = DistributedNotificationCenter.default(),
         keyName: @escaping @MainActor (UInt32) -> String? = KeyboardLayoutNames.current,
+        translator: @escaping @MainActor () -> LayoutTranslator = { LayoutTranslator.current },
         commit: @escaping (HotKeyShortcut) -> ShortcutCommitResult,
         recordingChanged: @escaping (Bool) -> Void
     ) {
@@ -42,6 +44,7 @@ final class ShortcutRecorderField: NSView {
         self.commit = commit
         self.recordingChanged = recordingChanged
         self.keyName = keyName
+        self.translator = translator
         self.observedCenter = notificationCenter
         super.init(frame: NSRect(x: 0, y: 0, width: 240, height: 26))
         wantsLayer = true
@@ -119,7 +122,7 @@ final class ShortcutRecorderField: NSView {
             return true
         }
         guard let candidate = HotKeyShortcut(event: event) else { return true }
-        if let rejection = candidate.validate() {
+        if let rejection = candidate.validate(using: translator()) {
             message = Self.message(for: rejection)
             return true
         }

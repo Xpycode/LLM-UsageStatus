@@ -23,10 +23,11 @@ final class ShortcutRecorderFieldTests: XCTestCase {
         UserDefaults(suiteName: suiteName)?.removePersistentDomain(forName: suiteName)
     }
 
-    private func makeRecorder() -> ShortcutRecorderField {
+    private func makeRecorder(translator: LayoutTranslator = .usANSI) -> ShortcutRecorderField {
         let probe = probe
         return ShortcutRecorderField(
             shortcut: .defaultToggle,
+            translator: { translator },
             commit: { shortcut in
                 probe.commits.append(shortcut)
                 return probe.result
@@ -108,6 +109,35 @@ final class ShortcutRecorderFieldTests: XCTestCase {
         XCTAssertEqual(recorder.message, "Command-Comma is reserved for Settings.")
         XCTAssertTrue(recorder.isRecording)
         XCTAssertTrue(probe.commits.isEmpty)
+        recorder.endRecording()
+    }
+
+    func testReservedChordFollowsLayoutKey() throws {
+        // AZERTY: "," is typed by the US M position; the US comma position types ";".
+        var map = LayoutTranslator.usANSIMap
+        map[UInt32(kVK_ANSI_M)] = ","
+        map[UInt32(kVK_ANSI_Comma)] = ";"
+        let recorder = makeRecorder(translator: LayoutTranslator(map: map))
+        recorder.startRecording()
+        XCTAssertTrue(recorder.handle(try keyDown(kVK_ANSI_M, [.command])))
+        XCTAssertEqual(recorder.message, "Command-Comma is reserved for Settings.")
+        XCTAssertTrue(recorder.isRecording)
+        XCTAssertTrue(recorder.handle(try keyDown(kVK_ANSI_Comma, [.command])))
+        XCTAssertEqual(recorder.message, "")
+        XCTAssertFalse(recorder.isRecording)
+        XCTAssertEqual(probe.commits.count, 1)
+    }
+
+    func testSystemShortcutFollowsLayoutKey() throws {
+        // QWERTZ: the US Y position types "z".
+        var map = LayoutTranslator.usANSIMap
+        map[UInt32(kVK_ANSI_Y)] = "z"
+        map[UInt32(kVK_ANSI_Z)] = "y"
+        let recorder = makeRecorder(translator: LayoutTranslator(map: map))
+        recorder.startRecording()
+        XCTAssertTrue(recorder.handle(try keyDown(kVK_ANSI_Y, [.command])))
+        XCTAssertEqual(recorder.message, "That shortcut is used by macOS and other apps.")
+        XCTAssertTrue(recorder.isRecording)
         recorder.endRecording()
     }
 
