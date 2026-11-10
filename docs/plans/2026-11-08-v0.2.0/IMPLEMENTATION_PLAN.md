@@ -297,7 +297,7 @@ extension HotKeyShortcut {
     confirm in System Settings; launch once with the login item enabled and check Console category
     LaunchAtLogin for "refresh failed" (closes that Inbox item either way); Help/Feedback/Tip spot check.
 
-- [ ] **E5**: Publish (optional; decision pending)
+- [ ] **E5**: Publish (optional; decision pending) — **in progress**: DMG live on the website 2026-11-10; detail page staged, upload pending
   - Depends on: E4
   - Requires: user decision on where 0.2.0 is downloaded (public repo + GitHub Release, or hosted on
     the website) and go-ahead for `git tag v0.2.0`, `gh release create`, visibility changes or upload.
@@ -333,6 +333,7 @@ extension HotKeyShortcut {
 | E1 | Coordinator, user go-ahead (2026-11-10; Count Clock Wise activation approved) | Website repo quiet (no edits since 2026-11-09 03:00; privacy work committed d4b329b). Dry run: only real change was `apps.json` (other listed files byte-equal to live). Added `llm-usagestatus` (portalPage false, no site → not on homepage/catalogue), format preserved. `./deploy.sh` ok; 29/29 uploaded files byte-match live; live roster has `llm-usagestatus` + `count-clock-wise`; donate page 200. Committed `apps.json` only. | App-Websites 06c8d1c | Next: E2 item 3 feedback test submission (user), then E3 notarize (go-ahead). |
 | E3 | Coordinator, user go-ahead (2026-11-10) | Clean tree at a10594b (docs-only on top of 83a3dcd). `scripts/notarize-release.sh 0.2.0` exit 0: universal Release build, Developer ID signed (FDMSRXXN73), notarytool submission d529519e-cce5-4597-85b6-e3bc1167d1b3 **Accepted**, stapled + validated, `spctl` "source=Notarized Developer ID". `dist/0.2.0/`: zip SHA-256 5c0e9f6a…8884a (`SHA256SUMS.txt`), `SOURCE_COMMIT.txt` a10594b, 0.2.0 (200), x86_64 arm64. | a10594b | Next: E4 (install go-ahead). |
 | E4 | Coordinator installed with user go-ahead; checks user-operated | E2b build (PID 88439) quit gracefully. Old `/Applications` copy (ad-hoc, build 100) moved to `04_Exports/replaced-Applications-288f5ab/`. Notarized zip extracted with `ditto` → `spctl` accepted, stapler validate ok, executable SHA-256 88036c2f…96b4a identical to `dist/0.2.0`; launched, running from `/Applications`. User reported **all pass**: About 0.2.0 (200), Launch at login re-toggled + Login Items, LaunchAtLogin Console check, Help/Feedback/Tip; feedback test submission arrived on the website (2026-11-10, "app 0.2.0 (200) · macOS 27.2.0") → closes E2 item 3. | — | Next: E5 publish decision (where to host; tag/release/upload need go-ahead). |
+| E5 | Coordinator, user decision: DMG on the website only (no GitHub release; repo stays private) | `scripts/package-dmg.sh` (e88214f): DMG notarized (22252889…, Accepted), stapled, spctl ok, SHA-256 380bb961…fe63e2. Scoped upload of `downloads/llm-usagestatus.dmg` only (dry run = one file); live direct 200 / 2,848,783 bytes, `dl.php` download byte-identical. README link + CHANGELOG date (8c48acf). Detail page + catalogue entry + icon draft + OG + sample-data renders staged in App-Websites (uncommitted), invariants pass; scoped upload denied by the auto-mode classifier. | e88214f, 8c48acf | Upload the 8 staged files (needs permission), verify live, commit them in App-Websites; icon approval. |
 
 ---
 *Keep active while required work or acceptance is incomplete. On completion, retire in place (as the

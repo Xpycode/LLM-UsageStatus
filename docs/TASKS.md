@@ -2,7 +2,7 @@
 
 - **Plan (retired 2026-10-29):** `docs/plans/2026-10-29-multi-provider-hud/IMPLEMENTATION_PLAN.md` — **COMPLETE**: 17/17 code tasks, E1 passed, E2 passed (notarized 0.1.0, Apple verdict Accepted, stapled, spctl clean). It stays in place as the permanent execution record.
 - **Plan (retired 2026-11-08):** `docs/plans/2026-11-06-settings-window/IMPLEMENTATION_PLAN.md` — **COMPLETE**: Settings window (launch at login, shortcut rebinding, About), 8/8 tasks (CI 204 green, 288f5ab), E1 passed. It stays in place as the permanent execution record.
-- **Active plan (2026-11-08):** `docs/plans/2026-11-08-v0.2.0/IMPLEMENTATION_PLAN.md` — 0.2.0: layout-aware shortcut names, in-app Help, Send Feedback… / Leave a Tip, notarized release. 11 tasks, 4 waves + E1–E5; Waves 1–4 done, 11/11, CI green (217 tests); E2 passed 2026-11-09; E1 done 2026-11-10; next E3–E5.
+- **Active plan (2026-11-08):** `docs/plans/2026-11-08-v0.2.0/IMPLEMENTATION_PLAN.md` — 0.2.0: layout-aware shortcut names, in-app Help, Send Feedback… / Leave a Tip, notarized release. 11 tasks, 4 waves + E1–E5; Waves 1–4 done, 11/11, CI green (217 tests); E1–E4 done (notarized 0.2.0 Accepted, installed, smoke test passed 2026-11-10); E5: DMG live on the website, detail page staged — upload pending.
 
 ## Backlog
 
@@ -48,6 +48,9 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
 
 ## Inbox
 
+- App icon (2026-11-10, E5): the app ships with no icon. A draft (three violet usage bars on a dark
+  tile, `02_Design/Exports/icon-draft-1024.png`) is used on the website only, pending approval.
+  Adopting an icon in the app needs 0.2.1 (rebuild, notarize, DMG, site swap).
 - Post-v1 baseline features (scoping session 2026-11-06, mapped against Directions
   `33_app-minimums.md` HUD/agent tier; user raised these as "what next" candidates):
   - → **Done 2026-11-08** (Settings plan, retired). **Settings window (Command-Comma)** including launch-at-login (`SMAppService`) — the

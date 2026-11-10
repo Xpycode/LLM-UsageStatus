@@ -1,6 +1,6 @@
 # PROJECT_STATE — LLM-UsageStatus
 
-**Last updated:** 2026-11-10 (0.2.0 notarized, E4 passed)
+**Last updated:** 2026-11-10 (0.2.0 released as DMG; detail page upload pending)
 
 ## Identity
 
@@ -16,8 +16,8 @@ Developer ID signed, notarized, zero configuration for end users.
 ## Now
 
 - **Execution:** `docs/plans/2026-11-08-v0.2.0/IMPLEMENTATION_PLAN.md` — 11/11 tasks; E1–E4 done.
-  **0.2.0 notarized** (Accepted, source a10594b) in `dist/0.2.0/`. Next: **E5 publish decision**
-  (public repo + GitHub Release, or website hosting; tag/release/upload need go-ahead).
+  **E5:** notarized 0.2.0 DMG live at `apps.lucesumbrarum.com/dl.php?app=llm-usagestatus` (website only).
+  Next: upload the staged detail page (8 files in App-Websites; needs permission), then icon decision.
 - Installed: notarized 0.2.0 (200) in `/Applications/LLM-UsageStatus.app`, running; previous ad-hoc
   copy kept in `04_Exports/replaced-Applications-288f5ab/`.
 - `dist/0.1.0` is stale vs source (rebuild + re-notarize before any redistribution).
@@ -25,15 +25,14 @@ Developer ID signed, notarized, zero configuration for end users.
 
 ## Recent
 
+- 2026-11-10: **0.2.0 is downloadable** — notarized DMG on the apps website, README links it; a detail page with sample-data screenshots and a draft icon is ready to upload.
 - 2026-11-10: **0.2.0 notarized (E3) and smoke-tested (E4)** — installed in /Applications; feedback test submission arrived on the website; login-item refresh check passed.
 - 2026-11-10: **E1 done** — LLM Usage Status is on the website's feedback and tip lists (Count Clock Wise activated in the same deploy, approved).
 - 2026-11-09: **0.2.0 E2 passed** — menus, Help, Feedback window, Tip, German layout names, About; Settings shortcut row was cut off and is fixed (label on its own line). Feedback test submission waits on E1.
 - 2026-11-08: 0.2.0 pushed (9 commits) — CI green, 217 tests; all 11 plan tasks checked. Manual check (E2) next.
-- 2026-11-08: 0.2.0 Wave 4 — version 0.2.0 (200), changelog, release scripts refuse uncommitted changes and record the source commit; universal Release build passes; independent review → README/Help now admit the last-seen usage cache and the US-position shortcut check. Fresh Debug build ready for manual testing (not launched).
-- 2026-11-08: 0.2.0 Wave 3 — Help, Send Feedback… and Leave a Tip are now in the right-click menu (Help also in the shortcut-warning menu), Command-? reopens Help while Help or Settings is in front, license notices for the Help window's open-source parts ship in the app, README updated. Builds clean; tests await CI; not yet tried by hand (E2).
 
 ## Handoff
 
-- Current handoff: `docs/sessions/2026-11-10.md` → **Resume** — confirm the feedback test submission,
-  then E3 notarize (go-ahead).
+- Current handoff: `docs/sessions/2026-11-10.md` → **Resume** — upload the staged website detail page
+  (needs permission), verify live, commit it in App-Websites; then the icon decision.
 - Decisions: `docs/decisions.md`
