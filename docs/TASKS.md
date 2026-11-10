@@ -61,11 +61,6 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
   - **Sparkle auto-update** with EdDSA appcast: gated on the public-distribution go-ahead and
     where the appcast is hosted; last in the sequence by design. Build numbers must stay
     monotonic (`sparkle:version` = build).
-- Login-item refresh at launch (2026-11-08, Settings Wave 3 review; unconfirmed):
-  `refreshRegistrationIfEnabled` calls `register()` on an already-enabled `SMAppService.mainApp`.
-  If macOS treats that as an error the launch log shows "refresh failed" every launch. Check
-  Console for category LaunchAtLogin on a launch with the login item enabled (not run during E1;
-  E1 item 5 passed otherwise).
 - Short-session token-lifetime question (2026-11-06): record how long the Claude OAuth access
   token actually lives between Claude Code runs, to set expectations for seeing "Sign-in expired".
 

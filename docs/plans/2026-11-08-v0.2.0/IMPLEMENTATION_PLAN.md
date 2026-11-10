@@ -266,7 +266,7 @@ extension HotKeyShortcut {
     renders the app name.
   - While unavailable: build and test proceed; submissions are rejected server-side.
 
-- [x] **E2**: Manual acceptance in a fresh Debug build (user-operated) — **passed 2026-11-09** on the E2b build (83a3dcd), except the item-3 test submission, which waits on E1
+- [x] **E2**: Manual acceptance in a fresh Debug build (user-operated) — **passed 2026-11-09** on the E2b build (83a3dcd); item-3 test submission confirmed 2026-11-10 from the notarized build (E4)
   - Depends on: 4.2; E1 for the submission step
   - Requires: the user at this Mac. Handoff under the standing fresh-build authorization (replaces
     the running `/Applications` copy only with a separate go-ahead; otherwise run from the build folder).
@@ -281,14 +281,14 @@ extension HotKeyShortcut {
        with Settings open, switching layout updates the recorder label; hotkey still fires.
     6. About shows `Version 0.2.0 (200)`.
 
-- [ ] **E3**: Notarize 0.2.0 (user go-ahead — contacts Apple, uses the `99-AUTH` key)
+- [x] **E3**: Notarize 0.2.0 (user go-ahead — contacts Apple, uses the `99-AUTH` key) — **done 2026-11-10**, Accepted, source a10594b
   - Depends on: 4.2, E2; E1 under D5
   - Gates: E4, E5, the release acceptance criterion.
   - Success / verification: clean tree; `scripts/notarize-release.sh 0.2.0` → Accepted, `stapler
     validate` ok, `spctl` "source=Notarized Developer ID", `SHA256SUMS.txt` and `SOURCE_COMMIT.txt`
     present in `dist/0.2.0/`.
 
-- [ ] **E4**: Smoke test of the notarized artifact (user-operated; install needs go-ahead)
+- [x] **E4**: Smoke test of the notarized artifact (user-operated; install needs go-ahead) — **passed 2026-11-10**
   - Depends on: E3
   - Requires: go-ahead to quit the running copy and replace `/Applications/LLM-UsageStatus.app`
     (currently the ad-hoc Debug E1 build) with the stapled 0.2.0 extracted via Finder/ditto.
@@ -331,6 +331,8 @@ extension HotKeyShortcut {
 | E2 fix | Coordinator, with user approval (UI-changes protocol) | E2 partial: items 1 and 6 pass. Settings shortcut row overflowed (label "Show/hid", recorder text clipped; pre-existing). Label above the row as "Show or hide the panel", recorder 190→240 pt, Help text updated. Debug `build-for-testing` ok; CI run 42530269930 green, 217 tests. New E2 candidate `04_Exports/0.2.0-E2b-Debug/` launched. | 83a3dcd | E2 items 2–5 + Settings recheck pending. |
 | E2 | User at M1 Max, build `04_Exports/0.2.0-E2b-Debug/` (83a3dcd, running PID 88439) | User reported **all pass** (2026-11-09): Settings layout fixed, Help (front, dark, search, Esc/Command-W, Command-?), Feedback window opens, Tip opens donate page, German layout names + live recorder update + hotkey. Feedback test submission deferred to E1. | — | Next: E1 (site roster, needs go-ahead) → feedback submission check → E3 notarize (own go-ahead). |
 | E1 | Coordinator, user go-ahead (2026-11-10; Count Clock Wise activation approved) | Website repo quiet (no edits since 2026-11-09 03:00; privacy work committed d4b329b). Dry run: only real change was `apps.json` (other listed files byte-equal to live). Added `llm-usagestatus` (portalPage false, no site → not on homepage/catalogue), format preserved. `./deploy.sh` ok; 29/29 uploaded files byte-match live; live roster has `llm-usagestatus` + `count-clock-wise`; donate page 200. Committed `apps.json` only. | App-Websites 06c8d1c | Next: E2 item 3 feedback test submission (user), then E3 notarize (go-ahead). |
+| E3 | Coordinator, user go-ahead (2026-11-10) | Clean tree at a10594b (docs-only on top of 83a3dcd). `scripts/notarize-release.sh 0.2.0` exit 0: universal Release build, Developer ID signed (FDMSRXXN73), notarytool submission d529519e-cce5-4597-85b6-e3bc1167d1b3 **Accepted**, stapled + validated, `spctl` "source=Notarized Developer ID". `dist/0.2.0/`: zip SHA-256 5c0e9f6a…8884a (`SHA256SUMS.txt`), `SOURCE_COMMIT.txt` a10594b, 0.2.0 (200), x86_64 arm64. | a10594b | Next: E4 (install go-ahead). |
+| E4 | Coordinator installed with user go-ahead; checks user-operated | E2b build (PID 88439) quit gracefully. Old `/Applications` copy (ad-hoc, build 100) moved to `04_Exports/replaced-Applications-288f5ab/`. Notarized zip extracted with `ditto` → `spctl` accepted, stapler validate ok, executable SHA-256 88036c2f…96b4a identical to `dist/0.2.0`; launched, running from `/Applications`. User reported **all pass**: About 0.2.0 (200), Launch at login re-toggled + Login Items, LaunchAtLogin Console check, Help/Feedback/Tip; feedback test submission arrived on the website (2026-11-10, "app 0.2.0 (200) · macOS 27.2.0") → closes E2 item 3. | — | Next: E5 publish decision (where to host; tag/release/upload need go-ahead). |
 
 ---
 *Keep active while required work or acceptance is incomplete. On completion, retire in place (as the

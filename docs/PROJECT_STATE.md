@@ -1,6 +1,6 @@
 # PROJECT_STATE — LLM-UsageStatus
 
-**Last updated:** 2026-11-10 (0.2.0 E1 done)
+**Last updated:** 2026-11-10 (0.2.0 notarized, E4 passed)
 
 ## Identity
 
@@ -15,16 +15,17 @@ Developer ID signed, notarized, zero configuration for end users.
 
 ## Now
 
-- **Execution:** `docs/plans/2026-11-08-v0.2.0/IMPLEMENTATION_PLAN.md` — 11/11 tasks; CI green on 7a092d0
-  (217 tests; Settings fix 83a3dcd green). **E2 passed**; **E1 done** (roster live). Next: one feedback test
-  submission from the app, then E3 notarize (go-ahead). Running: E2b Debug build from `04_Exports/0.2.0-E2b-Debug/`.
-- Installed: E1 build (288f5ab, Debug, ad-hoc) in `/Applications/LLM-UsageStatus.app`, not running;
-  not a release — replace with a notarized 0.2.0 before redistribution.
+- **Execution:** `docs/plans/2026-11-08-v0.2.0/IMPLEMENTATION_PLAN.md` — 11/11 tasks; E1–E4 done.
+  **0.2.0 notarized** (Accepted, source a10594b) in `dist/0.2.0/`. Next: **E5 publish decision**
+  (public repo + GitHub Release, or website hosting; tag/release/upload need go-ahead).
+- Installed: notarized 0.2.0 (200) in `/Applications/LLM-UsageStatus.app`, running; previous ad-hoc
+  copy kept in `04_Exports/replaced-Applications-288f5ab/`.
 - `dist/0.1.0` is stale vs source (rebuild + re-notarize before any redistribution).
 - GitHub remote (private) + CI green since 2026-11-07 (now 217 tests on Xcode 16.4).
 
 ## Recent
 
+- 2026-11-10: **0.2.0 notarized (E3) and smoke-tested (E4)** — installed in /Applications; feedback test submission arrived on the website; login-item refresh check passed.
 - 2026-11-10: **E1 done** — LLM Usage Status is on the website's feedback and tip lists (Count Clock Wise activated in the same deploy, approved).
 - 2026-11-09: **0.2.0 E2 passed** — menus, Help, Feedback window, Tip, German layout names, About; Settings shortcut row was cut off and is fixed (label on its own line). Feedback test submission waits on E1.
 - 2026-11-08: 0.2.0 pushed (9 commits) — CI green, 217 tests; all 11 plan tasks checked. Manual check (E2) next.
