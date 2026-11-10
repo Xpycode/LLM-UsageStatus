@@ -68,7 +68,7 @@ struct VibeUsageProvider: Provider {
                         now: Date = Date(), calendar: Calendar = .current) -> ProviderSection {
         let totalAllTime = Self.totalTokens(report.totals)
         var rows = [
-            SectionRow(id: "sessions", label: "Sessions", value: report.sessions.count.formatted()),
+            SectionRow(id: "sessions", label: "Sessions", value: report.rootSessionCount.formatted()),
             SectionRow(id: "tokens-24h", label: "Tokens (24 hours)",
                        value: Self.totalTokens(report.last24Hours.combined).formatted(),
                        isEstimate: !report.last24Hours.unattributed.isEmpty),

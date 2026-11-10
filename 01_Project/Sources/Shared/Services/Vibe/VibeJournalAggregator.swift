@@ -55,7 +55,9 @@ struct VibeWindowSessionTotals: Sendable, Equatable {
 }
 
 /// Per-session aggregation. Only token counts are retained; journal prompt and
-/// response content is never kept.
+/// response content is never kept. `totals` come from the session's cumulative
+/// snapshot counters when readable (they survive journal rotation), else from
+/// journal sums; `usageRows` always counts journal rows still on disk.
 struct VibeSessionUsage: Sendable, Equatable, Identifiable {
     let id: String
     let modelName: String?
@@ -63,6 +65,13 @@ struct VibeSessionUsage: Sendable, Equatable, Identifiable {
     let endedAt: Date?
     let usageRows: Int
     let totals: VibeTokenTotals
+    /// The root of a sub-agent tree as the snapshot names it; nil when unknown.
+    var rootSessionID: String? = nil
+
+    func withModelName(_ name: String?) -> VibeSessionUsage {
+        VibeSessionUsage(id: id, modelName: name, startedAt: startedAt, endedAt: endedAt,
+                         usageRows: usageRows, totals: totals, rootSessionID: rootSessionID)
+    }
 }
 
 /// Result of one store scan. `detected` is false only when the store directory
@@ -76,6 +85,17 @@ struct VibeUsageReport: Sendable, Equatable {
     let last7Days: VibeWindowTotals
     let skippedSessions: Int
     let malformedRecords: Int
+
+    /// Sessions a user would count: those that are their own root, have no
+    /// known root, or whose root is missing from the store. Sub-agent children
+    /// with a present root fold into it; their tokens still count in `totals`.
+    var rootSessionCount: Int {
+        let ids = Set(sessions.map(\.id))
+        return sessions.filter { session in
+            guard let root = session.rootSessionID, root != session.id else { return true }
+            return !ids.contains(root)
+        }.count
+    }
 
     static func absent(scannedAt: Date) -> VibeUsageReport {
         VibeUsageReport(detected: false, scannedAt: scannedAt, sessions: [],
@@ -139,13 +159,14 @@ struct VibeJournalAggregator: Sendable {
             return VibeUsageReport.absent(scannedAt: scannedAt)
         }
 
-        let contents = (try? FileManager.default.contentsOfDirectory(
-            at: storeRoot, includingPropertiesForKeys: [.isDirectoryKey])) ?? []
-        let sessionDirectories = contents.compactMap { url -> URL? in
-            guard let values = try? url.resourceValues(forKeys: [.isDirectoryKey]),
-                  values.isDirectory == true else { return nil }
-            return url
-        }.sorted { $0.lastPathComponent < $1.lastPathComponent }
+        var contents: [URL] = []
+        do {
+            contents = try FileManager.default.contentsOfDirectory(
+                at: storeRoot, includingPropertiesForKeys: [.isDirectoryKey])
+        } catch {
+            Self.logger.error("Vibe session store listing failed: \(error.localizedDescription, privacy: .public)")
+        }
+        let sessionDirectories = contents.filter { Self.isDirectory($0) }.sorted { $0.lastPathComponent < $1.lastPathComponent }
 
         var parsedSessions: [ParsedSession] = []
         var skippedSessions = 0
@@ -159,6 +180,7 @@ struct VibeJournalAggregator: Sendable {
             parsedSessions.append(parseSession(directory, malformedRecords: &sessionMalformed))
             malformedRecords += sessionMalformed
         }
+        parsedSessions = Self.resolvingModels(parsedSessions)
 
         Self.logger.notice("Vibe scan: sessions \(parsedSessions.count, privacy: .public), skipped \(skippedSessions, privacy: .public), malformed \(malformedRecords, privacy: .public)")
         return VibeUsageReport(
@@ -180,8 +202,16 @@ struct VibeJournalAggregator: Sendable {
     private func parseSession(_ sessionDirectory: URL, malformedRecords: inout Int) -> ParsedSession {
         let metadata = Self.sessionMetadata(sessionDirectory)
         let journalDirectory = sessionDirectory.appending(path: "journal", directoryHint: .isDirectory)
-        let journalFiles = ((try? FileManager.default.contentsOfDirectory(
-            at: journalDirectory, includingPropertiesForKeys: nil)) ?? [])
+        var journalListing: [URL] = []
+        if FileManager.default.fileExists(atPath: journalDirectory.path) {
+            do {
+                journalListing = try FileManager.default.contentsOfDirectory(
+                    at: journalDirectory, includingPropertiesForKeys: nil)
+            } catch {
+                Self.logger.error("Vibe journal listing failed for \(sessionDirectory.lastPathComponent, privacy: .public): \(error.localizedDescription, privacy: .public)")
+            }
+        }
+        let journalFiles = journalListing
             .filter { $0.pathExtension == "jsonl" }
             .sorted { $0.lastPathComponent < $1.lastPathComponent }
 
@@ -209,24 +239,56 @@ struct VibeJournalAggregator: Sendable {
             }
         }
 
+        // The snapshot's cumulative counters are authoritative; journal sums are
+        // the fallback for sessions without readable counters. Windows stay
+        // journal-based either way.
+        var snapshot: VibeSessionSnapshot?
+        do {
+            snapshot = try VibeSessionSnapshot.read(sessionDirectory: sessionDirectory)
+        } catch {
+            Self.logger.notice("Vibe snapshot for \(sessionDirectory.lastPathComponent, privacy: .public) not used, falling back to journal sums: \(String(describing: error), privacy: .public)")
+        }
         let session = VibeSessionUsage(
             id: sessionDirectory.lastPathComponent,
             modelName: modelNameSource(sessionDirectory.lastPathComponent, sessionDirectory),
             startedAt: metadata?.start,
             endedAt: metadata?.end,
             usageRows: usageRows,
-            totals: totals
+            totals: snapshot?.tokenUsage ?? totals,
+            rootSessionID: snapshot?.rootSessionID
         )
         return ParsedSession(session: session, timestampedRows: timestampedRows, remainder: remainder)
     }
 
+    /// A child is priced by its own model when that resolves on the rate card,
+    /// otherwise by its root's; with neither resolving, the own name (else the
+    /// root's) is kept so the session still reads as unpriced.
+    private static func resolvingModels(_ sessions: [ParsedSession]) -> [ParsedSession] {
+        let modelsByID = Dictionary(sessions.map { ($0.session.id, $0.session.modelName) },
+                                    uniquingKeysWith: { first, _ in first })
+        return sessions.map { parsed in
+            let session = parsed.session
+            var candidates = [session.modelName]
+            if let root = session.rootSessionID, root != session.id, let rootModel = modelsByID[root] {
+                candidates.append(rootModel)
+            }
+            let names = candidates.compactMap { $0 }
+            let name: String? = names.first(where: { VibeRateCard.resolve($0) != nil }) ?? names.first
+            return ParsedSession(session: session.withModelName(name),
+                                 timestampedRows: parsed.timestampedRows,
+                                 remainder: parsed.remainder)
+        }
+    }
+
     private func acceptsStoreFormat(_ sessionDirectory: URL) -> Bool {
-        guard let data = try? Data(contentsOf: sessionDirectory.appending(path: "CURRENT")),
-              let current = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
-              current["store_format"] as? String == Self.acceptedStoreFormat else {
+        do {
+            let data = try Data(contentsOf: sessionDirectory.appending(path: "CURRENT"))
+            let current = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+            return current?["store_format"] as? String == Self.acceptedStoreFormat
+        } catch {
+            Self.logger.notice("Vibe CURRENT unreadable for \(sessionDirectory.lastPathComponent, privacy: .public): \(error.localizedDescription, privacy: .public)")
             return false
         }
-        return true
     }
 
     private func timestamp(for row: UsageRow, coreInputs: [CoreInputTime],
@@ -247,14 +309,18 @@ struct VibeJournalAggregator: Sendable {
     private static func parseJournalFile(_ file: URL, rows: inout [UsageRow],
                                         coreInputs: inout [CoreInputTime],
                                         malformedRecords: inout Int) {
-        guard let data = try? Data(contentsOf: file) else {
+        let data: Data
+        do {
+            data = try Data(contentsOf: file)
+        } catch {
+            logger.error("Vibe journal file unreadable: \(file.lastPathComponent, privacy: .public): \(error.localizedDescription, privacy: .public)")
             malformedRecords += 1
             return
         }
         for line in String(decoding: data, as: UTF8.self).split(separator: "\n") {
             let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmed.isEmpty else { continue }
-            guard let record = (try? JSONSerialization.jsonObject(with: Data(trimmed.utf8))) as? [String: Any] else {
+            guard let record = jsonObject(Data(trimmed.utf8)) else {
                 malformedRecords += 1
                 continue
             }
@@ -402,12 +468,41 @@ struct VibeJournalAggregator: Sendable {
     }
 
     private static func metaObject(_ sessionDirectory: URL) -> [String: Any]? {
-        guard let data = try? Data(contentsOf: sessionDirectory.appending(path: "meta.json")) else { return nil }
-        return (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+        let file = sessionDirectory.appending(path: "meta.json")
+        // Sub-agent children carry no meta.json; absence is normal.
+        guard FileManager.default.fileExists(atPath: file.path) else { return nil }
+        do {
+            return jsonObject(try Data(contentsOf: file))
+        } catch {
+            logger.error("Vibe meta.json unreadable for \(sessionDirectory.lastPathComponent, privacy: .public): \(error.localizedDescription, privacy: .public)")
+            return nil
+        }
+    }
+
+    private static func jsonObject(_ data: Data) -> [String: Any]? {
+        do {
+            return try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        } catch {
+            return nil
+        }
+    }
+
+    private static func isDirectory(_ url: URL) -> Bool {
+        do {
+            return try url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory == true
+        } catch {
+            logger.error("Vibe store entry unreadable: \(url.lastPathComponent, privacy: .public)")
+            return false
+        }
     }
 
     private static func fileModificationDate(_ file: URL) -> Date? {
-        (try? file.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate
+        do {
+            return try file.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate
+        } catch {
+            logger.error("Vibe file date unreadable: \(file.lastPathComponent, privacy: .public)")
+            return nil
+        }
     }
 
     // MARK: - Field decoding
@@ -425,7 +520,7 @@ struct VibeJournalAggregator: Sendable {
 
     // Journal counters and sequences are integers. Require integer storage and
     // reject booleans and fractional values rather than rounding them.
-    private static func nonnegativeInt(_ value: Any?) -> Int? {
+    static func nonnegativeInt(_ value: Any?) -> Int? {
         guard let value = value as? NSNumber, CFGetTypeID(value) != CFBooleanGetTypeID(),
               "cislqCISLQ".contains(String(cString: value.objCType)) else { return nil }
         guard let integer = Int(value.stringValue), integer >= 0 else { return nil }

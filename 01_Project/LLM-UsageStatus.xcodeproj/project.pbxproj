@@ -13,9 +13,11 @@
 		0F540680EC4CA9DDA014B9AF /* UsageStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4544AE9F60C86AC4D81C5729 /* UsageStatusView.swift */; };
 		1317E37CB906096E7F3F4ECF /* UsageStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5E5974951BEE5C78AC243E /* UsageStoreTests.swift */; };
 		141D2409FAB57983E555A62E /* ClaudeLogAggregatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE7383097646DBAAD3BAC40E /* ClaudeLogAggregatorTests.swift */; };
+		1CD57C8BC4A594D1E8E1CA42 /* VibeSessionSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12B5A7C87E9D9E99579CC2D /* VibeSessionSnapshotTests.swift */; };
 		1D4E48ED1BF0E29A4BF5FF32 /* ShortcutRecorderField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5BFD88A3AD386E75BFC757A /* ShortcutRecorderField.swift */; };
 		1E99FE25CBCF9A47B7145512 /* GlobalHotKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514EE2AF472B97AA1985CC48 /* GlobalHotKey.swift */; };
 		296F51207DAB51EDB5F6A3FB /* UsageResponseDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5BEBC9BCD01682D42F37B5 /* UsageResponseDecoder.swift */; };
+		29B253673D9B764DA2BED1C8 /* VibeSessionSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = F38FDF0FB78867F24C80C392 /* VibeSessionSnapshot.swift */; };
 		29CB2AC7FCEBCB3A7D143544 /* help-mistral-vibe.md in Resources */ = {isa = PBXBuildFile; fileRef = 583EA444B05DE318F99F8881 /* help-mistral-vibe.md */; };
 		30DA43EC14D9C2848626AE54 /* AppVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B40468CE7090F4FBBA99D35 /* AppVersion.swift */; };
 		32F9904D8801808EEAFACAC9 /* ShortcutRecorderFieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2A54A04B0057EC58AC5CCE /* ShortcutRecorderFieldTests.swift */; };
@@ -142,6 +144,7 @@
 		BBA1AA0B5A00277E1B5A99C4 /* HelpSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpSupport.swift; sourceTree = "<group>"; };
 		BDB84069834FDFD792E408B5 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		BF79556401A23B9063E8A487 /* KeyboardLayoutNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardLayoutNames.swift; sourceTree = "<group>"; };
+		C12B5A7C87E9D9E99579CC2D /* VibeSessionSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeSessionSnapshotTests.swift; sourceTree = "<group>"; };
 		C9F30A41F6F2C68A3AC78020 /* HelpSupportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpSupportTests.swift; sourceTree = "<group>"; };
 		CBFACA8F222C460B9648EBF1 /* UsagePreferencesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePreferencesTests.swift; sourceTree = "<group>"; };
 		D7E26C5F20885B0DE272E3C7 /* help-getting-started.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "help-getting-started.md"; sourceTree = "<group>"; };
@@ -150,6 +153,7 @@
 		E0DDF3C0803BE188EF3E2BE1 /* SectionStateCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionStateCacheTests.swift; sourceTree = "<group>"; };
 		E5305E17D0F550DB53E9222F /* LaunchAtLoginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginTests.swift; sourceTree = "<group>"; };
 		E5BFD88A3AD386E75BFC757A /* ShortcutRecorderField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutRecorderField.swift; sourceTree = "<group>"; };
+		F38FDF0FB78867F24C80C392 /* VibeSessionSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeSessionSnapshot.swift; sourceTree = "<group>"; };
 		F39E311E6A2612C0A467434B /* GlobalHotKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalHotKeyTests.swift; sourceTree = "<group>"; };
 		F3EBD71D52ED781C4EBE4566 /* SectionStateCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionStateCache.swift; sourceTree = "<group>"; };
 		F6753BBC944B341814A3CA22 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -179,6 +183,7 @@
 			children = (
 				853AB380986CA290F24B25F4 /* VibeJournalAggregator.swift */,
 				5A3AC80EDE2E2C9029CD760A /* VibeRateCard.swift */,
+				F38FDF0FB78867F24C80C392 /* VibeSessionSnapshot.swift */,
 				5A84B6F317F0425FA903EF39 /* VibeUsageProvider.swift */,
 			);
 			path = Vibe;
@@ -379,6 +384,7 @@
 			children = (
 				1962AB6F02C1A3B93B3B8A7B /* VibeJournalAggregatorTests.swift */,
 				A0CCE6BAE057B307B9305A3B /* VibeRateCardTests.swift */,
+				C12B5A7C87E9D9E99579CC2D /* VibeSessionSnapshotTests.swift */,
 				3D79B6AFFD91BA3A799CC6F8 /* VibeUsageProviderTests.swift */,
 			);
 			path = Vibe;
@@ -571,6 +577,7 @@
 				1317E37CB906096E7F3F4ECF /* UsageStoreTests.swift in Sources */,
 				691DB206BEB7D941B2D7F81D /* VibeJournalAggregatorTests.swift in Sources */,
 				EA56EB2DEA11B8A5D51C8899 /* VibeRateCardTests.swift in Sources */,
+				1CD57C8BC4A594D1E8E1CA42 /* VibeSessionSnapshotTests.swift in Sources */,
 				FA376752DDC70FFA2BE8C49B /* VibeUsageProviderTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -607,6 +614,7 @@
 				50E84E605C398D452D8958A8 /* VibeBudgetEditor.swift in Sources */,
 				9D2119BF6606A7A76DBC2469 /* VibeJournalAggregator.swift in Sources */,
 				9487239880A4446AB3E9C4FE /* VibeRateCard.swift in Sources */,
+				29B253673D9B764DA2BED1C8 /* VibeSessionSnapshot.swift in Sources */,
 				BFFE93F8A1DFA07828DBD381 /* VibeUsageProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
