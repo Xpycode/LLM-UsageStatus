@@ -5,7 +5,7 @@
 > Task state/evidence is authoritative here; TASKS links here and holds backlog/inbox.
 > Follow the master's `reference/task-state.md` for legacy reconciliation and archival.
 
-**Progress:** 3/8 tasks complete (1.1, 1.2, 1.3); 1.4 implemented, Settings screenshot pending; external checks E1–E4 pending.
+**Progress:** 5/8 tasks complete (1.1, 1.2, 1.3, 2.1, 2.2); 1.4 implemented, Settings screenshot pending; Wave 3 (3.1, 3.2) next; external checks E1–E4 pending.
 **Task states:** unchecked = pending / implemented-unverified / blocked (name gate);
 checked = complete with required evidence. Task identity includes this plan path plus ID.
 
@@ -262,7 +262,7 @@ Wave 1 ownership (exclusive):
 
 ### Wave 2 (parallel — disjoint; prerequisites integrated and validated)
 
-- [ ] **2.1**: Settings hotkey follows the layout (D5) — coordinator
+- [x] **2.1**: Settings hotkey follows the layout (D5) — coordinator — `b088b6b` (AZERTY behaviour still gated by E1)
   - Depends on: 1.2 (`settings(using:)`), 1.4 (`AppDelegate.swift` integrated). External gates: E1 (AZERTY).
   - Owns: `AppDelegate.swift`.
   - Success:
@@ -273,7 +273,7 @@ Wave 1 ownership (exclusive):
   - Backpressure: `build-for-testing`. A unit test (in `HotKeyShortcutTests`, coordinator-added)
     covers `settings(using:)` with an AZERTY fake.
 
-- [ ] **2.2**: Vibe totals from session snapshots; rotation-proof; children fold (D1, D3)
+- [x] **2.2**: Vibe totals from session snapshots; rotation-proof; children fold (D1, D3) — `9ed0eb2` (real-store comparison matched; E1 check still open)
   - Depends on: 1.3. External gates: E1 (compare against Vibe's own numbers on this Mac).
   - Owns: `Vibe/VibeJournalAggregator.swift`, `Vibe/VibeUsageProvider.swift`, a new
     `Vibe/VibeSessionSnapshot.swift`, a new `Tests/Shared/Services/Vibe/VibeSessionSnapshotTests.swift`
@@ -383,6 +383,7 @@ Wave 1 ownership (exclusive):
 |---|---|---|---|---|
 | — | Plan written 2026-11-10 from two parallel research agents plus coordinator on-disk checks (`research/findings.md`); D3, D6 and the two deferrals decided by the user | — | — | Next: Wave 1 (1.1–1.4), once execution is requested |
 | Wave 1 (1.1, 1.2, 1.3, 1.4), 2026-11-10 | 4 parallel `developer` agents with fresh context, exclusive file ownership, separate scratch DerivedData folders. Coordinator handled one cross-owner fix: 1.4's new `SettingsWindowController(preferences:)` argument in `ShortcutRecorderFieldTests.testWindowControllerSmoke` was made by the 1.2 owner and committed with 1.4 | Integrated `build-for-testing` **TEST BUILD SUCCEEDED**, no warnings. 237 test functions (217 + 20 new: 1.1 +2, 1.2 +11 (35 → 46), 1.3 +3, 1.4 +4). `grep 'try?' SectionStateCache.swift` empty. Tests not run locally (app-hosted; CI at 3.2). 1.3 finding: mistral-vibe `formats.py` (`TokenCounts`: "the cached and cache-written input are part of the input") → `cache_write_tokens` is no longer added. Source: https://github.com/mistralai/mistral-vibe/blob/main/harness/runtimes/python/python/mistralai_vibe_local_harness/vibe/completion_profile/formats.py | `2c11dbe` 1.4 · `c5fc548` 1.1 · `7175c92` 1.3 · `4421c67` 1.2 (each builds alone). Not pushed | 1.4: the Settings screenshot is still open. API notes for later waves: the failure type is `HotKeyShortcut.Rejection`; extras are `LayoutTranslator.init(map:)`, `.unavailable` and `ShortcutRecorderField(translator:)`; `UsagePreferences.providerIDs` and `enabledStores(_:enabled:)`. Next: Wave 2 (2.1 coordinator, 2.2 agent) |
+| Wave 2 (2.1, 2.2), 2026-11-10 | 2.1 serial by coordinator (owns `AppDelegate.swift`); 2.2 by one `developer` agent with fresh context in parallel, exclusive Vibe files, separate scratch DerivedData. Coordinator pre-created `VibeSessionSnapshot.swift` and its test stub, then ran `xcodegen generate` | Integrated `build-for-testing` **TEST BUILD SUCCEEDED**. 244 test functions (237 + 7 new in `VibeSessionSnapshotTests`; Vibe 42 → 49). The 2.1 AZERTY test already existed from 1.2 (`HotKeyShortcutTests.swift:188`), so none was added. `grep 'try?' Vibe/*.swift` empty. Two Swift warnings in files outside this wave: `ShortcutRecorderField.swift:30` (unnecessary `nonisolated(unsafe)`) and `ClaudeLogAggregator.swift:144` (deprecated `init(cString:)`); not in the Wave 1 record, now in the TASKS Inbox. 2.2 real-store comparison (read-only, scripts in the session scratchpad `cmp/`): 36 sessions, app sum 168,838,748 equals Vibe's own `totalTokens` sum 168,838,748, 0 per-session mismatches; 12 root sessions. Store finding: `projection_state.chunks` hold only history, so counters always come from `projection-state.json`. The reader also folds in `projection_advanced` and `session_relocated` (as omarchy does). Tests not run locally (app-hosted; CI at 3.2) | `b088b6b` 2.1 · `9ed0eb2` 2.2 (with the project file). Not pushed | For 3.2 review: a session with no manifest logs a `.notice` on every refresh (fallback path); check this is acceptable. Next: Wave 3 (3.1 docs/version, then 3.2 review + CI, which needs a push go-ahead) |
 
 ---
 *Keep active while required work or acceptance is incomplete. On completion, retire in place with
