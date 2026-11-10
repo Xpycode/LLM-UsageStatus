@@ -61,6 +61,42 @@ final class SectionStateCacheTests: XCTestCase {
         XCTAssertEqual(SectionStateCache(fileURL: fileURL).loadSections()["codex"], section)
     }
 
+    func testStoreUnderRegularFileParentDoesNotCrashAndLoadStaysEmpty() throws {
+        // The "directory" component is a regular file, so directory creation
+        // and the write both fail; the cache must swallow that (after logging).
+        let blocker = FileManager.default.temporaryDirectory
+            .appending(path: "SectionStateCacheTests-blocker-\(UUID().uuidString)")
+        try Data("x".utf8).write(to: blocker)
+        defer { try? FileManager.default.removeItem(at: blocker) }
+        let blockedURL = blocker.appending(path: "sub/last-sections.json")
+
+        let cache = SectionStateCache(fileURL: blockedURL)
+        cache.store(Self.section(timestamp: 1_000), for: "codex")
+
+        XCTAssertTrue(cache.loadSections().isEmpty)
+    }
+
+    func testStoreIntoReadOnlyDirectoryKeepsPriorData() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appending(path: "SectionStateCacheTests-dir-\(UUID().uuidString)", directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer {
+            try? FileManager.default.setAttributes([.posixPermissions: 0o700], ofItemAtPath: directory.path)
+            try? FileManager.default.removeItem(at: directory)
+        }
+        let url = directory.appending(path: "last-sections.json")
+        let cache = SectionStateCache(fileURL: url)
+        let codex = Self.section(timestamp: 1_000)
+        cache.store(codex, for: "codex")
+
+        try FileManager.default.setAttributes([.posixPermissions: 0o500], ofItemAtPath: directory.path)
+        cache.store(Self.section(timestamp: 2_000), for: "claude")
+
+        // The atomic write fails in the read-only directory (unless running
+        // as root); either way the file stays readable and the prior entry intact.
+        XCTAssertEqual(cache.loadSections()["codex"], codex)
+    }
+
     private static func section(timestamp: TimeInterval) -> ProviderSection {
         ProviderSection(rows: [SectionRow(id: "credits", label: "Credits", value: "12.75")],
                         glanceLine: SectionGlanceLine("1.2M tokens · 24 hours", isEstimate: true),
