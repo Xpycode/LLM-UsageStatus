@@ -108,15 +108,16 @@ Updates are installed manually; the app has no auto-updater.
 
 ### Download
 
-Public downloads are not available yet; a link will appear here when a
-notarized release is published. Until then, build from source (below) or
-use a notarized `LLM-UsageStatus-<version>.zip` you received directly.
+Download the notarized disk image from the apps site:
+**[LLM-UsageStatus 0.2.0 (DMG)](https://apps.lucesumbrarum.com/dl.php?app=llm-usagestatus)**
+(macOS 15 or newer, Apple silicon and Intel).
 
-1. Check the zip against its published SHA-256 checksum, if one was provided.
+SHA-256 of `LLM-UsageStatus-0.2.0.dmg`:
+`380bb961435215818569e7df1f03bd6c090fa348e7b208959e4fb41288fe63e2`
+
+1. Optionally check the download: `shasum -a 256 <file>` should print the value above.
 2. Quit any older copy of LLM Usage Status normally.
-3. Extract the zip (in Finder, double-click it; on the command line use
-   `ditto -x -k`, not `unzip`) and copy `LLM-UsageStatus.app` to
-   `/Applications`.
+3. Open the disk image and drag `LLM-UsageStatus.app` onto the Applications folder.
 4. Launch it. No dock icon appears; the shortcut works immediately.
 
 ### Build from Source
