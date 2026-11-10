@@ -33,6 +33,6 @@ Developer ID signed, notarized, zero configuration for end users.
 
 ## Handoff
 
-- Current handoff: `docs/sessions/2026-11-08.md` → **Resume (end of 2026-11-08, after 0.2.0 Wave 4)** —
-  E1 + E2 done; next one feedback test submission → E3 notarize (go-ahead).
+- Current handoff: `docs/sessions/2026-11-10.md` → **Resume** — confirm the feedback test submission,
+  then E3 notarize (go-ahead).
 - Decisions: `docs/decisions.md`
