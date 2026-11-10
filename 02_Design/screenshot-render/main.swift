@@ -108,9 +108,11 @@ struct BarStyle: ProgressViewStyle {
 }
 
 @MainActor func saveIcon() {
+    // macOS icon grid: an 824-pt tile centred on a transparent 1024 canvas (100-pt margin),
+    // so the icon matches its Dock/Finder neighbours. Artwork is drawn at 1024 then scaled.
     let accent = Color(red: 0.55, green: 0.49, blue: 0.97)
     let fills: [CGFloat] = [0.78, 0.52, 0.30]
-    let icon = ZStack {
+    let tile = ZStack {
         RoundedRectangle(cornerRadius: 230, style: .continuous)
             .fill(LinearGradient(colors: [Color(red: 0.17, green: 0.18, blue: 0.23), Color(red: 0.07, green: 0.08, blue: 0.10)],
                                  startPoint: .top, endPoint: .bottom))
@@ -126,9 +128,21 @@ struct BarStyle: ProgressViewStyle {
         }
     }
     .frame(width: 1024, height: 1024)
+    .compositingGroup()
+    let icon = tile
+        .scaleEffect(824.0 / 1024.0)
+        .shadow(color: .black.opacity(0.30), radius: 10, y: 10)
+        .frame(width: 1024, height: 1024)
     let r = ImageRenderer(content: icon)
     r.scale = 1
-    guard let cg = r.cgImage, let png = NSBitmapImageRep(cgImage: cg).representation(using: .png, properties: [:]) else { return }
-    try? png.write(to: URL(fileURLWithPath: outDir).appendingPathComponent("icon-1024.png"))
-    print("wrote icon")
+    r.isOpaque = false
+    guard let cg = r.cgImage, let png = NSBitmapImageRep(cgImage: cg).representation(using: .png, properties: [:]) else {
+        print("icon render failed"); return
+    }
+    do {
+        try png.write(to: URL(fileURLWithPath: outDir).appendingPathComponent("icon-1024.png"))
+        print("wrote icon")
+    } catch {
+        print("icon write failed: \(error)")
+    }
 }

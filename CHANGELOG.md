@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] - 2026-11-10
+
+### Added
+
+- App icon: three violet usage bars on a dark tile, drawn on the standard
+  macOS icon grid. Shows in Finder, Launchpad and Login Items. No functional
+  changes.
+
 ## [0.2.0] - 2026-11-10
 
 ### Added
