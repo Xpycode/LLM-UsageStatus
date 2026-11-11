@@ -5,6 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.2.2] - Unreleased
+
+### Added
+
+- Settings has a new **Providers** section, first in the window: one checkbox
+  each for Codex, Claude Code and Mistral Vibe, all on by default. A provider
+  that is off is hidden from the panel and never read or fetched, and its
+  right-click items (Show 5-hour limit, Set Vibe Monthly Budget…) are hidden.
+  With all three off the panel shows a short hint.
+- The ISO key next to Left Shift (`<` on many European keyboards) can be
+  used in the show/hide shortcut.
+
+### Changed
+
+- **Vibe numbers are lower than in 0.2.1, and now correct.** Earlier versions
+  added cached tokens on top of input and reasoning tokens on top of output,
+  although Vibe already counts them inside those numbers. Tokens were counted
+  up to twice, and cached tokens were charged twice — once at the full input
+  price — so the cost estimate and the budget headline were several times too
+  high. Cached tokens are now
+  charged once, at the cached price.
+- Vibe "Sessions" counts the sessions you started. Sub-agent sessions are
+  folded into their parent; their tokens and cost still count in the totals.
+
+### Fixed
+
+- Vibe "Tokens (all time)" and the cost come from Vibe's own per-session
+  counters, so they match Vibe exactly and no longer drop when Vibe deletes
+  old log files.
+- Refused shortcuts follow the keyboard layout. On German QWERTZ, Command plus
+  the key labelled Z is refused and the key labelled Y is accepted; on Dvorak
+  the key that types C is refused. A saved shortcut keeps working after a
+  layout switch.
+- Command-Comma opens Settings from the key that types a comma on the current
+  layout (for example AZERTY) and follows layout switches while the panel is
+  showing.
+- Failures to read or write the last-seen values cache are now logged instead
+  of silently ignored.
+
 ## [0.2.1] - 2026-11-10
 
 ### Added

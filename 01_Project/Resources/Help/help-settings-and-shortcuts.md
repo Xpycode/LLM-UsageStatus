@@ -1,6 +1,15 @@
 # Settings and Shortcuts
 
-Open Settings from the right-click menu (**Settings…**), or press **Command-Comma** while the panel is showing. Command-Comma only works while the panel is visible, so other apps keep their own Command-Comma. Press Escape or Command-W to close the window. Changes apply immediately.
+Open Settings from the right-click menu (**Settings…**), or press **Command-Comma** while the panel is showing. Command-Comma means Command plus the key that types a comma on your keyboard layout, for example on French AZERTY too. It only works while the panel is visible, so other apps keep their own Command-Comma. Press Escape or Command-W to close the window. Changes apply immediately.
+
+## Providers
+
+The first section has one checkbox per provider: **Codex**, **Claude Code** and **Mistral Vibe**. All three are on by default, and your choice is remembered across restarts.
+
+- A provider that is off is hidden from the panel, and the app does not read its files, its sign-in or its usage service.
+- Its right-click items are hidden too: **Show 5-hour limit** while Codex is off, and **Set Vibe Monthly Budget…** while Mistral Vibe is off.
+- With all three off, the panel shows "All providers are off. Turn them on in Settings."
+- Turning a provider back on while the panel is showing brings its section back and refreshes it.
 
 ## Startup
 
@@ -15,7 +24,8 @@ The field under **Show or hide the panel** sets the global shortcut. Click the f
 
 - It must include Command or Control.
 - Command-Comma is reserved for Settings.
-- Common macOS shortcuts such as Command-C or Command-Space are refused ("That shortcut is used by macOS and other apps."). The check uses key positions as on a US keyboard, so on other layouts (for example QWERTZ or Dvorak) a few letter shortcuts may not be caught; avoid Command plus a single letter.
+- Common macOS shortcuts such as Command-C or Command-Space are refused ("That shortcut is used by macOS and other apps."). The check follows your keyboard layout: on German QWERTZ, Command plus the key labelled Z is refused and Command plus the key labelled Y is accepted.
+- The extra key next to Left Shift on ISO keyboards (`<` on many European layouts) can be used, for example with Control-Command.
 - A combination another app already uses is refused ("Already in use by another app."). Your previous shortcut keeps working.
 - **Reset to Default** restores Control-Option-Command-L.
 

@@ -11,7 +11,7 @@ The providers expose different amounts of information, so not every number in th
 ## Estimated
 
 - **Claude Code local fallback** — when the sign-in is unavailable, the section shows figures computed from your local session logs. They are labeled as estimates.
-- **Mistral Vibe** — Vibe has no usage service and no allowance. Every figure comes from local files on your Mac. Cost is estimated from a built-in price list, and a budget percent is an estimate based on that cost.
+- **Mistral Vibe** — Vibe has no usage service and no allowance. Every figure comes from local files on your Mac. Token totals count input plus output once (cached and reasoning tokens are already inside them), and sub-agent sessions count toward their parent session. Cost is estimated from a built-in price list, and a budget percent is an estimate based on that cost.
 
 ## How estimates are marked
 

@@ -4,10 +4,16 @@ Mistral Vibe is billed per token and has no usage service or allowance. Everythi
 
 ## What it shows
 
-- **Sessions**
+- **Sessions** — the conversations you started. Sub-agent sessions that Vibe starts on its own are folded into the session that started them, so they do not add to the count. Their tokens and cost are still included in the totals.
 - **Tokens (24 hours)**, **Tokens (7 days)** and **Tokens (all time)**
 - **Estimated cost** — token counts multiplied by a built-in price list. It is an estimate, not a bill. Your invoice from the provider is the real figure.
 - **Skipped sessions** and **Skipped malformed records** appear only when some data could not be read.
+
+## What the token numbers count
+
+Each total is input plus output tokens. Cached tokens are already part of input and reasoning tokens are already part of output, so they are not added again. The cost charges cached tokens once, at the cheaper cached price.
+
+**Tokens (all time)** and the estimated cost use Vibe's own per-session counters, so they match what Vibe itself reports and do not drop when Vibe deletes old log files. The 24-hour and 7-day figures are added up from the dated entries in Vibe's logs, so they cover only what is still on disk.
 
 ## Unpriced sessions
 

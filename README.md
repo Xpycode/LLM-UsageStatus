@@ -30,8 +30,10 @@ allowances, and renewal times are one keystroke away.
   visible stale-data message and the last update time.
 - Hotkey fallback: when the shortcut cannot be registered, a warning menu-bar
   item appears and offers Show HUD, Retry Shortcut, Settings, Help, and Quit.
-- Settings window: launch at login, a rebindable show/hide shortcut, and the
-  app's version.
+- Settings window: turn each provider on or off, launch at login, a
+  rebindable show/hide shortcut, and the app's version.
+- A provider that is turned off is hidden from the panel and never read — no
+  file, Keychain or network access for it.
 - Shortcut names follow your keyboard layout: on a German layout a chord
   recorded on the key labelled Z reads "Z", not the US "Y". Function, arrow,
   and other special keys keep their spelled-out names.
@@ -49,8 +51,15 @@ Help, Restart, Send Feedback…, Leave a Tip, and Quit.
 
 Open Settings from the panel's right-click menu, or press **Command-Comma**
 while the panel is showing (the app does not take Command-Comma from other apps
-while the panel is hidden). Changes apply immediately; Escape or Command-W
-closes the window.
+while the panel is hidden). Command-Comma follows the keyboard layout: it is
+Command plus whichever key types a comma, on AZERTY too. Changes apply
+immediately; Escape or Command-W closes the window.
+
+- **Providers** — one checkbox each for Codex, Claude Code, and Mistral Vibe,
+  all on by default. A provider that is off has no panel section, no refresh,
+  and no right-click items (Show 5-hour limit hides with Codex, Set Vibe
+  Monthly Budget… with Vibe). With all three off the panel says so. Turning
+  one on while the panel shows brings it back and refreshes it.
 
 - **Launch at login** — shows the real state from macOS, including changes made
   in System Settings → General → Login Items. If macOS asks for approval, the
@@ -59,9 +68,10 @@ closes the window.
   image) it is disabled with the reason.
 - **Shortcut** — click the field and press a new chord. It must include Command
   or Control; Command-Comma is reserved, and standard Command chords such as
-  Command-C or Command-Space are refused (matched by US key position, so on
-  other layouts a few letter chords may slip through). A chord another app already holds is
-  refused and the previous shortcut keeps working. **Reset to Default** restores
+  Command-C or Command-Space are refused. The check follows the keyboard
+  layout: on German QWERTZ the key labelled Z is refused with Command and the
+  key labelled Y is accepted. The ISO key next to Left Shift can be used. A
+  chord another app already holds is refused and the previous shortcut keeps working. **Reset to Default** restores
   Control-Option-Command-L. The shortcut persists across restarts.
 - **About** — name, version and build number.
 
@@ -90,9 +100,12 @@ itself stays bound to the same physical key.
 - **Claude Code** — subscription utilization (five-hour and seven-day windows)
   with renewal times when you are signed in; otherwise, labeled local estimates
   computed from your session logs.
-- **Mistral Vibe** — pay-per-token usage with no usage API: local token
-  aggregates (input, cached, reasoning, output) and an estimated cost line only
-  when model prices resolve. The cost is an estimate, not a bill.
+- **Mistral Vibe** — pay-per-token usage with no usage API: sessions, token
+  totals (input plus output; cached and reasoning tokens are inside those and
+  not counted twice) and an estimated cost line only when model prices
+  resolve. The all-time total comes from Vibe's own per-session counters, so
+  it matches Vibe and survives log rotation; sub-agent sessions fold into the
+  session that started them. The cost is an estimate, not a bill.
 
 ## Requirements
 
@@ -136,14 +149,15 @@ compiles.
 ## Privacy and Data Sources
 
 The app reads only local files owned by each CLI (`~/.codex/auth.json`,
-`~/.claude/projects/**/*.jsonl`, `~/.vibe/logs/session/unified/*/journal/*.jsonl`)
-plus the Codex and Claude usage endpoints. Tokens are read in memory and sent
+`~/.claude/projects/**/*.jsonl`, the Vibe session store under
+`~/.vibe/logs/session/unified/`) plus the Codex and Claude usage endpoints. Tokens are read in memory and sent
 only as authentication headers to their own usage service. The only other
 outgoing request is a feedback message you submit yourself through Send
 Feedback…. No credentials or telemetry are logged, stored, or transmitted
 elsewhere;
 sandboxing is disabled so the app can read these user-owned files outside an
-app container. Saved locally: the per-provider display toggles, the Vibe
+app container. A provider turned off in Settings is not read at all. Saved
+locally: which providers are on, the per-provider display toggles, the Vibe
 budget, the shortcut, window positions, and the last-seen usage values for
 each provider (`~/Library/Application Support/LLM-UsageStatus/last-sections.json`,
 so a relaunch can show them with their timestamps; no credentials).

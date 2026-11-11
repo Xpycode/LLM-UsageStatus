@@ -4,6 +4,38 @@ Durable, project-specific decisions. Newest first.
 
 ---
 
+## 2026-11-10 — 0.2.2: Vibe counting, layout-aware refusals, provider on/off
+
+Plan: `docs/plans/2026-11-10-v0.2.2/IMPLEMENTATION_PLAN.md` (research in its `research/findings.md`).
+
+- **D1 — Vibe all-time totals come from session snapshots.** Per session, `snapshot.session.tokenUsage`
+  from the store's current generation, overridden by the newest complete `set_envelope` in the
+  recovery journal segment; sessions without `tokenUsage` fall back to journal sums. The 24-hour and
+  7-day windows stay journal-based (only journal rows carry timestamps) and stay labelled estimates.
+  **Why:** the counters are cumulative and survive Vibe deleting old journal segments; journal sums
+  dropped after rotation. Matched Vibe's own total exactly on this Mac (36 sessions, 0 mismatches).
+- **D2 — Inclusive token semantics.** Cached tokens are inside input and reasoning tokens inside
+  output; total = input + output; cost = (input − cached) × input + cached × cached + output × output.
+  `cache_write_tokens` is not added (mistral-vibe `formats.py`: cached and cache-written input are
+  part of the input). **Why:** 0.2.1 double-counted and charged cached tokens twice.
+- **D3 — Child sessions fold into their root for the session count only.** Token and cost totals still
+  sum every session, because a root's counter excludes its children. A child with a missing root
+  counts as its own session; a child is priced by its own model, else its root's.
+- **D4 — Layout-aware refusals live only in the recorder.** The recorder resolves reserved and system
+  chords through `LayoutTranslator.current` (ASCII-capable layout, Command-specific map); the stored
+  value is validated structurally only, so a layout switch never resets a saved shortcut. With no
+  translator result, the US-position set applies. Supersedes the 0.2.0 "matched by US key position".
+- **D5 — The Settings hotkey follows the layout.** Command plus the key that types `,`, re-registered
+  on input-source change while the panel shows.
+- **D6 — Providers can be turned off in Settings** (first section, three AppKit checkboxes, default on,
+  `<id>.enabled`). Off means no section, no read or fetch, and no provider menu items; all-off is
+  allowed and shows a hint. **Why:** user request; not reading a provider is also the privacy answer
+  for people who do not use it.
+- **Deferred:** the monthly budget counting only since the reset day, and refusing enabled system
+  hotkeys (`CopySymbolicHotKeys`) — Backlog #14, #15.
+
+---
+
 ## 2026-11-08 — Help, AppCitizenshipKit and FeedbackKit are vendored in-repo
 
 **Choice:** `01_Project/HelpMenu/`, `01_Project/Vendor/AppCitizenshipKit/` and
