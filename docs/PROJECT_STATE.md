@@ -1,6 +1,6 @@
 # PROJECT_STATE — LLM-UsageStatus
 
-**Last updated:** 2026-11-11 (0.2.2 notarized; E3 DMG/website next)
+**Last updated:** 2026-11-11 (0.2.2 live on the website; E4 install next)
 
 ## Identity
 
@@ -15,15 +15,16 @@ Developer ID signed, notarized, zero configuration for end users.
 
 ## Now
 
-- **Funnel:** build → release — 0.2.2 code complete (8/8), CI green (244 tests), **E1 passed, E2 notarized 2026-11-11** (`dist/0.2.2/`).
-- **Execution:** `docs/plans/2026-11-10-v0.2.2/IMPLEMENTATION_PLAN.md` — 0.2.2 (202). Remaining: E3 DMG/website, E4 install (each needs a go-ahead).
-- **Next:** E3 DMG/website → E4 install (each needs a go-ahead). After 0.2.2: Sparkle; provider logos last. Deferred: Backlog #14 (budget since reset day), #15 (system hotkeys).
+- **Funnel:** build → release — 0.2.2 code complete (8/8), CI green (244 tests), **E1–E3 passed 2026-11-11** — notarized 0.2.2 is live on the website.
+- **Execution:** `docs/plans/2026-11-10-v0.2.2/IMPLEMENTATION_PLAN.md` — 0.2.2 (202). Remaining: E4 install (needs a go-ahead).
+- **Next:** E4 install (go-ahead), then plan Sparkle as 0.3.0 (decide where the update feed is hosted). After 0.2.2: Sparkle; provider logos last. Deferred: Backlog #14 (budget since reset day), #15 (system hotkeys).
 - Installed: notarized 0.2.1 (201) in `/Applications/LLM-UsageStatus.app` (not running; the 0.2.2 Debug build runs for E1).
 - `dist/` holds 0.2.1 and 0.2.2 (0.1.0 and 0.2.0 moved to the Trash 2026-11-10).
 - GitHub remote (private) + CI green since 2026-11-07 (now 244 tests on Xcode 16.4).
 
 ## Recent
 
+- 2026-11-11: **0.2.2 published** — notarized DMG live, page and roster show v0.2.2.
 - 2026-11-11: **0.2.2 notarized** — Apple Accepted, stapled, Gatekeeper clean.
 - 2026-11-11: **0.2.2 E1 passed** — user acceptance of the Debug build; all 8 tasks closed.
 - 2026-11-11: **0.2.2 Wave 3 done** — docs/version 0.2.2 (202), universal Release build, independent review (no defects; one log-noise fix), pushed, CI green with 244 tests.

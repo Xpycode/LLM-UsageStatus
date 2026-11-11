@@ -349,7 +349,7 @@ Wave 1 ownership (exclusive):
   - Depends on: E1.
   - Success: clean tree; `scripts/notarize-release.sh 0.2.2` gives Accepted, stapled, `spctl`
     "Notarized Developer ID"; `dist/0.2.2/` has `SHA256SUMS.txt` and `SOURCE_COMMIT.txt`.
-- [ ] **E3**: DMG and website (go-ahead — upload)
+- [x] **E3**: DMG and website (go-ahead — upload) — **passed 2026-11-11**: DMG Accepted + stapled, SHA-256 a4fbe57a…20136a; DMG, roster and page uploaded, 3/3 byte-match live, `dl.php` 302 → 0.2.2 DMG; App-Websites 4c46bfe
   - Depends on: E2.
   - Success: `scripts/package-dmg.sh 0.2.2` gives an Accepted DMG. Upload it, then update the page
     version (`data-field="version"`, released date) and the roster version, as for 0.2.1
