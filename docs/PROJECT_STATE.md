@@ -1,6 +1,6 @@
 # PROJECT_STATE — LLM-UsageStatus
 
-**Last updated:** 2026-11-11 (0.2.2 Wave 3 done; E1 handoff pending)
+**Last updated:** 2026-11-11 (0.2.2 Wave 3 done; Debug build running for E1)
 
 ## Identity
 
@@ -16,11 +16,11 @@ Developer ID signed, notarized, zero configuration for end users.
 ## Now
 
 - **Funnel:** build — 0.2.2 all three waves done; CI green (244 tests); pushed.
-- **Execution:** `docs/plans/2026-11-10-v0.2.2/IMPLEMENTATION_PLAN.md` — 0.2.2 (202). Awaiting user: launch
-  the fresh Debug build (`04_Exports/0.2.2-E1-Debug/…/Debug/LLM-UsageStatus.app`) for E1 — two 0.2.1
-  instances are running, so the user picks how to swap. E1 includes the 1.4 Settings screenshot.
+- **Execution:** `docs/plans/2026-11-10-v0.2.2/IMPLEMENTATION_PLAN.md` — 0.2.2 (202), 6/8 tasks done. The fresh
+  Debug build (`04_Exports/0.2.2-E1-Debug/…/Debug/LLM-UsageStatus.app`) is running; awaiting user E1
+  (includes the 1.4 Settings screenshot; 3.2 closes when E1 starts).
 - **Next:** E1 manual acceptance, then E2 notarize → E3 DMG/website → E4 install (each needs a go-ahead). After 0.2.2: Sparkle; provider logos last. Deferred: Backlog #14 (budget since reset day), #15 (system hotkeys).
-- Installed: notarized 0.2.1 (201) in `/Applications/LLM-UsageStatus.app` (user-installed, acceptance passed).
+- Installed: notarized 0.2.1 (201) in `/Applications/LLM-UsageStatus.app` (not running; the 0.2.2 Debug build runs for E1).
 - `dist/` holds only 0.2.1 (0.1.0 and 0.2.0 moved to the Trash 2026-11-10).
 - GitHub remote (private) + CI green since 2026-11-07 (now 244 tests on Xcode 16.4).
 
@@ -35,5 +35,5 @@ Developer ID signed, notarized, zero configuration for end users.
 
 ## Handoff
 
-- Current handoff: `docs/sessions/2026-11-10.md` → last **Resume** (late night) — 0.2.2 Wave 2 done, Wave 3 next.
+- Current handoff: `docs/sessions/2026-11-11.md` → **Resume** — 0.2.2 Wave 3 done; Debug build running for E1.
 - Decisions: `docs/decisions.md`
