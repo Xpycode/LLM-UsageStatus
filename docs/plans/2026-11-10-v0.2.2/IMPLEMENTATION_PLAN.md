@@ -238,7 +238,7 @@ Wave 1 ownership (exclusive):
     - **New tests:** inclusive totals, single cached charge, and a clamp when cached > input.
   - Backpressure: `build-for-testing`.
 
-- [ ] **1.4**: Provider on/off — preferences, Settings section, panel and menu (D6) — implemented in `2c11dbe`; **open:** fresh Debug build screenshot of Settings (take it at the 3.2 handoff; visual check E1)
+- [x] **1.4**: Provider on/off — preferences, Settings section, panel and menu (D6) — `2c11dbe`; visual check passed in E1 (2026-11-11, user-operated; no screenshot captured)
   - Depends on: none. External gates: E1 (visual check of Settings and the panel).
   - Owns: see table (`AppDelegate.swift` only in this wave).
   - Success:
@@ -319,7 +319,7 @@ Wave 1 ownership (exclusive):
   - Backpressure: `jq . Resources/Help/help-manifest.json`; `grep -rn "US key position" 01_Project/Resources README.md`
     empty; `build-for-testing`.
 
-- [ ] **3.2**: Final verification, independent review, CI — Release build, review (fix `8822044`) and CI green (244 tests) done; **open:** launch the fresh Debug build for E1 (two 0.2.1 instances running; user to choose)
+- [x] **3.2**: Final verification, independent review, CI — Release build, review (fix `8822044`), CI green (244 tests); fresh Debug build handed off and launched 2026-11-11
   - Depends on: 3.1. External gates: push go-ahead (CI).
   - Owns: the review report; findings return to the owning task.
   - Success:
@@ -333,7 +333,7 @@ Wave 1 ownership (exclusive):
 
 ## External checks
 
-- [ ] **E1**: Manual acceptance in a fresh Debug build (user-operated)
+- [x] **E1**: Manual acceptance in a fresh Debug build (user-operated) — **passed 2026-11-11** (user reported all checks pass)
   - Depends on: 3.2. Gates: the UI, layout and Vibe acceptance criteria; E2.
   - Success:
     1. Settings shows Providers first. Untick Claude Code → the panel has no Claude section and the
