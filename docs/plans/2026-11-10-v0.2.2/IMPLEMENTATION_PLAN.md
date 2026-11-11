@@ -5,7 +5,7 @@
 > Task state/evidence is authoritative here; TASKS links here and holds backlog/inbox.
 > Follow the master's `reference/task-state.md` for legacy reconciliation and archival.
 
-**Progress:** 5/8 tasks complete (1.1, 1.2, 1.3, 2.1, 2.2); 1.4 implemented, Settings screenshot pending; Wave 3 (3.1, 3.2) next; external checks E1–E4 pending.
+**Progress:** 6/8 tasks complete (1.1, 1.2, 1.3, 2.1, 2.2, 3.1); 3.2 done except the E1 build handoff (built, not launched); 1.4 Settings screenshot pending at E1; external checks E1–E4 pending.
 **Task states:** unchecked = pending / implemented-unverified / blocked (name gate);
 checked = complete with required evidence. Task identity includes this plan path plus ID.
 
@@ -305,7 +305,7 @@ Wave 1 ownership (exclusive):
 
 ### Wave 3 (serial integration — shared docs and version files)
 
-- [ ] **3.1**: Docs, decisions, version (coordinator)
+- [x] **3.1**: Docs, decisions, version (coordinator) — `efe5595`
   - Depends on: 1.1–1.4, 2.1, 2.2.
   - Owns: `Resources/Help/help-settings-and-shortcuts.md` (Providers section, layout-aware refusals,
     ISO key), `help-mistral-vibe.md` and `help-authoritative-vs-estimated.md` (what the Vibe numbers
@@ -319,7 +319,7 @@ Wave 1 ownership (exclusive):
   - Backpressure: `jq . Resources/Help/help-manifest.json`; `grep -rn "US key position" 01_Project/Resources README.md`
     empty; `build-for-testing`.
 
-- [ ] **3.2**: Final verification, independent review, CI
+- [ ] **3.2**: Final verification, independent review, CI — Release build, review (fix `8822044`) and CI green (244 tests) done; **open:** launch the fresh Debug build for E1 (two 0.2.1 instances running; user to choose)
   - Depends on: 3.1. External gates: push go-ahead (CI).
   - Owns: the review report; findings return to the owning task.
   - Success:
@@ -384,6 +384,7 @@ Wave 1 ownership (exclusive):
 | — | Plan written 2026-11-10 from two parallel research agents plus coordinator on-disk checks (`research/findings.md`); D3, D6 and the two deferrals decided by the user | — | — | Next: Wave 1 (1.1–1.4), once execution is requested |
 | Wave 1 (1.1, 1.2, 1.3, 1.4), 2026-11-10 | 4 parallel `developer` agents with fresh context, exclusive file ownership, separate scratch DerivedData folders. Coordinator handled one cross-owner fix: 1.4's new `SettingsWindowController(preferences:)` argument in `ShortcutRecorderFieldTests.testWindowControllerSmoke` was made by the 1.2 owner and committed with 1.4 | Integrated `build-for-testing` **TEST BUILD SUCCEEDED**, no warnings. 237 test functions (217 + 20 new: 1.1 +2, 1.2 +11 (35 → 46), 1.3 +3, 1.4 +4). `grep 'try?' SectionStateCache.swift` empty. Tests not run locally (app-hosted; CI at 3.2). 1.3 finding: mistral-vibe `formats.py` (`TokenCounts`: "the cached and cache-written input are part of the input") → `cache_write_tokens` is no longer added. Source: https://github.com/mistralai/mistral-vibe/blob/main/harness/runtimes/python/python/mistralai_vibe_local_harness/vibe/completion_profile/formats.py | `2c11dbe` 1.4 · `c5fc548` 1.1 · `7175c92` 1.3 · `4421c67` 1.2 (each builds alone). Not pushed | 1.4: the Settings screenshot is still open. API notes for later waves: the failure type is `HotKeyShortcut.Rejection`; extras are `LayoutTranslator.init(map:)`, `.unavailable` and `ShortcutRecorderField(translator:)`; `UsagePreferences.providerIDs` and `enabledStores(_:enabled:)`. Next: Wave 2 (2.1 coordinator, 2.2 agent) |
 | Wave 2 (2.1, 2.2), 2026-11-10 | 2.1 serial by coordinator (owns `AppDelegate.swift`); 2.2 by one `developer` agent with fresh context in parallel, exclusive Vibe files, separate scratch DerivedData. Coordinator pre-created `VibeSessionSnapshot.swift` and its test stub, then ran `xcodegen generate` | Integrated `build-for-testing` **TEST BUILD SUCCEEDED**. 244 test functions (237 + 7 new in `VibeSessionSnapshotTests`; Vibe 42 → 49). The 2.1 AZERTY test already existed from 1.2 (`HotKeyShortcutTests.swift:188`), so none was added. `grep 'try?' Vibe/*.swift` empty. Two Swift warnings in files outside this wave: `ShortcutRecorderField.swift:30` (unnecessary `nonisolated(unsafe)`) and `ClaudeLogAggregator.swift:144` (deprecated `init(cString:)`); not in the Wave 1 record, now in the TASKS Inbox. 2.2 real-store comparison (read-only, scripts in the session scratchpad `cmp/`): 36 sessions, app sum 168,838,748 equals Vibe's own `totalTokens` sum 168,838,748, 0 per-session mismatches; 12 root sessions. Store finding: `projection_state.chunks` hold only history, so counters always come from `projection-state.json`. The reader also folds in `projection_advanced` and `session_relocated` (as omarchy does). Tests not run locally (app-hosted; CI at 3.2) | `b088b6b` 2.1 · `9ed0eb2` 2.2 (with the project file). Not pushed | For 3.2 review: a session with no manifest logs a `.notice` on every refresh (fallback path); check this is acceptable. Next: Wave 3 (3.1 docs/version, then 3.2 review + CI, which needs a push go-ahead) |
+| Wave 3 (3.1, 3.2), 2026-11-11 | Serial by coordinator (shared docs/version files). Independent review by one `feature-dev:code-reviewer` agent with fresh context (read-only) | 3.1: `jq` manifest ok; no "US key position" outside CHANGELOG history; no shortcut glyphs; `build-for-testing` **TEST BUILD SUCCEEDED**; built Info.plist 0.2.2 / 202. 3.2: unsigned universal Release build **BUILD SUCCEEDED** (`lipo`: x86_64 arm64; log in session scratchpad). Review: no defects; applied its suggestion (per-session snapshot-fallback `.notice` → `.debug`, count in the scan summary line); `build-for-testing` green again. Push authorized by the user; CI https://github.com/Xpycode/LLM-UsageStatus/actions/runs/43055174992 **success, 244 tests, 0 failures**. Fresh Debug build: `04_Exports/0.2.2-E1-Debug/DerivedData/Build/Products/Debug/LLM-UsageStatus.app`, 0.2.2 (202), ad-hoc, executable SHA-256 `69c96da4…a6ca14`, from `8822044` | `efe5595` 3.1 · `8822044` 3.2 review fix. Pushed to origin | Not launched: two 0.2.1 instances running (PID 17683 `/Applications`, PID 12734 `dist/0.2.1`); the standing handoff covers one identified instance, so the user chooses. Then E1 (user-operated, includes the 1.4 screenshot); E2–E4 need their own go-aheads |
 
 ---
 *Keep active while required work or acceptance is incomplete. On completion, retire in place with
