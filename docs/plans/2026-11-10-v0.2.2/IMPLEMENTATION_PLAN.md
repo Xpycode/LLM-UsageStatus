@@ -345,7 +345,7 @@ Wave 1 ownership (exclusive):
     4. Vibe: totals are plausible against Vibe's own counters (2.2 report). Reopen later the same
        day → "Tokens (all time)" has not decreased. Sessions count is root sessions.
     5. About shows `Version 0.2.2 (202)`.
-- [ ] **E2**: Notarize 0.2.2 (go-ahead — Apple, `99-AUTH` key)
+- [x] **E2**: Notarize 0.2.2 (go-ahead — Apple, `99-AUTH` key) — **passed 2026-11-11**: Accepted (submission 2bccda37-a0bc-498f-9951-bb3a6f9335de), stapled, `spctl` Notarized Developer ID; universal; source c09c345; zip SHA-256 e37fe0fc…e1d233
   - Depends on: E1.
   - Success: clean tree; `scripts/notarize-release.sh 0.2.2` gives Accepted, stapled, `spctl`
     "Notarized Developer ID"; `dist/0.2.2/` has `SHA256SUMS.txt` and `SOURCE_COMMIT.txt`.
