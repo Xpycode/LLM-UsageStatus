@@ -171,18 +171,21 @@ struct VibeJournalAggregator: Sendable {
         var parsedSessions: [ParsedSession] = []
         var skippedSessions = 0
         var malformedRecords = 0
+        var snapshotFallbacks = 0
         for directory in sessionDirectories {
             guard acceptsStoreFormat(directory) else {
                 skippedSessions += 1
                 continue
             }
             var sessionMalformed = 0
-            parsedSessions.append(parseSession(directory, malformedRecords: &sessionMalformed))
+            let parsed = parseSession(directory, malformedRecords: &sessionMalformed)
+            if parsed.usedSnapshotFallback { snapshotFallbacks += 1 }
+            parsedSessions.append(parsed)
             malformedRecords += sessionMalformed
         }
         parsedSessions = Self.resolvingModels(parsedSessions)
 
-        Self.logger.notice("Vibe scan: sessions \(parsedSessions.count, privacy: .public), skipped \(skippedSessions, privacy: .public), malformed \(malformedRecords, privacy: .public)")
+        Self.logger.notice("Vibe scan: sessions \(parsedSessions.count, privacy: .public), skipped \(skippedSessions, privacy: .public), malformed \(malformedRecords, privacy: .public), snapshot fallbacks \(snapshotFallbacks, privacy: .public)")
         return VibeUsageReport(
             detected: true,
             scannedAt: scannedAt,
@@ -246,7 +249,8 @@ struct VibeJournalAggregator: Sendable {
         do {
             snapshot = try VibeSessionSnapshot.read(sessionDirectory: sessionDirectory)
         } catch {
-            Self.logger.notice("Vibe snapshot for \(sessionDirectory.lastPathComponent, privacy: .public) not used, falling back to journal sums: \(String(describing: error), privacy: .public)")
+            // Per-session detail at debug level; scan() reports the count once per refresh.
+            Self.logger.debug("Vibe snapshot for \(sessionDirectory.lastPathComponent, privacy: .public) not used, falling back to journal sums: \(String(describing: error), privacy: .public)")
         }
         let session = VibeSessionUsage(
             id: sessionDirectory.lastPathComponent,
@@ -257,7 +261,8 @@ struct VibeJournalAggregator: Sendable {
             totals: snapshot?.tokenUsage ?? totals,
             rootSessionID: snapshot?.rootSessionID
         )
-        return ParsedSession(session: session, timestampedRows: timestampedRows, remainder: remainder)
+        return ParsedSession(session: session, timestampedRows: timestampedRows, remainder: remainder,
+                             usedSnapshotFallback: snapshot == nil)
     }
 
     /// A child is priced by its own model when that resolves on the rate card,
@@ -276,7 +281,8 @@ struct VibeJournalAggregator: Sendable {
             let name: String? = names.first(where: { VibeRateCard.resolve($0) != nil }) ?? names.first
             return ParsedSession(session: session.withModelName(name),
                                  timestampedRows: parsed.timestampedRows,
-                                 remainder: parsed.remainder)
+                                 remainder: parsed.remainder,
+                                 usedSnapshotFallback: parsed.usedSnapshotFallback)
         }
     }
 
@@ -583,5 +589,7 @@ struct VibeJournalAggregator: Sendable {
         let session: VibeSessionUsage
         let timestampedRows: [TimestampedRow]
         let remainder: VibeTokenTotals
+        /// The snapshot could not be read, so totals come from journal sums.
+        let usedSnapshotFallback: Bool
     }
 }
