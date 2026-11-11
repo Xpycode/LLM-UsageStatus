@@ -3,7 +3,7 @@
 - **Plan (retired 2026-10-29):** `docs/plans/2026-10-29-multi-provider-hud/IMPLEMENTATION_PLAN.md` — **COMPLETE**: 17/17 code tasks, E1 passed, E2 passed (notarized 0.1.0, Apple verdict Accepted, stapled, spctl clean). It stays in place as the permanent execution record.
 - **Plan (retired 2026-11-08):** `docs/plans/2026-11-06-settings-window/IMPLEMENTATION_PLAN.md` — **COMPLETE**: Settings window (launch at login, shortcut rebinding, About), 8/8 tasks (CI 204 green, 288f5ab), E1 passed. It stays in place as the permanent execution record.
 - **Plan (retired 2026-11-10):** `docs/plans/2026-11-08-v0.2.0/IMPLEMENTATION_PLAN.md` — **COMPLETE**: 0.2.0 (layout-aware shortcut names, in-app Help, Send Feedback… / Leave a Tip), 11/11 tasks, E1–E5 passed; notarized DMG + detail page live. Follow-up 0.2.1 (app icon) shipped the same day, user acceptance passed. It stays in place as the permanent execution record.
-- **Active plan:** `docs/plans/2026-11-10-v0.2.2/IMPLEMENTATION_PLAN.md` — 0.2.2 (202): Vibe totals fix (snapshot source, no double count, children fold), layout-aware shortcut refusals + AZERTY Settings key + ISO key, provider on/off in Settings, `SectionStateCache` logging. Wave 1 done 2026-11-10 (1.4 Settings screenshot open); next ready: Wave 2 (2.1, 2.2).
+- **Active plan:** `docs/plans/2026-11-10-v0.2.2/IMPLEMENTATION_PLAN.md` — 0.2.2 (202): Vibe totals fix (snapshot source, no double count, children fold), layout-aware shortcut refusals + AZERTY Settings key + ISO key, provider on/off in Settings, `SectionStateCache` logging. Waves 1–3 done 2026-11-11 (6/8; 1.4 screenshot and 3.2 handoff close with E1); next: user E1, then E2–E4 with go-aheads.
 
 ## Backlog
 
