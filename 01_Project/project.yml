@@ -10,11 +10,14 @@ packages:
     path: Vendor/AppCitizenshipKit
   FeedbackKit:
     path: Vendor/FeedbackKit
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    exactVersion: 2.10.1
 settings:
   base:
     SWIFT_VERSION: "6.0"
-    MARKETING_VERSION: "0.2.2"
-    CURRENT_PROJECT_VERSION: "202"
+    MARKETING_VERSION: "0.3.0"
+    CURRENT_PROJECT_VERSION: "300"
     ENABLE_HARDENED_RUNTIME: YES
 targets:
   LLM-UsageStatus:
@@ -26,16 +29,19 @@ targets:
         buildPhase: resources
         excludes:
           - LLM-UsageStatus.entitlements
+          - Info.plist
     dependencies:
       - package: HelpMenu
       - package: AppCitizenshipKit
       - package: FeedbackKit
+      - package: Sparkle
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.sim.LLM-UsageStatus
         PRODUCT_MODULE_NAME: LLMUsageStatus
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_FILE: Resources/Info.plist
         INFOPLIST_KEY_CFBundleDisplayName: LLM Usage Status
         INFOPLIST_KEY_LSUIElement: YES
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.productivity
