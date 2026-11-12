@@ -5,5 +5,15 @@
     <link>https://github.com/Xpycode/LLM-UsageStatus</link>
     <description>Release feed for LLM Usage Status, a dockless macOS HUD that shows usage for Codex, Claude Code and Mistral Vibe.</description>
     <language>en</language>
+    <item>
+      <title>Version 0.2.2</title>
+      <pubDate>Thu, 12 Nov 2026 03:46:05 +0000</pubDate>
+      <sparkle:version>202</sparkle:version>
+      <sparkle:shortVersionString>0.2.2</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[<p>LLM Usage Status 0.2.2. See the <a href="https://github.com/Xpycode/LLM-UsageStatus/blob/main/CHANGELOG.md">changelog</a> for details.</p>]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/Xpycode/LLM-UsageStatus/releases/tag/v0.2.2</sparkle:fullReleaseNotesLink>
+      <enclosure url="https://github.com/Xpycode/LLM-UsageStatus/releases/download/v0.2.2/LLM-UsageStatus-0.2.2.dmg" length="3294714" type="application/octet-stream" sparkle:edSignature="1it5SmfDyXws92fbx8tZq5xp8cmofVWECnDS7WtBC+Dh7fGdvyMpoO2XvYXiZqgeisFpkbeMxzhxkVXQXGDyDw=="/>
+    </item>
   </channel>
 </rss>

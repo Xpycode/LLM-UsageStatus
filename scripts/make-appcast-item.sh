@@ -5,6 +5,8 @@
 #      SKIP_SIGN=1    placeholder signature (dry runs only; the item is NOT installable)
 #      APPCAST=path   appcast file to edit (default: <root>/appcast.xml)
 #      ROOT=path      directory holding dist/ and the default appcast (default: the repo)
+#      SIGN_UPDATE=path  Sparkle's sign_update, for a release whose own build did not embed
+#                        Sparkle (default: the release's DerivedData package artifacts)
 set -euo pipefail
 version="${1:?Usage: scripts/make-appcast-item.sh VERSION [--allow-missing]}"
 allow_missing=0
@@ -34,8 +36,8 @@ if [[ "${SKIP_SIGN:-0}" == 1 ]]; then
   print -u2 '*** SKIP_SIGN=1: using a PLACEHOLDER edSignature. This item is for dry runs only and must never be published. ***'
   signature='SKIP_SIGN_PLACEHOLDER_NOT_A_REAL_SIGNATURE'
 else
-  sign_update="$out/DerivedData/SourcePackages/artifacts/sparkle/Sparkle/bin/sign_update"
-  [[ -x "$sign_update" ]] || { print -u2 "Missing $sign_update (run scripts/release.sh first)."; exit 1; }
+  sign_update="${SIGN_UPDATE:-$out/DerivedData/SourcePackages/artifacts/sparkle/Sparkle/bin/sign_update}"
+  [[ -x "$sign_update" ]] || { print -u2 "Missing $sign_update (run scripts/release.sh first, or set SIGN_UPDATE)."; exit 1; }
   # Output looks like: sparkle:edSignature="..." length="..."; only the signature is kept.
   signed="$("$sign_update" --account LLM-UsageStatus "$dmg")"
   signature="$(print -r -- "$signed" | sed -n 's/.*sparkle:edSignature="\([^"]*\)".*/\1/p')"
