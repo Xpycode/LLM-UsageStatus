@@ -26,8 +26,7 @@ final class ShortcutRecorderField: NSView {
     private let keyName: @MainActor (UInt32) -> String?
     private let translator: @MainActor () -> LayoutTranslator
     // Same reasoning as `monitor`: written once in init, read by deinit to unregister.
-    nonisolated(unsafe) private var layoutObserver: (any NSObjectProtocol)?
-    nonisolated(unsafe) private let observedCenter: NotificationCenter
+    nonisolated(unsafe) private var layoutObserver: (center: NotificationCenter, token: any NSObjectProtocol)?
 
     /// `notificationCenter` is typed as the superclass so tests can inject a plain
     /// `NotificationCenter` and post synchronously; production uses the distributed center
@@ -45,7 +44,6 @@ final class ShortcutRecorderField: NSView {
         self.recordingChanged = recordingChanged
         self.keyName = keyName
         self.translator = translator
-        self.observedCenter = notificationCenter
         super.init(frame: NSRect(x: 0, y: 0, width: 240, height: 26))
         wantsLayer = true
         layer?.cornerRadius = 6
@@ -65,11 +63,12 @@ final class ShortcutRecorderField: NSView {
         setAccessibilityRole(.button)
         setAccessibilityLabel("Show/hide shortcut")
         refreshDisplay()
-        layoutObserver = notificationCenter.addObserver(
+        let token = notificationCenter.addObserver(
             forName: KeyboardLayoutNames.changedNotification, object: nil, queue: .main
         ) { [weak self] _ in
             MainActor.assumeIsolated { self?.refreshDisplay() }
         }
+        layoutObserver = (notificationCenter, token)
     }
 
     required init?(coder: NSCoder) {
@@ -78,7 +77,7 @@ final class ShortcutRecorderField: NSView {
 
     deinit {
         if let monitor { NSEvent.removeMonitor(monitor) }
-        if let layoutObserver { observedCenter.removeObserver(layoutObserver) }
+        if let layoutObserver { layoutObserver.center.removeObserver(layoutObserver.token) }
     }
 
     // MARK: Public seams

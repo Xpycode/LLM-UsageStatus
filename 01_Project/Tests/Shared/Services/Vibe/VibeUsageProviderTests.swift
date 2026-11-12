@@ -316,10 +316,10 @@ final class VibeUsageProviderTests: XCTestCase {
         XCTAssertNil(VibeUsageProvider.nextResetDate(onOrAfter: jan20, dayOfMonth: 0, calendar: calendar))
     }
 
-    func testBudgetReadIgnoresMalformedDefaults() {
-        let name = "VibeUsageProviderTests.Budget-\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: name)!
-        defer { defaults.removePersistentDomain(forName: name) }
+    func testBudgetReadIgnoresMalformedDefaults() throws {
+        let testDefaults = try TestDefaults(prefix: "VibeUsageProviderTests.Budget")
+        let defaults = testDefaults.defaults
+        defer { testDefaults.tearDown() }
 
         XCTAssertNil(VibeUsageProvider.budget(from: defaults))
         defaults.set(-5.0, forKey: UsagePreferenceKeys.vibeMonthlyBudgetUSD)

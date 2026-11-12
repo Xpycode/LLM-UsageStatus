@@ -5,7 +5,7 @@ import XCTest
 /// real `.standard` domain is never touched.
 @MainActor
 final class UsagePreferencesTests: XCTestCase {
-    private let suiteName = "LLMUsageStatusTests.UsagePreferences-\(UUID().uuidString)"
+    private var testDefaults: TestDefaults?
     private var defaults: UserDefaults!
 
     // Async overrides keep main-actor isolation on every toolchain; the
@@ -13,11 +13,14 @@ final class UsagePreferencesTests: XCTestCase {
     override func setUp() async throws {
         // XCTestCase's async setUp/tearDown are empty; calling super from a
         // @MainActor override is a sending error on the Swift 6.1 toolchain.
-        defaults = UserDefaults(suiteName: suiteName)
+        let suite = try TestDefaults(prefix: "LLMUsageStatusTests.UsagePreferences")
+        testDefaults = suite
+        defaults = suite.defaults
     }
 
     override func tearDown() async throws {
-        defaults.removePersistentDomain(forName: suiteName)
+        testDefaults?.tearDown()
+        testDefaults = nil
         defaults = nil
     }
 

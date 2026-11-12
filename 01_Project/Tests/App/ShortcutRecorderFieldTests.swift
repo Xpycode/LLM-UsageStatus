@@ -12,15 +12,16 @@ final class ShortcutRecorderFieldTests: XCTestCase {
     }
 
     private var probe = Probe()
-    private var suiteName = ""
+    private var testDefaults: TestDefaults?
 
     override func setUp() async throws {
         probe = Probe()
-        suiteName = "ShortcutRecorderFieldTests-\(UUID().uuidString)"
+        testDefaults = try TestDefaults(prefix: "ShortcutRecorderFieldTests")
     }
 
     override func tearDown() async throws {
-        UserDefaults(suiteName: suiteName)?.removePersistentDomain(forName: suiteName)
+        testDefaults?.tearDown()
+        testDefaults = nil
     }
 
     private func makeRecorder(translator: LayoutTranslator = .usANSI) -> ShortcutRecorderField {
@@ -237,7 +238,7 @@ final class ShortcutRecorderFieldTests: XCTestCase {
     }
 
     func testWindowControllerSmoke() {
-        let defaults = UserDefaults(suiteName: suiteName) ?? .standard
+        let defaults = testDefaults?.defaults ?? .standard
         let controller = SettingsWindowController(
             preferences: UsagePreferences(defaults: defaults),
             shortcuts: HotKeyShortcutStore(defaults: defaults),

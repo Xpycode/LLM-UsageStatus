@@ -5,16 +5,18 @@ import XCTest
 
 @MainActor
 final class HotKeyShortcutTests: XCTestCase {
-    private var suiteName = ""
+    private var testDefaults: TestDefaults?
     private var defaults: UserDefaults!
 
     override func setUp() async throws {
-        suiteName = "HotKeyShortcutTests-\(UUID().uuidString)"
-        defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        let suite = try TestDefaults(prefix: "HotKeyShortcutTests")
+        testDefaults = suite
+        defaults = suite.defaults
     }
 
     override func tearDown() async throws {
-        defaults.removePersistentDomain(forName: suiteName)
+        testDefaults?.tearDown()
+        testDefaults = nil
         defaults = nil
     }
 

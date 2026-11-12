@@ -141,7 +141,10 @@ struct ClaudeLogAggregator: Sendable {
     private static func physicalPath(_ url: URL) -> String {
         var buffer = [CChar](repeating: 0, count: Int(PATH_MAX))
         guard realpath(url.path, &buffer) != nil else { return url.path }
-        return String(cString: buffer)
+        // Decode the bytes before the terminator from the array itself; the pointer realpath
+        // returns aliases `&buffer`, which Swift only guarantees for the duration of the call.
+        let bytes = buffer.prefix { $0 != 0 }.map { UInt8(bitPattern: $0) }
+        return String(decoding: bytes, as: UTF8.self)
     }
 
     private static func isBlank(_ data: Data) -> Bool {
