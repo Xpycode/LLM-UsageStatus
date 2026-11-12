@@ -5,11 +5,11 @@
 > Task state/evidence is authoritative here; TASKS links here and holds backlog/inbox.
 > Follow the master's `reference/task-state.md` for legacy reconciliation and archival.
 
-**Progress:** 8/10 tasks complete (0.1, 1.1–1.4, 2.1–2.3); E0 passed; E1–E5 open. D2, D4, D10
-and D11 confirmed by the user 2026-11-12. Wave 0 done 2026-11-12 (`109957c`); Wave 1 done 2026-11-12
-(`1581e8a`, `0349627`, `2835494`, `0ffbc79`); Wave 2 done 2026-11-12 (`b327b10`, `b987e61`,
-`04d0ece`, `3c83c41`; CI green on `04d0ece`, 279 tests). Wave 3 (3.1 → 3.2) is ready. Execution so
-far was requested wave by wave (Wave 0, Wave 1, Wave 2).
+**Progress:** 10/10 tasks complete (0.1, 1.1–1.4, 2.1–2.3, 3.1–3.2); E0 passed; E1–E5 open (E1 is
+next, user-operated). D2, D4, D10 and D11 confirmed by the user 2026-11-12. Wave 0 done 2026-11-12
+(`109957c`); Wave 1 done 2026-11-12 (`1581e8a`, `0349627`, `2835494`, `0ffbc79`); Wave 2 done 2026-11-12
+(`b327b10`, `b987e61`, `04d0ece`, `3c83c41`); Wave 3 done 2026-11-12 (`023ad9f`, `4ae5cc9`; CI green on
+`4ae5cc9`, 280 tests). Execution was requested wave by wave (Wave 0, 1, 2, 3).
 **Task states:** unchecked = pending / implemented-unverified / blocked (name gate);
 checked = complete with required evidence. Task identity includes this plan path plus ID.
 
@@ -172,7 +172,9 @@ confirmed all four (D2, D4, D10, D11) as written on 2026-11-12.
 - [ ] "Check for Updates…" exists in the right-click menu and the fallback menu; Settings has the
       Updates section (D4). In a 0.3.0 build against a feed whose newest item is 202, the alert
       appears **in front** and says the app is up to date. Unticking automatic checks persists.
-- [ ] The updater does not start inside the app-hosted test process (no network from tests).
+- [x] The updater does not start inside the app-hosted test process (no network from tests).
+      (`AppDelegate` passes `startingUpdater: false` under `XCTestConfigurationFilePath`; tests build
+      `UpdateController(startingUpdater: false)`; no `URLSession`/Keychain in tests — 3.2 review; CI green.)
 - [ ] A lower-versioned, Developer-ID-signed local build updates to the published 0.3.0 through the
       live feed, verifies the signature, relaunches and shows Version 0.3.0 (300) (E5).
 - [ ] `notarize-release.sh` output passes `codesign --verify --deep --strict`; the nested
@@ -184,17 +186,18 @@ confirmed all four (D2, D4, D10, D11) as written on 2026-11-12.
       left, countdown and bar; no grey collapsed caption remains for the 7-day window. Codex:
       `weekly` always, `five-hour` only while the toggle is on; the daily-budget quote is on `weekly`
       only. Vibe: unchanged (`budget`). The Codex toggle never changes the Claude section.
-- [ ] A 0.2.2-format `last-sections.json` decodes into one-headline sections without a log line; a
-      0.3.0 file round-trips every field including `subMeters`.
+- [x] A 0.2.2-format `last-sections.json` decodes into one-headline sections without a log line; a
+      0.3.0 file round-trips every field including `subMeters`. (`SectionStateCacheTests` literal 0.2.2
+      JSON, round trip and null cases on CI 280; the legacy path has no log for valid headlines.)
 - [ ] With a `limits[]` Fable row in the response, the 7-day headline carries one sub-meter
       `fable-allowance` "Fable allowance" with fraction = percent / 100 (clamped), rendered as a
       smaller bar under the headline and in the tooltip; without the row, nothing is rendered and no
       log line appears. The diagnostic logs key names only (top level and one level down), at
       `.debug`, never values.
 - [x] E0 shows the live response's key names; the Fable row's presence or absence is recorded.
-- [ ] Help, README, CHANGELOG, `docs/homebrew.md`, `ThirdPartyNotices.txt` (Sparkle MIT) and the
+- [x] Help, README, CHANGELOG, `docs/homebrew.md`, `ThirdPartyNotices.txt` (Sparkle MIT) and the
       cask (`auto_updates true`) describe the new behaviour; no "Updates are installed manually for
-      now" text remains; no shortcut glyphs; the help manifest is valid JSON.
+      now" text remains; no shortcut glyphs; the help manifest is valid JSON. (3.1)
 - [ ] Notarized 0.3.0 (300): GitHub Release, appcast item, cask, website and `dl.php` all serve the
       same DMG checksum; About shows Version 0.3.0 (300) after installation.
 - [ ] (D11) After a full local or CI test run no `LLMUsageStatusTests.*`/`VibeUsageProviderTests.*`
@@ -606,7 +609,7 @@ Wave 2 ownership (exclusive):
 
 ### Wave 3 (serial integration — shared docs and version files)
 
-- [ ] **3.1**: Docs, decisions, cask, notices (coordinator)
+- [x] **3.1**: Docs, decisions, cask, notices (coordinator)
   - Depends on: 1.1–1.4, 2.1–2.3.
   - Owns: `README.md` (features: automatic updates; Installation: replace "Updates are installed
     manually for now…" with an Updates paragraph incl. Homebrew `auto_updates`/`--greedy` note;
@@ -630,8 +633,29 @@ Wave 2 ownership (exclusive):
     `build-for-testing` green; built Info.plist 0.3.0 / 300.
   - Backpressure: `grep -rn "manually for now" README.md 01_Project/Resources` empty;
     `jq . 01_Project/Resources/Help/help-manifest.json`; `build-for-testing`.
+  - **Evidence (2026-11-12, `023ad9f`; coordinator, serial — shared docs):** UI strings taken from the
+    code (`SettingsWindowController` Updates section, both menus, headline/sub-meter labels). README: What's
+    New 0.3.0, features, right-click and fallback menu lists, Settings → Updates, What each section shows,
+    an Installation → Updates paragraph (Homebrew `auto_updates` / `--greedy`), Privacy (daily feed request
+    names the app and version only — checked against Sparkle 2.10.1 `SPUUserAgent+Private.m`; DMG download
+    only on accept), architecture (`appcast.xml`), a troubleshooting entry, notices list. CHANGELOG
+    `[0.3.0] - Unreleased` (E3 sets the date). Help: settings (Updates), privacy (feed check, download),
+    reading the panel (one headline per window, sub-meters), Claude Code (two headlines; Fable allowance:
+    percent of the Fable allowance, up to half the weekly limit, resets with it, absent on Pro), Codex
+    (5-hour headline, Codex-only), troubleshooting (feed error, failed install, `ditto -x -k`), plus getting
+    started (menu list) and authoritative-vs-estimated (Fable). `ThirdPartyNotices.txt`: Sparkle 2.10.1
+    (`ab7d7129…`) LICENSE appended verbatim (diff-checked; includes its bsdiff, sais, ed25519 and
+    SUSignatureVerifier notices). Cask: `livecheck` (appcast, `strategy :sparkle`) + `auto_updates true`;
+    `brew style` no offenses (`brew livecheck` does not accept a local path → checked at E3 after the push).
+    `docs/homebrew.md`: Updates and `brew upgrade` section (verified against Homebrew 7.0.12
+    `Cask#outdated_version` / `auto_updates_bundle_outdated?`), appcast step 3, verify step includes the
+    appcast `length`. `docs/decisions.md`: 0.3.0 entry (D1–D11). `docs/TASKS.md` Backlog #16 already
+    present (unchanged). Checks: no "manually for now"; `jq` ok; no shortcut glyphs in README, CHANGELOG,
+    Help; fresh-DerivedData `build-for-testing` **TEST BUILD SUCCEEDED**, zero Swift warnings (two
+    AppIntents metadata notes only); built plist 0.3.0 / 300, `SUFeedURL`, `SUEnableAutomaticChecks` true;
+    bundled notices contain Sparkle. README badges and the SHA-256 line stay at 0.2.2 until E3 step 5.
 
-- [ ] **3.2**: Final verification, independent review, CI, fresh build for E1
+- [x] **3.2**: Final verification, independent review, CI, fresh build for E1
   - Depends on: 3.1. External gates: push go-ahead (CI).
   - Owns: the review report; findings return to the owning task.
   - Success:
@@ -645,6 +669,30 @@ Wave 2 ownership (exclusive):
     - A fresh Debug build is handed off for E1 under the standing authorization (full artifact path
       reported).
   - Backpressure: Release build log; CI run URL; review report.
+  - **Evidence (2026-11-12, `4ae5cc9`; coordinator + one fresh-context `feature-dev:code-reviewer`):**
+    unsigned universal Release builds in fresh scratch DerivedData on `023ad9f` and again on `4ae5cc9`:
+    **BUILD SUCCEEDED**, zero Swift warnings, `x86_64 arm64`, `Contents/Frameworks/Sparkle.framework`,
+    0.3.0 / 300. **Review** (read-only, of `v0.2.2..HEAD` code; no blockers) → fixed in `4ae5cc9`:
+    (1) `sign-app.sh` now exits 1 when any signed component's TeamIdentifier differs from the outer app's
+    (skipped for ad-hoc) — proved with a Developer ID run on a scratch copy (six components FDMSRXXN73,
+    rc 0), a forced-wrong expected team (6 mismatches, rc 1) and `SIGN_ID=-` (rc 0); (4) an explicit
+    `"headlines": null` decodes like an absent key instead of failing the whole cache file (new
+    `SectionStateCacheTests.testExplicitNullHeadlinesNeverDropTheWholeFile`); (5) Settings refreshes the
+    "Last checked" caption when a check ends; (6) `make-appcast-item.sh` refuses `SKIP_SIGN=1` against the
+    repository's `appcast.xml` (refusal proved, feed SHA-256 unchanged; scratch-copy dry run still rc 0);
+    (3, 0.3.0 code only) the lenient `LossyHeadline` and `LimitRow` decoders now log the error type or
+    key name, never values. Not changed: (2) the `util=` notice log and the remaining `try?` in the Claude
+    decoder predate 0.3.0 (present in `v0.2.2`) → TASKS Backlog #17. Clean per the review: signing order,
+    Downloader entitlements, `--deep` verify-only, appcast insert/replace/order/CDATA, 0.2.2 compat and
+    round trip, diagnostic key-names-only at `.debug` after the status check, Fable decode, Codex toggle
+    scoped to `codex`, updater off under XCTest, `TestDefaults` deletion guards, threading.
+    Post-fix `build-for-testing` **TEST BUILD SUCCEEDED**, zero Swift warnings. **CI green on `4ae5cc9`**
+    (run 43156399908, 280 tests, 0 failures; pushed `04d0ece..4ae5cc9` with the user's go-ahead).
+    **E1 handoff** (standing authorization): Debug build of `4ae5cc9` preserved at
+    `04_Exports/0.3.0-W3-E1-Debug/LLM-UsageStatus.app` (ad-hoc signed, 0.3.0 / 300, executable SHA-256
+    `aec9bea3…7016f3a95`); the W2b test build (pid 49601) quit via a quit Apple Event and exited in ~2 s;
+    the E1 build launched (pid 97978) and verified by executable path and SHA-256; hotkey registered
+    (Carbon status 0).
 
 ## External checks
 
@@ -688,6 +736,13 @@ Wave 2 ownership (exclusive):
        decode), then refresh.
     4. About shows Version 0.3.0 (300).
   - Evidence: the user's report; screenshots if provided go to `docs/verification/2026-11-v0.3.0/`.
+  - Notes (2026-11-12, 3.2): the build under test is `04_Exports/0.3.0-W3-E1-Debug/LLM-UsageStatus.app`
+    (`4ae5cc9`, ad-hoc signed, so Claude's Keychain item may ask for access again). It shares the
+    `com.sim.LLM-UsageStatus` preferences with the installed copy: re-tick **Check for updates
+    automatically** after step 2. Step 3 cannot be replayed live: the W2 builds already rewrote
+    `last-sections.json` in the 0.3.0 format (format keys checked read-only: `headlines` ×3, `headline`
+    ×0), and restoring a 0.2.2 file would be a live-profile change. Its evidence is the CI unit test on the
+    literal 0.2.2 JSON, plus the user's recollection of the first W2 launch if available.
 - [ ] **E2**: Notarize 0.3.0 (go-ahead — Apple, `99-AUTH` key)
   - Depends on: E1.
   - Success: clean tree; `scripts/notarize-release.sh 0.3.0` → Accepted, stapled, `spctl`
@@ -706,7 +761,9 @@ Wave 2 ownership (exclusive):
     4. Cask: version 0.3.0, sha256, `auto_updates true`; `brew style` and
        `brew audit --cask --online` pass; push.
     5. Website (App-Websites): DMG upload, page and roster version/date (and the GitHub/Homebrew
-       links if still missing); `dl.php` serves 0.3.0; README SHA-256 line updated.
+       links if still missing); `dl.php` serves 0.3.0; README SHA-256 line and version/download
+       badges updated; CHANGELOG `[0.3.0] - Unreleased` gets the release date; `brew livecheck`
+       reports 0.3.0 from the feed.
     6. Verify live: GitHub asset, `brew fetch`, `dl.php` and the appcast `length` agree.
 - [ ] **E4**: Install and smoke test (go-ahead to replace the `/Applications` copy)
   - Depends on: E3.
@@ -769,6 +826,7 @@ Wave 2 ownership (exclusive):
 | Wave 0 (0.1), 2026-11-12 | Serial by coordinator (shared files only: `project.yml`, project file, Info.plist, Keychain, stubs); no agents | `xcodebuild -resolvePackageDependencies` ok (Sparkle 2.10.1); key generated under account `LLM-UsageStatus`, exported and verified (see 0.1 evidence); scratch `build-for-testing` (session scratchpad `dd-0.1`) **TEST BUILD SUCCEEDED**; PlistBuddy on the built app shows all 0.1 keys, 0.3.0 / 300, Sparkle.framework embedded. Two known warnings only (`ShortcutRecorderField.swift:30`, `ClaudeLogAggregator.swift:144` → 2.2). Tests not run (app-hosted; CI at 3.2) | `109957c` 0.1 (project + stubs). Not pushed | Next: Wave 1 (1.1, 1.2, 1.3, 1.4 as 4 parallel agents) when execution is requested. 1.4 records the public key above in `docs/sparkle-signing.md` |
 | Wave 1 (1.1, 1.2, 1.3, 1.4), 2026-11-12 | 4 parallel fresh-context `developer` agents, exclusive ownership per the table, each in its **own git worktree in the session scratchpad** (outside Syncthing) with its own DerivedData, so no agent's half-done edit could break another's build. Schedule repair: `SectionFixtureRenderTests.swift` added to 1.2's ownership (fixture API consumer; ended up unchanged). Coordinator reviewed each diff, applied the four patches to `main` (worktree files byte-identical to the commits except the two 1.4 wording fixes), then removed the worktrees and branches | Each task: `build-for-testing` **TEST BUILD SUCCEEDED** alone on `c8e34b9`. Integrated (1.1+1.2+1.3 on `main`, scratch `dd-int`): **TEST BUILD SUCCEEDED**, only the two known D11 warnings (→ 2.2). 1.4 touches no Swift; `zsh -n` ×4 and `xmllint` re-run after integration. 275 test functions (244 + 31). Tests not run locally (app-hosted; CI at 3.2). Details in each task's Evidence | `1581e8a` 1.3 · `0349627` 1.1 · `2835494` 1.2 · `0ffbc79` 1.4. Not pushed | 1.1–1.3 unchecked until CI; 1.4 until 2.3. Next: Wave 2 — 2.1 (agent, Fable sub-meter), 2.2 (agent, hygiene; plist deletion needs its go-ahead), 2.3 (coordinator: Developer ID signing dry run, launch of the signed scratch build, first appcast item — its push needs a go-ahead) |
 | Wave 2 (2.1, 2.2, 2.3), 2026-11-12 | 2.1 and 2.2: two parallel fresh-context `developer` agents, each in its own scratchpad worktree and DerivedData (exclusive ownership per the Wave 2 table); 2.3 by the coordinator in parallel. Coordinator applied both diffs to `main`, replaced 2.2's `realpath` pointer use, added `SIGN_UPDATE=` to `make-appcast-item.sh`, and after the user's screenshot changed the Fable bar colour (user's choice) | Integrated `build-for-testing` **TEST BUILD SUCCEEDED**, zero Swift warnings; universal Release zero Swift warnings; 279 test functions; **CI green on `04d0ece` (run 43150527567, 279 tests, 0 failures)**; Developer ID signing of all six components, deep strict verify, `spctl` rejects only for notarization; appcast 0.2.2 item signature verified against `SUPublicEDKey`, raw feed HTTP 200; signed build launched under the standing handoff, user saw two Claude headlines plus "Fable allowance: 87% left" and Check for Updates… "You're up to date!" in front; E0 key names captured. 96 leftover plists deleted (go-ahead). `3c83c41` validated by fresh `build-for-testing` and Release builds (not yet on CI). Tests not run locally (app-hosted) | `b327b10` 2.1 · `b987e61` 2.2 · `04d0ece` 2.3 (pushed with go-ahead) · `3c83c41` 2.1 follow-up (not pushed) | 1.1–1.4, 2.1–2.3 and E0 checked. Open: D11 local no-new-plist proof (first authorized local test run), E1–E5. Running: signed 0.3.0 test build pid 49601 from `04_Exports/0.3.0-W2b-signed-Release` (installed 0.2.2 quit; relaunching it is the user's or needs its own go-ahead). Next: Wave 3 (3.1 → 3.2, coordinator) |
+| Wave 3 (3.1, 3.2), 2026-11-12 | Serial by the coordinator (shared docs, then integration); one fresh-context `feature-dev:code-reviewer` (read-only) for the independent review, run in parallel with the Release build; review findings fixed by the coordinator (owning tasks already closed) | 3.1: `jq`, no "manually for now", no glyphs, `brew style` ok, fresh `build-for-testing` green, built plist 0.3.0/300. 3.2: universal Release ×2 zero Swift warnings with Sparkle.framework; review 6 findings → 5 fixed + 1 to Backlog #17; script fixes proved positive and negative; post-fix `build-for-testing` green; **CI green on `4ae5cc9` (run 43156399908, 280 tests)**; E1 Debug build handed off and verified (pid 97978). Tests not run locally (app-hosted) | `023ad9f` 3.1 · `4ae5cc9` 3.2 fixes (both pushed with go-ahead) · plan/state commit (not pushed) | All 10 tasks checked. Open: E1 (user-operated, running build), D11 local no-new-plist proof, E2–E5 (each needs its go-ahead). Running: E1 Debug build pid 97978 from `04_Exports/0.3.0-W3-E1-Debug`. Next: user runs E1 |
 
 ---
 *Keep active while required work or acceptance is incomplete. On completion, retire in place with

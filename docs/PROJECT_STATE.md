@@ -1,6 +1,6 @@
 # PROJECT_STATE — LLM-UsageStatus
 
-**Last updated:** 2026-11-12 (0.3.0 Wave 2 done; Wave 3 ready)
+**Last updated:** 2026-11-12 (0.3.0 Wave 3 done; all 10 tasks checked; E1 next)
 
 ## Identity
 
@@ -15,22 +15,22 @@ Developer ID signed, notarized, zero configuration for end users.
 
 ## Now
 
-- **Funnel:** build — 0.3.0 plan written and decisions confirmed 2026-11-12; Waves 0, 1 and 2 done the same day; Wave 3 is ready.
-- **Execution:** `docs/plans/2026-11-12-v0.3.0/IMPLEMENTATION_PLAN.md` — 0.3.0 (300): 8/10 tasks checked (0.1, 1.1–1.4, 2.1–2.3), E0 passed; **ready:** Wave 3 = 3.1 docs/cask/notices → 3.2 review, CI, fresh build for E1 (coordinator). Open gates: E1–E5; D11 local no-new-plist proof waits for an authorized local test run. CI green on `04d0ece` (279 tests); `3c83c41` (Fable bar colour) is committed but not pushed (main ahead 3 with the docs commits; a further push needs a go-ahead).
-- **Next:** `/execute` Wave 3 (3.1, 3.2). Website: the App-Websites session adds GitHub/Homebrew links (E3 folds them in if still open). Deferred: Backlog #14 (budget since reset day), #15 (system hotkeys), #16 (Claude limit resets).
-- Running: signed 0.3.0 test build (pid 49601) from `04_Exports/0.3.0-W2b-signed-Release/`; the installed notarized 0.2.2 in `/Applications/LLM-UsageStatus.app` was quit for the handoff and is **not** running — relaunch it yourself (or give a go-ahead) when done testing.
+- **Funnel:** build → acceptance — 0.3.0 plan written and decisions confirmed 2026-11-12; Waves 0–3 done the same day; E1 (user-operated) is next.
+- **Execution:** `docs/plans/2026-11-12-v0.3.0/IMPLEMENTATION_PLAN.md` — 0.3.0 (300): **10/10 tasks checked**, E0 passed; **awaiting acceptance:** E1 (user-operated manual check in the running E1 Debug build), then E2 notarize → E3 publish → E4 install → E5 self-update (each needs its go-ahead). D11 local no-new-plist proof waits for an authorized local test run. CI green on `4ae5cc9` (run 43156399908, 280 tests).
+- **Next:** run E1 (four checks in the plan's E1 entry) and report; then go-ahead for E2. Website: the App-Websites session adds GitHub/Homebrew links (E3 folds them in if still open). Deferred: Backlog #14, #15, #16, #17 (pre-0.3.0 `try?` + `util=` log in the Claude decoder).
+- Running: **E1 Debug build** (pid 97978, `4ae5cc9`) from `04_Exports/0.3.0-W3-E1-Debug/` — the W2b test build was quit for the handoff. The installed notarized 0.2.2 in `/Applications/LLM-UsageStatus.app` is **not** running — relaunch it yourself (quit the E1 build first) or give a go-ahead when done testing.
 - `appcast.xml` is live on `main` (raw GitHub) with the 0.2.2 (202) item; `dist/` holds 0.2.1 and 0.2.2.
-- GitHub remote **public since 2026-11-12** (Releases + Homebrew tap `xpycode/llm-usagestatus`) + CI green since 2026-11-07 (now 279 tests on Xcode 16.4).
+- GitHub remote **public since 2026-11-12** (Releases + Homebrew tap `xpycode/llm-usagestatus`) + CI green since 2026-11-07 (now 280 tests on Xcode 16.4).
 
 ## Recent
 
+- 2026-11-12: **0.3.0 Wave 3 done** — docs, Help, Sparkle notice and cask (`auto_updates`, livecheck) for 0.3.0; independent review (no blockers; signing team check, null-headlines decode, logged lenient drops, Settings caption, SKIP_SIGN guard fixed; pre-0.3.0 items → Backlog #17); CI green 280; E1 Debug build handed off.
 - 2026-11-12: **0.3.0 Wave 2 done** — Fable allowance sub-meter (live: 87% left), test-defaults cleanup and zero warnings (96 leftover plists deleted), Developer ID signing dry run, first appcast item (0.2.2) pushed and live; signed build said "You're up to date!"; CI green 279; E0 key names captured.
 - 2026-11-12: **0.3.0 Wave 1 done** — Sparkle updater with Check for Updates… and a Settings Updates section, Claude 5-hour and 7-day headlines, the Fable decoder and key-names diagnostic, inside-out signing and appcast tooling; integrated test build green.
 - 2026-11-12: **0.3.0 Wave 0 done** — Sparkle 2.10.1 pinned, 0.3.0 (300), partial Info.plist, own EdDSA key exported and verified, stubs; build-for-testing green.
 - 2026-11-12: **0.2.2 plan closed** — last check passed (provider on/off survives a relaunch); 0.3.0 decisions confirmed.
-- 2026-11-12: **0.3.0 planned** — Sparkle auto-updates, Claude two headlines, Fable allowance meter; research found the Fable meter in `limits[]` and that the resets inventory is gated to the Claude CLI surface (deferred). Plan: `docs/plans/2026-11-12-v0.3.0/`.
 
 ## Handoff
 
-- Current handoff: `docs/sessions/2026-11-12.md` → **Resume (current handoff)** in the sixth session section — Wave 2 done; next: `/execute` Wave 3. The earlier Resume blocks are historical.
+- Current handoff: `docs/sessions/2026-11-12.md` → **Resume (current handoff)** in the seventh session section — Wave 3 done, all 10 tasks checked; next: E1 (user-operated). The earlier Resume blocks are historical.
 - Decisions: `docs/decisions.md`
