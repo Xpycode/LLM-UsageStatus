@@ -5,11 +5,11 @@
 > Task state/evidence is authoritative here; TASKS links here and holds backlog/inbox.
 > Follow the master's `reference/task-state.md` for legacy reconciliation and archival.
 
-**Progress:** 1/10 tasks complete (0.1); 1.1–1.4 implemented and integrated (build-for-testing green),
-unchecked until their gates (CI for 1.1–1.3, 2.3 for 1.4); external checks E0–E5 pending. D2, D4, D10
+**Progress:** 8/10 tasks complete (0.1, 1.1–1.4, 2.1–2.3); E0 passed; E1–E5 open. D2, D4, D10
 and D11 confirmed by the user 2026-11-12. Wave 0 done 2026-11-12 (`109957c`); Wave 1 done 2026-11-12
-(`1581e8a`, `0349627`, `2835494`, `0ffbc79`); Wave 2 (2.1, 2.2, 2.3) is ready. Execution so far was
-requested wave by wave (Wave 0, then Wave 1).
+(`1581e8a`, `0349627`, `2835494`, `0ffbc79`); Wave 2 done 2026-11-12 (`b327b10`, `b987e61`,
+`04d0ece`, `3c83c41`; CI green on `04d0ece`, 279 tests). Wave 3 (3.1 → 3.2) is ready. Execution so
+far was requested wave by wave (Wave 0, Wave 1, Wave 2).
 **Task states:** unchecked = pending / implemented-unverified / blocked (name gate);
 checked = complete with required evidence. Task identity includes this plan path plus ID.
 
@@ -166,7 +166,7 @@ confirmed all four (D2, D4, D10, D11) as written on 2026-11-12.
 
 ## Acceptance Criteria
 
-- [ ] The built app's `Info.plist` has `SUFeedURL` (D1), a 32-byte base64 `SUPublicEDKey` and
+- [x] The built app's `Info.plist` has `SUFeedURL` (D1), a 32-byte base64 `SUPublicEDKey` and
       `SUEnableAutomaticChecks` true, **and** keeps `CFBundleDisplayName` and `LSUIElement`;
       `Contents/Frameworks/Sparkle.framework` is present.
 - [ ] "Check for Updates…" exists in the right-click menu and the fallback menu; Settings has the
@@ -191,7 +191,7 @@ confirmed all four (D2, D4, D10, D11) as written on 2026-11-12.
       smaller bar under the headline and in the tooltip; without the row, nothing is rendered and no
       log line appears. The diagnostic logs key names only (top level and one level down), at
       `.debug`, never values.
-- [ ] E0 shows the live response's key names; the Fable row's presence or absence is recorded.
+- [x] E0 shows the live response's key names; the Fable row's presence or absence is recorded.
 - [ ] Help, README, CHANGELOG, `docs/homebrew.md`, `ThirdPartyNotices.txt` (Sparkle MIT) and the
       cask (`auto_updates true`) describe the new behaviour; no "Updates are installed manually for
       now" text remains; no shortcut glyphs; the help manifest is valid JSON.
@@ -206,8 +206,9 @@ confirmed all four (D2, D4, D10, D11) as written on 2026-11-12.
   2026-11-12). Each of these needs an explicit go-ahead from the user when reached:
   - ~~generating the EdDSA key (login Keychain write) and exporting it to `99-AUTH` (D2)~~ —
     **given 2026-11-12**;
-  - deleting the 96 leftover test plists in `~/Library/Preferences` (D11);
-  - pushing (CI);
+  - ~~deleting the 96 leftover test plists in `~/Library/Preferences` (D11)~~ — **given and done
+    2026-11-12** (Wave 2);
+  - pushing (CI) — **given for Wave 2 2026-11-12** (pushed `04d0ece`); later pushes ask again;
   - notarization (contacts Apple, uses the `99-AUTH` notarytool key);
   - creating the GitHub Release and pushing `appcast.xml` / the cask (the feed is production);
   - deploying the website;
@@ -350,7 +351,7 @@ Wave 2 ownership (exclusive):
 
 ### Wave 1 (parallel — no mutual dependencies; disjoint ownership)
 
-- [ ] **1.1**: Sparkle wiring — `UpdateController`, menu items, Settings Updates section (D3, D4)
+- [x] **1.1**: Sparkle wiring — `UpdateController`, menu items, Settings Updates section (D3, D4)
   - Depends on: 0.1. External gates: E1 (alert in front, toggle persistence). D4 confirmed 2026-11-12.
   - Owns: see table. Interface: `UpdateController` as fixed above.
   - Success:
@@ -389,8 +390,10 @@ Wave 2 ownership (exclusive):
     registered in `startUpdater`), so the toggle test is safe and restores the host's real value in
     tearDown. Tests: `UpdateControllerTests` (6: feed URL, 32-byte key, automatic checks, display
     name/LSUIElement kept, framework embedded, non-starting toggle); smoke call site updated.
+    **Gate closed 2026-11-12:** CI green on `04d0ece` (run 43150527567, macos-15 / Xcode 16.4: 279 tests, 0 failures). In the signed 2.3 build a user-initiated Check for Updates…
+    showed "You're up to date!" in front (user). E1 still covers scheduled alerts and toggle persistence.
 
-- [ ] **1.2**: Two headlines — model, view, Claude/Codex/Vibe mapping, cache compatibility (D9)
+- [x] **1.2**: Two headlines — model, view, Claude/Codex/Vibe mapping, cache compatibility (D9)
   - Depends on: 0.1. External gates: E1 (visual check).
   - Owns: see table. Interface: `SectionHeadline(id:…)`, `ProviderSection.headlines`.
   - Success:
@@ -425,8 +428,11 @@ Wave 2 ownership (exclusive):
     `ProviderModelsTests` (5 new), `SectionStateCacheTests` (3 new incl. the literal 0.2.2 fixture),
     `CodexUsageProviderTests` (2 new), `ClaudeUsageProviderTests` (2 new/renamed), Vibe assertions,
     fixtures with two headlines.
+    **Gate closed 2026-11-12:** CI green on `04d0ece` (run 43150527567, macos-15 / Xcode 16.4: 279 tests, 0 failures). Live panel (user screenshot, signed 2.3 build): Claude shows
+    5-hour (43% left) and 7-day (86% left) headlines with countdowns and bars; Codex shows only its
+    weekly headline while Claude keeps its 5-hour one (the toggle quirk is gone). E1 repeats the visual check.
 
-- [ ] **1.3**: Claude usage decoder — key-names diagnostic and Fable window (D10)
+- [x] **1.3**: Claude usage decoder — key-names diagnostic and Fable window (D10)
   - Depends on: 0.1. External gates: **E0** (live key names) for acceptance of the Fable decode;
     the diagnostic needs no gate.
   - Owns: see table. Interface: `ClaudeOAuthUsage.fable`, `ClaudeUsageKeyDiagnostic.summary`.
@@ -452,8 +458,9 @@ Wave 2 ownership (exclusive):
     `limits` is silent; an undecodable `limits` logs one `.debug` failure-kind line. 15 new tests;
     the grep shows 51 `utilization|percent` lines. Pre-existing `try?` in the unchanged
     `five_hour`/`seven_day` decoding was left as it was.
+    **Gates closed 2026-11-12:** CI green on `04d0ece` (run 43150527567, macos-15 / Xcode 16.4: 279 tests, 0 failures); E0 passed (see E0).
 
-- [ ] **1.4**: Release pipeline — inside-out signing, appcast tooling, signing notes (D1, D2, D8)
+- [x] **1.4**: Release pipeline — inside-out signing, appcast tooling, signing notes (D1, D2, D8)
   - Depends on: 0.1 (public key for `docs/sparkle-signing.md`). External gates: 2.3 (dry run on
     this Mac), E2/E3 (real use).
   - Owns: see table.
@@ -494,10 +501,14 @@ Wave 2 ownership (exclusive):
     `notarize-release.sh` still checks the notary key files before `SIGN_ONLY` applies, so 2.3 runs
     `sign-app.sh` directly on the scratch build. Coordinator fixes at integration: feed description
     wording (dockless HUD, as the README) and the signing notes name `scripts/package-dmg.sh`.
+    **Gate closed 2026-11-12 by 2.3:** Developer ID signing prints `TeamIdentifier FDMSRXXN73` for all six
+    components and the deep strict verify passes; `sign_update --account LLM-UsageStatus` output parsed into
+    a valid `sparkle:edSignature` (verified with CryptoKit against `SUPublicEDKey`). 2.3 added a
+    `SIGN_UPDATE=` override for releases whose own build has no Sparkle (0.2.2).
 
 ### Wave 2 (parallel — disjoint; prerequisites integrated and validated)
 
-- [ ] **2.1**: Fable sub-meter under the 7-day headline (D10)
+- [x] **2.1**: Fable sub-meter under the 7-day headline (D10)
   - Depends on: 1.2, 1.3. External gates: **E0** for acceptance (live confirmation that the
     `limits[]` Fable row exists; if E0 shows no such row on this account, the code stays data-driven
     and dormant, Help describes the meter conditionally, and the task is recorded as
@@ -513,8 +524,20 @@ Wave 2 ownership (exclusive):
       the non-empty check.
     - Tests: with and without the Fable window; the sub-meter is on `seven-day` only.
   - Backpressure: `build-for-testing`.
+  - **Evidence (2026-11-12, `b327b10` + follow-up `3c83c41`):** fresh-context agent in a scratch worktree.
+    `ClaudeUsageProvider.section(for:)` puts `fable-allowance` "Fable allowance" (fraction = Fable
+    utilization) on the `seven-day` headline only; without a seven-day headline it is not shown and nothing
+    else is added. Sub-meters draw a real 4 pt `ThinMeterBar` (capsule track and fill; the old
+    `scaleEffect` kept full height), shown collapsed and expanded (every visible headline renders through
+    `SectionHeadlineView`), tooltip unchanged. Follow-up after the user saw the live panel: the fill uses the
+    accent colour only in the key window, secondary grey otherwise, like the native headline bars (user's
+    choice). Fixture: Claude endpoint seven-day carries Fable 0.35. Tests: 4 new in `ClaudeUsageProviderTests`
+    (Fable on seven-day only, clamping 1.4 → 1, no Fable, Fable without seven-day). Validation: agent and
+    integrated `build-for-testing` green; CI green on `04d0ece` (279 tests); `3c83c41` validated by fresh
+    `build-for-testing` and Release builds (zero Swift warnings). **Live (E0):** the signed 2.3 build showed
+    "Fable allowance: 87% left" under the 7-day headline (user screenshot).
 
-- [ ] **2.2**: Hygiene — test defaults cleanup, compiler warnings (D11)
+- [x] **2.2**: Hygiene — test defaults cleanup, compiler warnings (D11)
   - Depends on: 1.1, 1.2 (shared test files). External gates: go-ahead to delete the 96 leftovers
     (coordinator, once, after the fix lands).
   - Owns: see Wave 2 table.
@@ -529,8 +552,21 @@ Wave 2 ownership (exclusive):
     local `ls ~/Library/Preferences | grep -c LLMUsageStatusTests` stays at 0 once the leftovers
     are deleted (the CI machine's home is not ours; the local proof comes at E1's test run if any,
     otherwise at the first local `xcodebuild test` the user authorizes).
+  - **Evidence (2026-11-12, `b987e61`):** fresh-context agent in a scratch worktree. `TestDefaults(prefix:)`
+    makes `<prefix>-<UUID>`; `tearDown()` removes the domain, `CFPreferencesAppSynchronize`s it, then deletes
+    `NSHomeDirectory()/Library/Preferences/<suite>.plist` (guarded to its own UUID name, never the app or
+    test bundle id; `do/catch`, missing file is normal, other errors printed). Adopted in `UsagePreferencesTests`,
+    `HotKeyShortcutTests`, `ShortcutRecorderFieldTests`, `VibeUsageProviderTests` (cleanup site only).
+    Warnings: `ShortcutRecorderField` keeps `(center, token)` in one `nonisolated(unsafe) var` (no reliance on
+    `NotificationCenter` being `Sendable`, which only newer SDKs declare); coordinator replaced the agent's
+    `String(cString: realpath(...)!)` (pointer aliasing a call-scoped `&buffer`) with
+    `String(decoding: buffer.prefix { $0 != 0 }…, as: UTF8.self)`. Integrated and Release builds: **zero Swift
+    warnings**; CI (Xcode 16.4) green on `04d0ece`. The 96 leftovers (84 UsagePreferences, 12 Vibe Budget; all
+    empty dicts) were deleted with the user's go-ahead after a negative pattern check; the app's own
+    `com.sim.LLM-UsageStatus.plist` untouched; 0 remain. **Still open (acceptance D11):** proof that a local
+    test run leaves no new plist (no local `xcodebuild test` authorized yet).
 
-- [ ] **2.3**: Pipeline dry run and first appcast item (coordinator)
+- [x] **2.3**: Pipeline dry run and first appcast item (coordinator)
   - Depends on: 1.1, 1.4; the key from 0.1. External gates: none (no Apple contact; local signing
     identity only).
   - Owns: scratch Release build, `dist/` dry-run output (deleted afterwards), the first `appcast.xml`
@@ -549,6 +585,24 @@ Wave 2 ownership (exclusive):
     - The signed scratch app's **Check for Updates…** now says up to date (300 > 202).
   - Backpressure: the `codesign --verify --deep --strict` and `curl` outputs in the log; `dist/`
     dry-run output removed so E2 can create `dist/0.3.0`.
+  - **Evidence (2026-11-12, `04d0ece`; coordinator):** universal Release builds into scratch (`rel-2.3a` on
+    `3a6d5c0`; `rel-2.3d` on integrated Wave 2 — an incremental rebuild in `rel-2.3b` broke the Sparkle
+    artifact, see Operational Learnings). `scripts/sign-app.sh` (Developer ID `D3002F50…`): all six components
+    `TeamIdentifier FDMSRXXN73`, `flags=0x10000(runtime)`, secure timestamps; `codesign --verify --deep
+    --strict` valid and satisfies its DR; outer entitlements only `app-sandbox = false` (no `get-task-allow`);
+    `spctl -a -t exec` → `rejected, source=Unnotarized Developer ID` (expected). `dist/0.2.2` DMG SHA-256
+    `a4fbe57a…136a` equals the downloaded GitHub asset; `SIGN_UPDATE=<rel-2.3a>/…/bin/sign_update
+    scripts/make-appcast-item.sh 0.2.2` (no Keychain prompt) → item build 202, length 3294714, edSignature
+    verified with CryptoKit against the app's `SUPublicEDKey` over the downloaded asset; `xmllint` ok. Pushed
+    with the user's go-ahead (`bf2d640..04d0ece`); raw feed HTTP 200 and byte-identical. No `dist/` output
+    created. Handoff (standing authorization): quit the `/Applications` 0.2.2 instance (pid 60772) via a quit
+    Apple Event, confirmed exit, launched `04_Exports/0.3.0-W2-signed-Release/LLM-UsageStatus.app` (pid 15554,
+    executable SHA-256 `abbf160b…a6add3c0` matched); hotkey registered (Carbon status 0), panel opened by
+    the user with Control-Option-Command-L; **Check for Updates… → "You're up to date!" in front** (user;
+    Sparkle strings in the log). The empty-feed error step was skipped because the feed went live before
+    the launch. After the bar-colour follow-up the build was replaced the same way: pid 15554 quit and exited,
+    `04_Exports/0.3.0-W2b-signed-Release/LLM-UsageStatus.app` launched (pid 49601, SHA-256
+    `9b96ab47…845951e0`, 0.3.0 (300)) and left running for the user.
 
 ### Wave 3 (serial integration — shared docs and version files)
 
@@ -594,7 +648,7 @@ Wave 2 ownership (exclusive):
 
 ## External checks
 
-- [ ] **E0**: Live key names of the Claude usage response (after Wave 1; user-operated panel open)
+- [x] **E0**: Live key names of the Claude usage response (after Wave 1; user-operated panel open)
   - Depends on: 1.3 integrated; a fresh Debug build handed off. Requires: Claude Code run recently
     (a stale token gives 401 and no 2xx diagnostic); the user allows the Keychain prompt for the new
     build and opens the panel once.
@@ -606,6 +660,21 @@ Wave 2 ownership (exclusive):
     (key names only) and 2.1 is re-scoped before it is accepted.
   - While unavailable: 2.1 proceeds provisionally on the R2 field names with fixtures; it is not
     marked complete.
+  - **Evidence (2026-11-12, signed 2.3 build, panel opened by the user):** captured with
+    `/usr/bin/log stream --level debug` (debug lines are not persisted; `log` alone is a zsh builtin). Key
+    names (os_log truncated the line at about 1 KB): `amber_cistern amber_cistern_offer amber_gauge amber_ladder
+    brass_thimble cedar_ember cinder_cove copper_kite extra_usage{credits_ever_enabled,currency,daily,
+    decimal_places,disabled_reason,is_enabled,monthly_limit,spend_limit_reached,used_credits,user_disabled,
+    utilization,weekly} five_hour{limit_dollars,locked_reason,remaining_dollars,resets_at,used_dollars,
+    utilization} granite_teacup harbor_lantern iguana_necktie indicator juniper_tide
+    limits[group,is_active,kind,percent,resets_at,scope,severity] member_dashboard_available nimbus_quill
+    omelette_promotional pace promo_credits seven_day{limit_dollars,locked_reason,remaining_dollars,resets_at,
+    used_dollars,utilization} seven_day_breakdown{as_of,rows,window_started_at} seven_day_cowork
+    seven_day_oauth_apps seven_day_omelette seven_day_opus seven_day_sonnet spend{auto_reload,balance,
+    can_purchase_credits,can_toggle,cap,disabled_reason,disclaimer,enabled,limit,percent,severity,used}
+    starry_waterfall tangelo wattle_ember weekly_scoped_shares[allowance_percent<…>`. `limits[]` carries the
+    R2 names (`kind`, `percent`, `resets_at`, `scope`). **Fable row present:** the panel rendered "Fable
+    allowance: 87% left", which only a decoded `weekly_scoped` Fable row produces. No re-scope of 2.1 needed.
 - [ ] **E1**: Manual acceptance in a fresh Debug build (user-operated)
   - Depends on: 3.2. Gates: the UI acceptance criteria; E2.
   - Success:
@@ -675,12 +744,19 @@ Wave 2 ownership (exclusive):
   Syncthing) plus its own DerivedData, so a half-done edit in one task never breaks another task's
   build; the coordinator applies each `git diff` to `main`, checks the files are byte-identical,
   runs one integrated build, then removes the worktrees.
+- Xcode 27.2 (2026-11-12): an incremental build in an **existing** DerivedData re-extracted the Sparkle
+  binary artifact incompletely (`Sparkle.xcframework` without `Info.plist`, `bin/` gone) → "There is no
+  Info.plist found at …/Sparkle.xcframework/Info.plist". A fresh DerivedData builds cleanly; `release.sh`
+  already uses a fresh `dist/VERSION/DerivedData`. For scratch builds, use a new folder per build.
+- Logs: in zsh `log` is a builtin — call `/usr/bin/log`. `.debug` lines are only kept while a
+  `log stream --level debug` is attached, so start the stream before the trigger (opening the panel
+  refreshes every enabled provider). os_log truncates a long message at about 1 KB.
+- `sign_update --account LLM-UsageStatus` read the Keychain key without a prompt on this Mac.
 
 ## Blocked Tasks
 
 - None. D2, D4, D10 and D11 were confirmed 2026-11-12. Remaining go-aheads are per-step (see
-  Execution scope and limits): deleting the 96 test plists, pushes, notarization, publishing,
-  installation and E5.
+  Execution scope and limits): further pushes, notarization, publishing, installation and E5.
 
 ---
 
@@ -692,6 +768,7 @@ Wave 2 ownership (exclusive):
 | — | Decisions confirmed by the user 2026-11-12: D2 (own key account + `99-AUTH` export; key go-ahead given), D4 (as drawn), D10 (limit resets deferred to Backlog #16), D11 (hygiene in scope; plist deletion still needs its own go-ahead) | User answers in session | — | Next: `/execute` Wave 0 (0.1) |
 | Wave 0 (0.1), 2026-11-12 | Serial by coordinator (shared files only: `project.yml`, project file, Info.plist, Keychain, stubs); no agents | `xcodebuild -resolvePackageDependencies` ok (Sparkle 2.10.1); key generated under account `LLM-UsageStatus`, exported and verified (see 0.1 evidence); scratch `build-for-testing` (session scratchpad `dd-0.1`) **TEST BUILD SUCCEEDED**; PlistBuddy on the built app shows all 0.1 keys, 0.3.0 / 300, Sparkle.framework embedded. Two known warnings only (`ShortcutRecorderField.swift:30`, `ClaudeLogAggregator.swift:144` → 2.2). Tests not run (app-hosted; CI at 3.2) | `109957c` 0.1 (project + stubs). Not pushed | Next: Wave 1 (1.1, 1.2, 1.3, 1.4 as 4 parallel agents) when execution is requested. 1.4 records the public key above in `docs/sparkle-signing.md` |
 | Wave 1 (1.1, 1.2, 1.3, 1.4), 2026-11-12 | 4 parallel fresh-context `developer` agents, exclusive ownership per the table, each in its **own git worktree in the session scratchpad** (outside Syncthing) with its own DerivedData, so no agent's half-done edit could break another's build. Schedule repair: `SectionFixtureRenderTests.swift` added to 1.2's ownership (fixture API consumer; ended up unchanged). Coordinator reviewed each diff, applied the four patches to `main` (worktree files byte-identical to the commits except the two 1.4 wording fixes), then removed the worktrees and branches | Each task: `build-for-testing` **TEST BUILD SUCCEEDED** alone on `c8e34b9`. Integrated (1.1+1.2+1.3 on `main`, scratch `dd-int`): **TEST BUILD SUCCEEDED**, only the two known D11 warnings (→ 2.2). 1.4 touches no Swift; `zsh -n` ×4 and `xmllint` re-run after integration. 275 test functions (244 + 31). Tests not run locally (app-hosted; CI at 3.2). Details in each task's Evidence | `1581e8a` 1.3 · `0349627` 1.1 · `2835494` 1.2 · `0ffbc79` 1.4. Not pushed | 1.1–1.3 unchecked until CI; 1.4 until 2.3. Next: Wave 2 — 2.1 (agent, Fable sub-meter), 2.2 (agent, hygiene; plist deletion needs its go-ahead), 2.3 (coordinator: Developer ID signing dry run, launch of the signed scratch build, first appcast item — its push needs a go-ahead) |
+| Wave 2 (2.1, 2.2, 2.3), 2026-11-12 | 2.1 and 2.2: two parallel fresh-context `developer` agents, each in its own scratchpad worktree and DerivedData (exclusive ownership per the Wave 2 table); 2.3 by the coordinator in parallel. Coordinator applied both diffs to `main`, replaced 2.2's `realpath` pointer use, added `SIGN_UPDATE=` to `make-appcast-item.sh`, and after the user's screenshot changed the Fable bar colour (user's choice) | Integrated `build-for-testing` **TEST BUILD SUCCEEDED**, zero Swift warnings; universal Release zero Swift warnings; 279 test functions; **CI green on `04d0ece` (run 43150527567, 279 tests, 0 failures)**; Developer ID signing of all six components, deep strict verify, `spctl` rejects only for notarization; appcast 0.2.2 item signature verified against `SUPublicEDKey`, raw feed HTTP 200; signed build launched under the standing handoff, user saw two Claude headlines plus "Fable allowance: 87% left" and Check for Updates… "You're up to date!" in front; E0 key names captured. 96 leftover plists deleted (go-ahead). `3c83c41` validated by fresh `build-for-testing` and Release builds (not yet on CI). Tests not run locally (app-hosted) | `b327b10` 2.1 · `b987e61` 2.2 · `04d0ece` 2.3 (pushed with go-ahead) · `3c83c41` 2.1 follow-up (not pushed) | 1.1–1.4, 2.1–2.3 and E0 checked. Open: D11 local no-new-plist proof (first authorized local test run), E1–E5. Running: signed 0.3.0 test build pid 49601 from `04_Exports/0.3.0-W2b-signed-Release` (installed 0.2.2 quit; relaunching it is the user's or needs its own go-ahead). Next: Wave 3 (3.1 → 3.2, coordinator) |
 
 ---
 *Keep active while required work or acceptance is incomplete. On completion, retire in place with

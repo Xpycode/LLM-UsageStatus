@@ -4,7 +4,7 @@
 - **Plan (retired 2026-11-08):** `docs/plans/2026-11-06-settings-window/IMPLEMENTATION_PLAN.md` — **COMPLETE**: Settings window (launch at login, shortcut rebinding, About), 8/8 tasks (CI 204 green, 288f5ab), E1 passed. It stays in place as the permanent execution record.
 - **Plan (retired 2026-11-10):** `docs/plans/2026-11-08-v0.2.0/IMPLEMENTATION_PLAN.md` — **COMPLETE**: 0.2.0 (layout-aware shortcut names, in-app Help, Send Feedback… / Leave a Tip), 11/11 tasks, E1–E5 passed; notarized DMG + detail page live. Follow-up 0.2.1 (app icon) shipped the same day, user acceptance passed. It stays in place as the permanent execution record.
 - **Plan (retired 2026-11-12):** `docs/plans/2026-11-10-v0.2.2/IMPLEMENTATION_PLAN.md` — **COMPLETE**: 0.2.2 (202): Vibe totals fix (snapshot source, no double count, children fold), layout-aware shortcut refusals + AZERTY Settings key + ISO key, provider on/off in Settings, `SectionStateCache` logging. 8/8 tasks done; E1 passed 2026-11-11; E2 notarized and E3 published 2026-11-11; E4 installed 2026-11-12; provider toggles survive a relaunch (user, 2026-11-12). It stays in place as the permanent execution record.
-- **Active plan:** `docs/plans/2026-11-12-v0.3.0/IMPLEMENTATION_PLAN.md` — 0.3.0 (300): Sparkle auto-updates (EdDSA key, `appcast.xml` in this repo, Check for Updates…, Settings Updates section, inside-out signing in the release scripts), Claude 5-hour and 7-day as two equal headlines (Codex 5-hour headline with its toggle), Claude Fable allowance sub-meter after a key-names diagnostic, test/warning hygiene. 1/10 tasks checked (Wave 0 done; Wave 1 implemented and integrated 2026-11-12, unchecked until CI/2.3), E0–E5 open. D2, D4, D10 and D11 confirmed by the user 2026-11-12. Ready: Wave 2 (2.1, 2.2 agents; 2.3 coordinator).
+- **Active plan:** `docs/plans/2026-11-12-v0.3.0/IMPLEMENTATION_PLAN.md` — 0.3.0 (300): Sparkle auto-updates (EdDSA key, `appcast.xml` in this repo, Check for Updates…, Settings Updates section, inside-out signing in the release scripts), Claude 5-hour and 7-day as two equal headlines (Codex 5-hour headline with its toggle), Claude Fable allowance sub-meter after a key-names diagnostic, test/warning hygiene. 8/10 tasks checked (Waves 0–2 done 2026-11-12; CI green on `04d0ece`, 279 tests), E0 passed, E1–E5 open. D2, D4, D10 and D11 confirmed by the user 2026-11-12. Ready: Wave 3 (3.1 → 3.2, coordinator).
 
 ## Backlog
 
@@ -65,6 +65,11 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
 
 ## Inbox
 
+- **Claude usage key diagnostic truncated; new response fields** (2026-11-12, E0, unconfirmed whether worth acting on): the
+  `.debug` key-names line is cut by os_log at about 1 KB (ends at `weekly_scoped_shares[allowance_percent<…>`), so later
+  keys are invisible — splitting the summary over several lines would fix it. The live response also carries
+  `five_hour`/`seven_day` `{limit_dollars, remaining_dollars, used_dollars, locked_reason}`, `weekly_scoped_shares[allowance_percent…]`,
+  `seven_day_breakdown`, `spend{…}` and `extra_usage{…}` — candidates for later features. Evidence: plan E0.
 - → **Planned 2026-11-12** (0.3.0 plan, 1.2, D9). **0.3.0 — Claude weekly limit as prominent as the 5-hour one** (2026-11-12, user chose "two equal
   headlines"): the Claude headline is the next-resetting window (`ClaudeUsageProvider.swift:82-99`),
   nearly always the 5-hour one; 7-day is only a grey caption while collapsed
