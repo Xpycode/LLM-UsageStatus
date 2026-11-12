@@ -158,6 +158,9 @@ brew tap xpycode/llm-usagestatus https://github.com/Xpycode/LLM-UsageStatus.git
 brew install --cask xpycode/llm-usagestatus/llm-usagestatus
 ```
 
+If Homebrew refuses to load the cask from an untrusted tap, trust it once and repeat the install:
+`brew trust --cask xpycode/llm-usagestatus/llm-usagestatus`.
+
 To upgrade later:
 
 ```sh

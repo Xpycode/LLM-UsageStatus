@@ -11,6 +11,9 @@ brew tap xpycode/llm-usagestatus https://github.com/Xpycode/LLM-UsageStatus.git
 brew install --cask xpycode/llm-usagestatus/llm-usagestatus
 ```
 
+If Homebrew refuses to load the cask from an untrusted tap, trust it once and repeat the install:
+`brew trust --cask xpycode/llm-usagestatus/llm-usagestatus`.
+
 An existing manual installation in `/Applications` may need `--adopt` (quit the app first). Do not
 use `--force` to overwrite an unknown installation.
 
