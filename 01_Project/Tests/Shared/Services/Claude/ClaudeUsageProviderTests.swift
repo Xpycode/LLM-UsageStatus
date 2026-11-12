@@ -94,6 +94,67 @@ final class ClaudeUsageProviderTests: XCTestCase {
                        ["seven-day"])
     }
 
+    func testFableWindowAddsSubMeterToSevenDayHeadlineOnly() {
+        let usage = ClaudeOAuthUsage(
+            fiveHour: ClaudeUsageWindow(utilization: 0.42, resetsAt: Self.now.addingTimeInterval(3_600)),
+            sevenDay: ClaudeUsageWindow(utilization: 0.81, resetsAt: Self.now.addingTimeInterval(600_000)),
+            fable: ClaudeUsageWindow(utilization: 0.35, resetsAt: Self.now.addingTimeInterval(600_000)),
+            fetchedAt: Self.now)
+        let section = ClaudeUsageProvider.section(for: usage)
+        XCTAssertEqual(section.headlines.map(\.id), ["five-hour", "seven-day"])
+        XCTAssertTrue(section.headlines[0].subMeters.isEmpty)
+        XCTAssertEqual(section.headlines[1].subMeters,
+                       [SectionMeter(id: "fable-allowance", label: "Fable allowance", fraction: 0.35)!])
+        XCTAssertEqual(section.headlines[1].subMeters.first?.fraction, 0.35)
+        // The Fable reset equals the weekly reset: no extra meter or deadline.
+        XCTAssertEqual(section.meters.map(\.id), ["five-hour-limit", "seven-day-limit"])
+        XCTAssertEqual(section.deadlines.map(\.id), ["five-hour-reset", "seven-day-reset"])
+        XCTAssertTrue(section.rows.isEmpty)
+    }
+
+    func testFableUtilizationIsClampedIntoSubMeter() {
+        let usage = ClaudeOAuthUsage(
+            fiveHour: nil,
+            sevenDay: ClaudeUsageWindow(utilization: 0.5, resetsAt: nil),
+            fable: ClaudeUsageWindow(utilization: 1.4, resetsAt: nil),
+            fetchedAt: Self.now)
+        let section = ClaudeUsageProvider.section(for: usage)
+        XCTAssertEqual(section.headlines.map(\.id), ["seven-day"])
+        XCTAssertEqual(section.headlines[0].subMeters.map(\.fraction), [1])
+    }
+
+    func testNoFableWindowMeansNoSubMeters() {
+        let usage = ClaudeOAuthUsage(
+            fiveHour: ClaudeUsageWindow(utilization: 0.42, resetsAt: nil),
+            sevenDay: ClaudeUsageWindow(utilization: 0.81, resetsAt: nil),
+            fetchedAt: Self.now)
+        let section = ClaudeUsageProvider.section(for: usage)
+        XCTAssertEqual(section.headlines.map(\.id), ["five-hour", "seven-day"])
+        XCTAssertTrue(section.headlines.allSatisfy { $0.subMeters.isEmpty })
+
+        let fableWithoutUtilization = ClaudeOAuthUsage(
+            fiveHour: nil,
+            sevenDay: ClaudeUsageWindow(utilization: 0.81, resetsAt: nil),
+            fable: ClaudeUsageWindow(utilization: nil, resetsAt: Self.now),
+            fetchedAt: Self.now)
+        XCTAssertTrue(ClaudeUsageProvider.section(for: fableWithoutUtilization)
+            .headlines.allSatisfy { $0.subMeters.isEmpty })
+    }
+
+    func testFableWithoutSevenDayUtilizationIsNotShown() {
+        let usage = ClaudeOAuthUsage(
+            fiveHour: ClaudeUsageWindow(utilization: 0.42, resetsAt: Self.now.addingTimeInterval(3_600)),
+            sevenDay: ClaudeUsageWindow(utilization: nil, resetsAt: nil),
+            fable: ClaudeUsageWindow(utilization: 0.35, resetsAt: Self.now.addingTimeInterval(600_000)),
+            fetchedAt: Self.now)
+        let section = ClaudeUsageProvider.section(for: usage)
+        XCTAssertEqual(section.headlines.map(\.id), ["five-hour"])
+        XCTAssertTrue(section.headlines.allSatisfy { $0.subMeters.isEmpty })
+        XCTAssertEqual(section.meters.map(\.id), ["five-hour-limit"])
+        XCTAssertEqual(section.deadlines.map(\.id), ["five-hour-reset"])
+        XCTAssertTrue(section.rows.isEmpty)
+    }
+
     func testMissingTokenFallsBackToLabeledLocalAggregates() async throws {
         try writeTranscript("session-a.jsonl", lines: [
             transcriptLine(hoursAgo: 1, input: 100, output: 50, cacheCreation: 10, cacheRead: 5),

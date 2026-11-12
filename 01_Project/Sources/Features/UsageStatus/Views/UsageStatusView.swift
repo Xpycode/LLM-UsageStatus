@@ -280,6 +280,27 @@ enum SectionVisibility {
     }
 }
 
+/// A slim progress bar for sub-meters. `ProgressView` keeps its full layout
+/// height under any transform, so the track and fill are drawn directly.
+private struct ThinMeterBar: View {
+    let fraction: Double
+
+    var body: some View {
+        Capsule()
+            .fill(.quaternary)
+            .frame(height: 4)
+            .overlay(alignment: .leading) {
+                GeometryReader { proxy in
+                    Capsule()
+                        .fill(Color.accentColor)
+                        .frame(width: proxy.size.width * min(max(fraction, 0), 1))
+                }
+            }
+            .accessibilityElement()
+            .accessibilityValue("\(Int((fraction * 100).rounded())) percent left")
+    }
+}
+
 /// The glance line: percent left for the primary window, its live reset
 /// countdown, and — when a remaining quantity exists — the estimated
 /// per-day amount for the remaining days.
@@ -321,9 +342,7 @@ private struct SectionHeadlineView: View {
                             estimateTag
                         }
                     }
-                    ProgressView(value: sub.fractionLeft)
-                        .progressViewStyle(.linear)
-                        .scaleEffect(x: 1, y: 0.6, anchor: .center)
+                    ThinMeterBar(fraction: sub.fractionLeft)
                 }
             }
         }

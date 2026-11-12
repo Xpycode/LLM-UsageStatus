@@ -87,9 +87,17 @@ struct ClaudeUsageProvider: Provider {
                                           fractionLeft: 1 - utilization, resetsAt: window.resetsAt) {
             headlines.append(headline)
         }
+        // The Fable allowance shares the weekly reset, so it rides under the
+        // 7-day headline as a sub-meter; without that headline it is not shown.
+        var sevenDaySubMeters: [SectionMeter] = []
+        if let fableUtilization = usage.fable?.utilization,
+           let meter = SectionMeter(id: "fable-allowance", label: "Fable allowance", fraction: fableUtilization) {
+            sevenDaySubMeters.append(meter)
+        }
         if let window = usage.sevenDay, let utilization = window.utilization,
            let headline = SectionHeadline(id: "seven-day", windowLabel: "7-day limit",
-                                          fractionLeft: 1 - utilization, resetsAt: window.resetsAt) {
+                                          fractionLeft: 1 - utilization, resetsAt: window.resetsAt,
+                                          subMeters: sevenDaySubMeters) {
             headlines.append(headline)
         }
 

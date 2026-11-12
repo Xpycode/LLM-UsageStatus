@@ -211,7 +211,9 @@ enum SectionFixture {
                 SectionHeadline(id: "five-hour", windowLabel: "5-hour limit", fractionLeft: 0.58,
                                 resetsAt: now.addingTimeInterval(4_500))!,
                 SectionHeadline(id: "seven-day", windowLabel: "7-day limit", fractionLeft: 0.19,
-                                resetsAt: now.addingTimeInterval(90_000))!,
+                                resetsAt: now.addingTimeInterval(90_000),
+                                subMeters: [SectionMeter(id: "fable-allowance", label: "Fable allowance",
+                                                         fraction: 0.35)!])!,
             ],
             lastUpdated: now)
     }
