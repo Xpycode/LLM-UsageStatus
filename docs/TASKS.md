@@ -68,7 +68,8 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
   ignores every top-level key except `five_hour`/`seven_day` (`ClaudeOAuthUsageService.swift:127`),
   so the field names are unknown. First step: a debug-level, key-names-only diagnostic of the
   response's top-level and per-window keys (no values) to find the Fable window and reset fields;
-  then a third headline/meter "Fable (weekly)" and a resets row like Codex's reset credits.
+  then a smaller Fable meter nested under the 7-day headline (user agreed 2026-11-12: Fable is a
+  slice of the weekly limit, not a peer window) and a resets row like Codex's reset credits.
   Do not guess field names.
 
 - Test hygiene (2026-11-12): the test suite leaves `LLMUsageStatusTests.UsagePreferences-<UUID>.plist` files in `~/Library/Preferences` (85 found). Tests should call `removePersistentDomain(forName:)` on their suite in tearDown; the leftovers can then be deleted.
