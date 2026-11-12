@@ -80,8 +80,9 @@ struct ProviderSection: Equatable, Sendable, Codable {
     let meters: [SectionMeter]
     /// Future dates with labels (resets, renewals) for countdown rendering.
     let deadlines: [SectionDeadline]
-    /// Glance-first headline; nil when no utilization window is present.
-    let headline: SectionHeadline?
+    /// Glance-first headlines in display order (shorter window first); empty
+    /// when no utilization window is present.
+    let headlines: [SectionHeadline]
     /// Compact fallback line when no headline exists (e.g. Vibe without a
     /// budget): the most glance-relevant local fact, one sentence.
     let glanceLine: SectionGlanceLine?
@@ -91,15 +92,70 @@ struct ProviderSection: Equatable, Sendable, Codable {
     let lastUpdated: Date
 
     init(rows: [SectionRow] = [], meters: [SectionMeter] = [], deadlines: [SectionDeadline] = [],
-         headline: SectionHeadline? = nil, glanceLine: SectionGlanceLine? = nil,
+         headlines: [SectionHeadline] = [], glanceLine: SectionGlanceLine? = nil,
          note: SectionNote? = nil, lastUpdated: Date) {
         self.rows = rows
         self.meters = meters
         self.deadlines = deadlines
-        self.headline = headline
+        self.headlines = headlines
         self.glanceLine = glanceLine
         self.note = note
         self.lastUpdated = lastUpdated
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case rows, meters, deadlines, headlines, glanceLine, note, lastUpdated
+        /// Single-headline key written by 0.2.2; decoded, never encoded.
+        case legacyHeadline = "headline"
+    }
+
+    /// Decodes both the current format (`headlines`) and the 0.2.2 format
+    /// (`headline`), so a cache written before the update still seeds the HUD.
+    /// A stored headline that fails validation is dropped rather than failing
+    /// the whole file: the section keeps its other values and the next refresh
+    /// supplies a fresh headline.
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        rows = try container.decode([SectionRow].self, forKey: .rows)
+        meters = try container.decode([SectionMeter].self, forKey: .meters)
+        deadlines = try container.decode([SectionDeadline].self, forKey: .deadlines)
+        if container.contains(.headlines) {
+            let decoded = try container.decode([LossyHeadline].self, forKey: .headlines)
+            headlines = decoded.compactMap(\.value)
+        } else if container.contains(.legacyHeadline),
+                  let legacy = try container.decodeIfPresent(LossyHeadline.self, forKey: .legacyHeadline)?.value {
+            headlines = [legacy]
+        } else {
+            headlines = []
+        }
+        glanceLine = try container.decodeIfPresent(SectionGlanceLine.self, forKey: .glanceLine)
+        note = try container.decodeIfPresent(SectionNote.self, forKey: .note)
+        lastUpdated = try container.decode(Date.self, forKey: .lastUpdated)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(rows, forKey: .rows)
+        try container.encode(meters, forKey: .meters)
+        try container.encode(deadlines, forKey: .deadlines)
+        try container.encode(headlines, forKey: .headlines)
+        try container.encodeIfPresent(glanceLine, forKey: .glanceLine)
+        try container.encodeIfPresent(note, forKey: .note)
+        try container.encode(lastUpdated, forKey: .lastUpdated)
+    }
+}
+
+/// Decodes a headline that failed validation as nil instead of throwing, so
+/// one bad stored headline cannot discard the whole cache file.
+private struct LossyHeadline: Decodable {
+    let value: SectionHeadline?
+
+    init(from decoder: Decoder) throws {
+        do {
+            value = try SectionHeadline(from: decoder)
+        } catch {
+            value = nil
+        }
     }
 }
 
@@ -117,7 +173,10 @@ struct SectionGlanceLine: Equatable, Sendable, Codable {
 /// The glance line at the top of a populated section: percent left until the
 /// next reset of the provider's primary window. Pure data; the view renders
 /// the live countdown against its ticking clock.
-struct SectionHeadline: Equatable, Sendable, Codable {
+struct SectionHeadline: Equatable, Sendable, Identifiable, Codable {
+    /// Stable identity within the section: "five-hour", "seven-day", "weekly"
+    /// or "budget". Cache files from 0.2.2 carry none and decode as "primary".
+    let id: String
     /// What resets, e.g. "Weekly limit".
     let windowLabel: String
     /// Remaining fraction, always clamped to 0...1 (1 − utilization).
@@ -129,16 +188,44 @@ struct SectionHeadline: Equatable, Sendable, Codable {
     /// True when the headline derives from estimated rather than authoritative
     /// data, so the view can label it.
     var isEstimate = false
+    /// Smaller meters rendered under this headline's bar (e.g. a per-model
+    /// allowance within the weekly window).
+    var subMeters: [SectionMeter] = []
 
     /// Rejects non-finite input so a broken payload cannot reach presentation.
-    init?(windowLabel: String, fractionLeft: Double, resetsAt: Date? = nil,
-          dailyBudget: SectionDailyBudget? = nil, isEstimate: Bool = false) {
+    init?(id: String, windowLabel: String, fractionLeft: Double, resetsAt: Date? = nil,
+          dailyBudget: SectionDailyBudget? = nil, isEstimate: Bool = false,
+          subMeters: [SectionMeter] = []) {
         guard fractionLeft.isFinite else { return nil }
+        self.id = id
         self.windowLabel = windowLabel
         self.fractionLeft = min(max(fractionLeft, 0), 1)
         self.resetsAt = resetsAt
         self.dailyBudget = dailyBudget
         self.isEstimate = isEstimate
+        self.subMeters = subMeters
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, windowLabel, fractionLeft, resetsAt, dailyBudget, isEstimate, subMeters
+    }
+
+    /// Applies the failable initializer's validation. Missing `id` and
+    /// `subMeters` (0.2.2 format) decode as "primary" and empty.
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let fractionLeft = try container.decode(Double.self, forKey: .fractionLeft)
+        guard fractionLeft.isFinite else {
+            throw DecodingError.dataCorruptedError(forKey: .fractionLeft, in: container,
+                                                   debugDescription: "Non-finite fraction")
+        }
+        id = try container.decodeIfPresent(String.self, forKey: .id) ?? "primary"
+        windowLabel = try container.decode(String.self, forKey: .windowLabel)
+        self.fractionLeft = min(max(fractionLeft, 0), 1)
+        resetsAt = try container.decodeIfPresent(Date.self, forKey: .resetsAt)
+        dailyBudget = try container.decodeIfPresent(SectionDailyBudget.self, forKey: .dailyBudget)
+        isEstimate = try container.decodeIfPresent(Bool.self, forKey: .isEstimate) ?? false
+        subMeters = try container.decodeIfPresent([SectionMeter].self, forKey: .subMeters) ?? []
     }
 }
 

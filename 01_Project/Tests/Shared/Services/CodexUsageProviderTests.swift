@@ -35,10 +35,12 @@ final class CodexUsageProviderTests: XCTestCase {
             SectionRow(id: "reset-passes", label: "Reset passes", value: "Unavailable"),
         ])
         XCTAssertTrue(section.deadlines.isEmpty)
-        XCTAssertEqual(section.headline,
-                       SectionHeadline(windowLabel: "Weekly limit", fractionLeft: 0.8, resetsAt: nil,
-                                       dailyBudget: SectionDailyBudget(amount: Decimal(string: "12.5")!,
-                                                                        unitText: "credits", isEstimate: false)))
+        XCTAssertEqual(section.headlines, [
+            SectionHeadline(id: "five-hour", windowLabel: "5-hour limit", fractionLeft: 0.93, resetsAt: nil)!,
+            SectionHeadline(id: "weekly", windowLabel: "Weekly limit", fractionLeft: 0.8, resetsAt: nil,
+                            dailyBudget: SectionDailyBudget(amount: Decimal(string: "12.5")!,
+                                                            unitText: "credits", isEstimate: false))!,
+        ])
     }
 
     func testSectionMappingCarriesResetsExpiryAndUnlimitedCredits() {
@@ -62,10 +64,28 @@ final class CodexUsageProviderTests: XCTestCase {
             SectionDeadline(id: "five-hour-reset", label: "5-hour limit", date: now.addingTimeInterval(3_600)),
             SectionDeadline(id: "pass-expiry", label: "Next reset-pass expiry", date: now.addingTimeInterval(172_800)),
         ])
-        XCTAssertEqual(section.headline,
-                       SectionHeadline(windowLabel: "Weekly limit", fractionLeft: 0.68,
-                                       resetsAt: now.addingTimeInterval(90_000), dailyBudget: nil))
+        XCTAssertEqual(section.headlines, [
+            SectionHeadline(id: "five-hour", windowLabel: "5-hour limit", fractionLeft: 0.82,
+                            resetsAt: now.addingTimeInterval(3_600))!,
+            SectionHeadline(id: "weekly", windowLabel: "Weekly limit", fractionLeft: 0.68,
+                            resetsAt: now.addingTimeInterval(90_000), dailyBudget: nil)!,
+        ])
         XCTAssertEqual(section.lastUpdated, now)
+    }
+
+    func testHeadlinesOmitFiveHourWhenWindowIsAbsent() {
+        let now = Self.timestamp
+        let snapshot = UsageSnapshot(
+            weekly: QuotaWindow(usedPercentage: 32, resetsAt: now.addingTimeInterval(90_000)),
+            fiveHour: nil, credits: .unavailable,
+            resets: ResetSummary(availableCount: 0), fetchedAt: now)
+        XCTAssertEqual(CodexUsageService.section(for: snapshot).headlines.map(\.id), ["weekly"])
+    }
+
+    func testHeadlinesAreEmptyWithoutAnyWindow() {
+        let snapshot = UsageSnapshot(weekly: nil, fiveHour: nil, credits: .unavailable,
+                                     resets: ResetSummary(availableCount: 0), fetchedAt: Self.timestamp)
+        XCTAssertTrue(CodexUsageService.section(for: snapshot).headlines.isEmpty)
     }
 
     func testZeroPassesOmitExpiryDeadline() {

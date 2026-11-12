@@ -64,7 +64,15 @@ extension CodexUsageService: Provider {
                        value: snapshot.resets.availableCount.map { $0.formatted() } ?? "Unavailable"),
         ]
 
-        var headline: SectionHeadline?
+        // Shorter window first. The provider always emits the 5-hour headline;
+        // the view hides it while the Codex toggle is off.
+        var headlines: [SectionHeadline] = []
+        if let fiveHour = snapshot.fiveHour,
+           let headline = SectionHeadline(id: "five-hour", windowLabel: "5-hour limit",
+                                          fractionLeft: fiveHour.remainingPercentage / 100,
+                                          resetsAt: fiveHour.resetsAt) {
+            headlines.append(headline)
+        }
         if let weekly = snapshot.weekly {
             // The weekly window is Codex's primary constraint; the headline's
             // remaining amount is the credit balance when one exists.
@@ -74,13 +82,15 @@ extension CodexUsageService: Provider {
             } else {
                 dailyBudget = nil
             }
-            headline = SectionHeadline(windowLabel: "Weekly limit",
-                                       fractionLeft: weekly.remainingPercentage / 100,
-                                       resetsAt: weekly.resetsAt,
-                                       dailyBudget: dailyBudget)
+            if let headline = SectionHeadline(id: "weekly", windowLabel: "Weekly limit",
+                                              fractionLeft: weekly.remainingPercentage / 100,
+                                              resetsAt: weekly.resetsAt,
+                                              dailyBudget: dailyBudget) {
+                headlines.append(headline)
+            }
         }
 
         return ProviderSection(rows: rows, meters: meters, deadlines: deadlinesOut,
-                               headline: headline, lastUpdated: snapshot.fetchedAt)
+                               headlines: headlines, lastUpdated: snapshot.fetchedAt)
     }
 }

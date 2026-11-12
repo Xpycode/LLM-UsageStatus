@@ -79,30 +79,22 @@ struct ClaudeUsageProvider: Provider {
             }
         }
 
-        // The headline shows the next window to reset; Claude exposes no token
-        // quantity, so no daily-budget quote is possible.
-        let windows: [(label: String, window: ClaudeUsageWindow, id: String)] =
-            [("5-hour limit", usage.fiveHour, "five-hour"),
-             ("7-day limit", usage.sevenDay, "seven-day")]
-            .compactMap { entry in entry.1.map { (entry.0, $0, entry.2) } }
-        let headline = windows
-            .filter { $0.window.utilization != nil }
-            .min { lhs, rhs in
-                switch (lhs.window.resetsAt, rhs.window.resetsAt) {
-                case (nil, nil): return lhs.id < rhs.id
-                case (nil, _): return false
-                case (_, nil): return true
-                case (let l?, let r?): return l < r
-                }
-            }
-            .flatMap { window in
-                SectionHeadline(windowLabel: window.label,
-                               fractionLeft: 1 - (window.window.utilization ?? 0),
-                               resetsAt: window.window.resetsAt)
-            }
+        // 5-hour then 7-day, each only when its window reports a utilization.
+        // Claude exposes no token quantity, so no daily-budget quote is possible.
+        var headlines: [SectionHeadline] = []
+        if let window = usage.fiveHour, let utilization = window.utilization,
+           let headline = SectionHeadline(id: "five-hour", windowLabel: "5-hour limit",
+                                          fractionLeft: 1 - utilization, resetsAt: window.resetsAt) {
+            headlines.append(headline)
+        }
+        if let window = usage.sevenDay, let utilization = window.utilization,
+           let headline = SectionHeadline(id: "seven-day", windowLabel: "7-day limit",
+                                          fractionLeft: 1 - utilization, resetsAt: window.resetsAt) {
+            headlines.append(headline)
+        }
 
         return ProviderSection(rows: [], meters: meters, deadlines: deadlines,
-                               headline: headline, lastUpdated: usage.fetchedAt)
+                               headlines: headlines, lastUpdated: usage.fetchedAt)
     }
 
     /// Local transcript aggregates are estimates; every row and the glance

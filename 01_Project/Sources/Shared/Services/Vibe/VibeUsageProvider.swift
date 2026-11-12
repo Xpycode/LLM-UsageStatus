@@ -91,7 +91,8 @@ struct VibeUsageProvider: Provider {
         }
         let sectionHeadline = headline(for: report, budget: budget, now: now, calendar: calendar)
         let glance = sectionHeadline == nil ? glanceLine(for: report) : nil
-        return ProviderSection(rows: rows, headline: sectionHeadline, glanceLine: glance,
+        return ProviderSection(rows: rows, headlines: sectionHeadline.map { [$0] } ?? [],
+                               glanceLine: glance,
                                lastUpdated: report.scannedAt)
     }
 
@@ -183,7 +184,7 @@ struct VibeUsageProvider: Provider {
         let fractionLeft = min(max(1 - spent / budget.amountUSD, 0), 1)
         let raw = amount - cost.total
         let remaining = raw < 0 ? Decimal(0) : raw
-        return SectionHeadline(windowLabel: "Monthly budget",
+        return SectionHeadline(id: "budget", windowLabel: "Monthly budget",
                                fractionLeft: fractionLeft,
                                resetsAt: nextResetDate(onOrAfter: now, dayOfMonth: budget.resetDay,
                                                        calendar: calendar),

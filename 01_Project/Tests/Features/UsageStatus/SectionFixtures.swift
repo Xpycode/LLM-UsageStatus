@@ -149,10 +149,14 @@ enum SectionFixture {
                 SectionDeadline(id: "five-hour-reset", label: "5-hour limit", date: now.addingTimeInterval(4_500)),
                 SectionDeadline(id: "pass-expiry", label: "Next reset-pass expiry", date: now.addingTimeInterval(172_800)),
             ],
-            headline: SectionHeadline(windowLabel: "Weekly limit", fractionLeft: 0.68,
-                                     resetsAt: now.addingTimeInterval(90_000),
-                                     dailyBudget: SectionDailyBudget(amount: Decimal(string: "7417273")!,
-                                                                     unitText: "credits", isEstimate: false)),
+            headlines: [
+                SectionHeadline(id: "five-hour", windowLabel: "5-hour limit", fractionLeft: 0.82,
+                                resetsAt: now.addingTimeInterval(4_500))!,
+                SectionHeadline(id: "weekly", windowLabel: "Weekly limit", fractionLeft: 0.68,
+                                resetsAt: now.addingTimeInterval(90_000),
+                                dailyBudget: SectionDailyBudget(amount: Decimal(string: "7417273")!,
+                                                                unitText: "credits", isEstimate: false))!,
+            ],
             lastUpdated: now)
     }
 
@@ -203,8 +207,12 @@ enum SectionFixture {
                 SectionDeadline(id: "five-hour-reset", label: "5-hour limit", date: now.addingTimeInterval(4_500)),
                 SectionDeadline(id: "seven-day-reset", label: "7-day limit", date: now.addingTimeInterval(90_000)),
             ],
-            headline: SectionHeadline(windowLabel: "5-hour limit", fractionLeft: 0.58,
-                                     resetsAt: now.addingTimeInterval(4_500)),
+            headlines: [
+                SectionHeadline(id: "five-hour", windowLabel: "5-hour limit", fractionLeft: 0.58,
+                                resetsAt: now.addingTimeInterval(4_500))!,
+                SectionHeadline(id: "seven-day", windowLabel: "7-day limit", fractionLeft: 0.19,
+                                resetsAt: now.addingTimeInterval(90_000))!,
+            ],
             lastUpdated: now)
     }
 
@@ -273,11 +281,13 @@ enum SectionFixture {
                 SectionRow(id: "tokens-total", label: "Tokens (all time)", value: "9,876,543"),
                 SectionRow(id: "estimated-cost", label: "Estimated cost", value: "$2.33", isEstimate: true),
             ],
-            headline: SectionHeadline(windowLabel: "Monthly budget", fractionLeft: 0.99,
-                                     resetsAt: now.addingTimeInterval(172_800),
-                                     dailyBudget: SectionDailyBudget(amount: Decimal(string: "297.67")!,
-                                                                     unitText: "$", isEstimate: true),
-                                     isEstimate: true),
+            headlines: [
+                SectionHeadline(id: "budget", windowLabel: "Monthly budget", fractionLeft: 0.99,
+                                resetsAt: now.addingTimeInterval(172_800),
+                                dailyBudget: SectionDailyBudget(amount: Decimal(string: "297.67")!,
+                                                                unitText: "$", isEstimate: true),
+                                isEstimate: true)!,
+            ],
             lastUpdated: now)
     }
 

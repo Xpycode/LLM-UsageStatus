@@ -100,7 +100,7 @@ final class VibeUsageProviderTests: XCTestCase {
                                            value: VibeUsageProvider.usd(pricedCost) + "+ · 1 session unpriced",
                                            isEstimate: true))
         // A partial floor is not good enough for the budget headline.
-        XCTAssertNil(section.headline)
+        XCTAssertTrue(section.headlines.isEmpty)
     }
 
     func testUnattributedWindowsAreLabeledAsEstimates() async throws {
@@ -196,12 +196,13 @@ final class VibeUsageProviderTests: XCTestCase {
         let cost = VibeRateCard.cost(inputTokens: 5_100, cachedTokens: 5_000, outputTokens: 200,
                                         prices: VibeRateCard.resolve("mistral-medium-3.5")!)
         let expectedHeadline = SectionHeadline(
+            id: "budget",
             windowLabel: "Monthly budget",
             fractionLeft: 1 - Double(truncating: cost as NSDecimalNumber) / 300,
             resetsAt: calendar.date(from: DateComponents(year: 2025, month: 1, day: 15)),
             dailyBudget: SectionDailyBudget(amount: Decimal(300) - cost, unitText: "$", isEstimate: true),
             isEstimate: true)
-        XCTAssertEqual(section.headline, expectedHeadline)
+        XCTAssertEqual(section.headlines, [expectedHeadline!])
     }
 
     func testBudgetWithoutResolvableCostHasNoHeadline() async throws {
@@ -213,7 +214,7 @@ final class VibeUsageProviderTests: XCTestCase {
 
         let section = VibeUsageProvider.section(for: report,
                                                 budget: VibeBudget(amountUSD: 300, resetDay: 15))
-        XCTAssertNil(section.headline)
+        XCTAssertTrue(section.headlines.isEmpty)
     }
 
     func testNoBudgetMeansNoHeadline() async throws {
@@ -222,7 +223,7 @@ final class VibeUsageProviderTests: XCTestCase {
             coreInputRecord(sequence: 2, actionID: "n1", timeUnixMs: milliseconds(Self.now)),
         ], modelName: "mistral-medium-3.5")
         let report = await aggregator(modelName: { _, _ in "mistral-medium-3.5" }).scan()
-        XCTAssertNil(VibeUsageProvider.section(for: report, budget: nil).headline)
+        XCTAssertTrue(VibeUsageProvider.section(for: report, budget: nil).headlines.isEmpty)
     }
 
     func testGlanceLineShowsCostAndTokensForLast24Hours() async throws {
@@ -285,7 +286,7 @@ final class VibeUsageProviderTests: XCTestCase {
         let section = VibeUsageProvider.section(for: report,
                                                 budget: VibeBudget(amountUSD: 300, resetDay: 15))
 
-        XCTAssertNotNil(section.headline)
+        XCTAssertEqual(section.headlines.map(\.id), ["budget"])
         XCTAssertNil(section.glanceLine)
     }
 

@@ -52,24 +52,46 @@ final class ClaudeUsageProviderTests: XCTestCase {
         ])
         XCTAssertTrue(section.rows.isEmpty)
         XCTAssertEqual(section.lastUpdated, Self.now)
-        // The headline leads with the window that resets soonest: here the
-        // seven-day window (2027) resets before the five-hour one (2030).
-        XCTAssertEqual(section.headline,
-                       SectionHeadline(windowLabel: "7-day limit", fractionLeft: 1 - 0.81,
-                                       resetsAt: Self.isoDate("2027-01-21T00:00:00Z")))
+        // Both windows headline in fixed order, whichever resets first.
+        XCTAssertEqual(section.headlines, [
+            SectionHeadline(id: "five-hour", windowLabel: "5-hour limit", fractionLeft: 1 - 0.42,
+                            resetsAt: Date(timeIntervalSince1970: 1_893_456_000))!,
+            SectionHeadline(id: "seven-day", windowLabel: "7-day limit", fractionLeft: 1 - 0.81,
+                            resetsAt: Self.isoDate("2027-01-21T00:00:00Z"))!,
+        ])
     }
 
-    func testFiveHourWindowLeadsHeadlineWhenItResetsSooner() {
+    func testHeadlinesListFiveHourThenSevenDay() {
         let fiveHourReset = Self.now.addingTimeInterval(3_600)
         let usage = ClaudeOAuthUsage(
             fiveHour: ClaudeUsageWindow(utilization: 0.42, resetsAt: fiveHourReset),
             sevenDay: ClaudeUsageWindow(utilization: 0.81, resetsAt: Self.now.addingTimeInterval(600_000)),
             fetchedAt: Self.now)
         let section = ClaudeUsageProvider.section(for: usage)
-        XCTAssertEqual(section.headline,
-                       SectionHeadline(windowLabel: "5-hour limit", fractionLeft: 1 - 0.42,
-                                       resetsAt: fiveHourReset))
+        XCTAssertEqual(section.headlines, [
+            SectionHeadline(id: "five-hour", windowLabel: "5-hour limit", fractionLeft: 1 - 0.42,
+                            resetsAt: fiveHourReset)!,
+            SectionHeadline(id: "seven-day", windowLabel: "7-day limit", fractionLeft: 1 - 0.81,
+                            resetsAt: Self.now.addingTimeInterval(600_000))!,
+        ])
         XCTAssertNil(section.note)
+    }
+
+    func testHeadlineIsPresentOnlyForWindowsWithUtilization() {
+        let sevenDayOnly = ClaudeOAuthUsage(
+            fiveHour: nil,
+            sevenDay: ClaudeUsageWindow(utilization: 0.5, resetsAt: nil),
+            fetchedAt: Self.now)
+        XCTAssertEqual(ClaudeUsageProvider.section(for: sevenDayOnly).headlines, [
+            SectionHeadline(id: "seven-day", windowLabel: "7-day limit", fractionLeft: 0.5, resetsAt: nil)!,
+        ])
+
+        let fiveHourWithoutUtilization = ClaudeOAuthUsage(
+            fiveHour: ClaudeUsageWindow(utilization: nil, resetsAt: Self.now.addingTimeInterval(60)),
+            sevenDay: ClaudeUsageWindow(utilization: 0.25, resetsAt: nil),
+            fetchedAt: Self.now)
+        XCTAssertEqual(ClaudeUsageProvider.section(for: fiveHourWithoutUtilization).headlines.map(\.id),
+                       ["seven-day"])
     }
 
     func testMissingTokenFallsBackToLabeledLocalAggregates() async throws {

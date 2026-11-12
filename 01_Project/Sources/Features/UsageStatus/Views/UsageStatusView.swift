@@ -122,8 +122,10 @@ struct ProviderSectionView: View {
     @ViewBuilder
     private func sectionContent(_ section: ProviderSection) -> some View {
         VStack(alignment: .leading, spacing: 14) {
-            if let headline = section.headline {
-                SectionHeadlineView(headline: headline, now: now)
+            if !visibleHeadlines.isEmpty {
+                ForEach(visibleHeadlines) { headline in
+                    SectionHeadlineView(headline: headline, now: now)
+                }
             } else if let glance = section.glanceLine {
                 // No utilization window (e.g. Vibe without a budget): one
                 // glance sentence of the most relevant local fact instead.
@@ -137,7 +139,7 @@ struct ProviderSectionView: View {
             }
             if !expanded {
                 // Collapsed sections keep their secondary windows visible in
-                // small — the headline shows only the primary one.
+                // small — headlines show only the primary windows.
                 ForEach(secondaryMeters(section)) { meter in
                     Text(Self.smallWindowLine(meter, section: section, now: now))
                         .font(.caption)
@@ -182,12 +184,19 @@ struct ProviderSectionView: View {
     }
 
     private func visibleMeters(_ section: ProviderSection) -> [SectionMeter] {
-        showFiveHourLimit ? section.meters : section.meters.filter { $0.id != "five-hour-limit" }
+        SectionVisibility.meters(section, providerID: store.providerID, showFiveHourLimit: showFiveHourLimit)
     }
 
-    /// Meters other than the headline's primary window, shown small while collapsed.
+    private var visibleHeadlines: [SectionHeadline] {
+        store.section.map {
+            SectionVisibility.headlines($0, providerID: store.providerID, showFiveHourLimit: showFiveHourLimit)
+        } ?? []
+    }
+
+    /// Meters without a same-label headline, shown small while collapsed.
     private func secondaryMeters(_ section: ProviderSection) -> [SectionMeter] {
-        visibleMeters(section).filter { $0.label != section.headline?.windowLabel }
+        SectionVisibility.collapsedSecondaryMeters(section, providerID: store.providerID,
+                                                   showFiveHourLimit: showFiveHourLimit)
     }
 
     /// Compact collapsed line for one secondary window, with its reset countdown
@@ -204,15 +213,20 @@ struct ProviderSectionView: View {
     }
 
     private func visibleDeadlines(_ section: ProviderSection) -> [SectionDeadline] {
-        showFiveHourLimit ? section.deadlines : section.deadlines.filter { $0.id != "five-hour-reset" }
+        SectionVisibility.deadlines(section, providerID: store.providerID, showFiveHourLimit: showFiveHourLimit)
     }
 
     /// Compact hover summary of the full detail, for glance-without-click.
     private func tooltip(_ section: ProviderSection) -> String {
         var lines: [String] = []
-        if let headline = section.headline {
+        let headlines = visibleHeadlines
+        for headline in headlines {
             lines.append("\(headline.windowLabel): \(Int((headline.fractionLeft * 100).rounded()))% left")
-        } else if let glance = section.glanceLine {
+            for sub in headline.subMeters {
+                lines.append("\(sub.label): \(Int((sub.fractionLeft * 100).rounded()))% left")
+            }
+        }
+        if headlines.isEmpty, let glance = section.glanceLine {
             lines.append(glance.text)
         }
         for meter in visibleMeters(section) {
@@ -225,6 +239,44 @@ struct ProviderSectionView: View {
             lines.append("\(deadline.label): resets \(deadline.date.formatted(date: .abbreviated, time: .shortened))")
         }
         return lines.joined(separator: "\n")
+    }
+}
+
+/// Which meters, deadlines and headlines the section view shows. The Codex
+/// "Show 5-hour limit" toggle applies to the Codex store only; every other
+/// provider's 5-hour window is always shown. The provider owns the stable ids.
+enum SectionVisibility {
+    static let codexProviderID = "codex"
+
+    private static func hidesFiveHour(providerID: String, showFiveHourLimit: Bool) -> Bool {
+        providerID == codexProviderID && !showFiveHourLimit
+    }
+
+    static func meters(_ section: ProviderSection, providerID: String,
+                       showFiveHourLimit: Bool) -> [SectionMeter] {
+        hidesFiveHour(providerID: providerID, showFiveHourLimit: showFiveHourLimit)
+            ? section.meters.filter { $0.id != "five-hour-limit" } : section.meters
+    }
+
+    static func deadlines(_ section: ProviderSection, providerID: String,
+                          showFiveHourLimit: Bool) -> [SectionDeadline] {
+        hidesFiveHour(providerID: providerID, showFiveHourLimit: showFiveHourLimit)
+            ? section.deadlines.filter { $0.id != "five-hour-reset" } : section.deadlines
+    }
+
+    static func headlines(_ section: ProviderSection, providerID: String,
+                          showFiveHourLimit: Bool) -> [SectionHeadline] {
+        hidesFiveHour(providerID: providerID, showFiveHourLimit: showFiveHourLimit)
+            ? section.headlines.filter { $0.id != "five-hour" } : section.headlines
+    }
+
+    /// Visible meters that no visible headline already presents under the same label.
+    static func collapsedSecondaryMeters(_ section: ProviderSection, providerID: String,
+                                         showFiveHourLimit: Bool) -> [SectionMeter] {
+        let labels = Set(headlines(section, providerID: providerID, showFiveHourLimit: showFiveHourLimit)
+            .map(\.windowLabel))
+        return meters(section, providerID: providerID, showFiveHourLimit: showFiveHourLimit)
+            .filter { !labels.contains($0.label) }
     }
 }
 
@@ -259,6 +311,21 @@ private struct SectionHeadlineView: View {
             }
             ProgressView(value: headline.fractionLeft)
                 .progressViewStyle(.linear)
+            ForEach(headline.subMeters) { sub in
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 4) {
+                        Text("\(sub.label): \(Int((sub.fractionLeft * 100).rounded()))% left")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        if sub.isEstimate {
+                            estimateTag
+                        }
+                    }
+                    ProgressView(value: sub.fractionLeft)
+                        .progressViewStyle(.linear)
+                        .scaleEffect(x: 1, y: 0.6, anchor: .center)
+                }
+            }
         }
     }
 
@@ -382,10 +449,10 @@ private struct SectionPreview: View {
             meters: [SectionMeter(id: "weekly", label: "Weekly limit", fraction: 0.32)!,
                      SectionMeter(id: "five-hour", label: "5-hour limit", fraction: 0.18, isEstimate: true)!],
             deadlines: [SectionDeadline(id: "reset", label: "Weekly limit", date: now.addingTimeInterval(90_000))],
-            headline: SectionHeadline(windowLabel: "Weekly limit", fractionLeft: 0.68,
-                                      resetsAt: now.addingTimeInterval(90_000),
-                                      dailyBudget: SectionDailyBudget(amount: Decimal(string: "7417273")!,
-                                                                      unitText: "credits", isEstimate: false)),
+            headlines: [SectionHeadline(id: "weekly", windowLabel: "Weekly limit", fractionLeft: 0.68,
+                                        resetsAt: now.addingTimeInterval(90_000),
+                                        dailyBudget: SectionDailyBudget(amount: Decimal(string: "7417273")!,
+                                                                        unitText: "credits", isEstimate: false))!],
             lastUpdated: now)
         ProviderSectionView(store: store(section: section), now: now, showFiveHourLimit: true)
     }

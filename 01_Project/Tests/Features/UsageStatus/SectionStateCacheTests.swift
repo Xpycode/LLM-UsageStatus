@@ -47,11 +47,17 @@ final class SectionStateCacheTests: XCTestCase {
             rows: [SectionRow(id: "credits", label: "Credits", value: "12.75", isEstimate: true)],
             meters: [SectionMeter(id: "weekly", label: "Weekly limit", fraction: 0.32, isEstimate: false)!],
             deadlines: [SectionDeadline(id: "weekly-reset", label: "Weekly limit", date: Date(timeIntervalSince1970: 1_800_000_900), isEstimate: true)],
-            headline: SectionHeadline(windowLabel: "Weekly limit", fractionLeft: 0.68,
-                                      resetsAt: Date(timeIntervalSince1970: 1_800_000_900),
-                                      dailyBudget: SectionDailyBudget(amount: Decimal(string: "7417273")!,
-                                                                      unitText: "credits", isEstimate: false),
-                                      isEstimate: true),
+            headlines: [
+                SectionHeadline(id: "five-hour", windowLabel: "5-hour limit", fractionLeft: 0.82,
+                                resetsAt: Date(timeIntervalSince1970: 1_800_000_300))!,
+                SectionHeadline(id: "weekly", windowLabel: "Weekly limit", fractionLeft: 0.68,
+                                resetsAt: Date(timeIntervalSince1970: 1_800_000_900),
+                                dailyBudget: SectionDailyBudget(amount: Decimal(string: "7417273")!,
+                                                                unitText: "credits", isEstimate: false),
+                                isEstimate: true,
+                                subMeters: [SectionMeter(id: "fable", label: "Fable", fraction: 0.4,
+                                                         isEstimate: true)!])!,
+            ],
             glanceLine: SectionGlanceLine("≈ $2.41+ · 5.3K tokens · 24 hours", isEstimate: true),
             note: .refreshClaudeSignIn,
             lastUpdated: Date(timeIntervalSince1970: 1_800_000_000))
@@ -59,6 +65,51 @@ final class SectionStateCacheTests: XCTestCase {
         cache.store(section, for: "codex")
 
         XCTAssertEqual(SectionStateCache(fileURL: fileURL).loadSections()["codex"], section)
+    }
+
+    func testZeroPointTwoPointTwoFormatFileDecodesLegacyHeadlineAsPrimary() throws {
+        // Literal 0.2.2 cache shape: single `headline` without id/subMeters,
+        // dates as default reference-date seconds, written by a default encoder.
+        let json = """
+        {"codex":{"rows":[{"id":"credits","label":"Credits","value":"12.75","isEstimate":false}],
+        "meters":[{"id":"weekly-limit","label":"Weekly limit","fraction":0.32,"isEstimate":false}],
+        "deadlines":[{"id":"weekly-reset","label":"Weekly limit","date":800000900,"isEstimate":false}],
+        "headline":{"windowLabel":"Weekly limit","fractionLeft":0.68,"resetsAt":800000900,
+        "dailyBudget":{"amount":7417273,"unitText":"credits","isEstimate":false},"isEstimate":false},
+        "lastUpdated":800000000}}
+        """
+        try Data(json.utf8).write(to: fileURL)
+
+        let loaded = SectionStateCache(fileURL: fileURL).loadSections()
+
+        let section = try XCTUnwrap(loaded["codex"])
+        XCTAssertEqual(section.headlines.count, 1)
+        let headline = try XCTUnwrap(section.headlines.first)
+        XCTAssertEqual(headline.id, "primary")
+        XCTAssertEqual(headline.windowLabel, "Weekly limit")
+        XCTAssertEqual(headline.fractionLeft, 0.68)
+        XCTAssertEqual(headline.dailyBudget?.amount, Decimal(7417273))
+        XCTAssertTrue(headline.subMeters.isEmpty)
+        XCTAssertEqual(section.rows.map(\.id), ["credits"])
+        XCTAssertEqual(section.lastUpdated, Date(timeIntervalSinceReferenceDate: 800_000_000))
+    }
+
+    func testLegacyFileWithoutHeadlineDecodesWithNoHeadlines() throws {
+        let json = """
+        {"claude":{"rows":[],"meters":[],"deadlines":[],"lastUpdated":800000000}}
+        """
+        try Data(json.utf8).write(to: fileURL)
+        let section = try XCTUnwrap(SectionStateCache(fileURL: fileURL).loadSections()["claude"])
+        XCTAssertTrue(section.headlines.isEmpty)
+    }
+
+    func testEncodedSectionWritesHeadlinesAndNoLegacyKey() throws {
+        let section = ProviderSection(
+            headlines: [SectionHeadline(id: "five-hour", windowLabel: "5-hour limit", fractionLeft: 0.5)!],
+            lastUpdated: Date(timeIntervalSince1970: 1_000))
+        let text = try XCTUnwrap(String(data: JSONEncoder().encode(section), encoding: .utf8))
+        XCTAssertTrue(text.contains("\"headlines\""))
+        XCTAssertFalse(text.contains("\"headline\""))
     }
 
     func testStoreUnderRegularFileParentDoesNotCrashAndLoadStaysEmpty() throws {
