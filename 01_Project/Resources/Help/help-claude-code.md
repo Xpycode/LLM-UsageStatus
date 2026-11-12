@@ -2,11 +2,18 @@
 
 ## When you are signed in
 
-If Claude Code is signed in on this Mac, the section shows your subscription utilization as reported by Claude's usage service:
+If Claude Code is signed in on this Mac, the section shows your subscription utilization as reported by Claude's usage service, as two headlines:
 
-- **5-hour limit** and **7-day limit**, each with percent left and a renewal time.
+- **5-hour limit** — percent left, a countdown to its reset and a bar.
+- **7-day limit** — percent left, a countdown to the weekly reset and a bar.
 
-These values are authoritative.
+Click the section to expand it for the meters and the exact reset times. These values are authoritative.
+
+## Fable allowance
+
+On plans that include Fable models with their own allowance (such as Max), a smaller bar under the 7-day headline reads, for example, "Fable allowance: 87% left". It is the percent left of your Fable allowance, not of the whole weekly limit. The Fable allowance can use up to half of your weekly limit and resets together with it.
+
+If Claude does not report a Fable allowance for your account, for example on Pro, the bar does not appear. That is expected.
 
 ## When you are not
 

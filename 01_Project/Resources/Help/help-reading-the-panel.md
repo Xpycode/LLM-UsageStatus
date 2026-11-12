@@ -4,7 +4,8 @@ The panel has one section per provider: **Codex**, **Claude Code** and **Mistral
 
 ## What a section shows
 
-- A headline with the percent left until the next reset (for example, "68% left") and a live countdown such as "Resets in 2d 4h 10m".
+- One headline per limit window, each with the percent left until its reset (for example, "68% left"), the window's name (such as "5-hour limit" or "Weekly limit"), a live countdown such as "Resets in 2d 4h 10m" and a bar. Claude Code shows two headlines, the 5-hour and the 7-day limit; Codex shows its weekly limit, plus the 5-hour limit while **Show 5-hour limit** is on.
+- Some headlines carry a smaller bar underneath for a related allowance, such as Claude's **Fable allowance**.
 - Where a remaining amount exists, an approximate per-day amount (for example, "≈ 7417273 credits/day").
 - Click the section to expand it for meters, rows and reset times.
 

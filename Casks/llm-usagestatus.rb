@@ -7,6 +7,12 @@ cask "llm-usagestatus" do
   desc "HUD panel showing Codex, Claude Code and Mistral Vibe usage"
   homepage "https://github.com/Xpycode/LLM-UsageStatus"
 
+  livecheck do
+    url "https://raw.githubusercontent.com/Xpycode/LLM-UsageStatus/main/appcast.xml"
+    strategy :sparkle
+  end
+
+  auto_updates true
   depends_on macos: :sequoia
 
   app "LLM-UsageStatus.app"

@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.3.0] - Unreleased
+
+### Added
+
+- **Automatic updates.** The app checks this project's release feed once a
+  day and offers a new version in an alert with its release notes; the update
+  installs only after you choose Install Update. Updates are notarized disk
+  images from GitHub Releases, verified with the app's own signing key before
+  they replace the app.
+- **Check for Updates…** in the right-click menu, after Settings…, and in the
+  warning menu-bar item that appears when the shortcut cannot be registered.
+- Settings has a new **Updates** section: Check for updates automatically (on
+  by default), a Check for Updates… button and the time of the last check.
+- Claude Code shows the 5-hour and the 7-day limit as **two headlines**, each
+  with percent left, a countdown and a bar. The 7-day limit is no longer a
+  grey line under the 5-hour headline.
+- A smaller **Fable allowance** bar under Claude's 7-day headline shows the
+  percent left of your Fable allowance, when Claude reports one (Max and
+  similar plans). It resets with the weekly limit.
+- With **Show 5-hour limit** on, Codex shows the 5-hour limit as a second
+  headline under its weekly limit.
+
+### Fixed
+
+- The Codex **Show 5-hour limit** toggle no longer hides Claude's 5-hour
+  meter and countdown.
+- The last-seen values saved by 0.2.2 still load after updating, so the panel
+  shows them at once after the first relaunch.
+
 ## [0.2.2] - 2026-11-11
 
 ### Added

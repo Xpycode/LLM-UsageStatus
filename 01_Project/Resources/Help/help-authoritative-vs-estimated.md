@@ -6,7 +6,7 @@ The providers expose different amounts of information, so not every number in th
 
 **Codex** allowance figures (weekly limit, credits, reset passes, and the optional 5-hour limit) come from Codex's own usage service. They are the provider's own numbers.
 
-**Claude Code** subscription utilization (5-hour and 7-day limits) is also reported by the provider's usage service, but only while you are signed in. See Claude Code.
+**Claude Code** subscription utilization (5-hour and 7-day limits, and the Fable allowance where your plan has one) is also reported by the provider's usage service, but only while you are signed in. See Claude Code.
 
 ## Estimated
 

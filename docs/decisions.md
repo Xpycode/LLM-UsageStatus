@@ -4,6 +4,50 @@ Durable, project-specific decisions. Newest first.
 
 ---
 
+## 2026-11-12 — 0.3.0: Sparkle updates, one headline per limit window, Fable allowance
+
+**Context:** updates were manual; Claude's 7-day limit was a grey caption under the 5-hour headline;
+the claude.ai usage page shows a Fable allowance and limit resets this app did not. Full decision
+text (D1–D11) and evidence: `docs/plans/2026-11-12-v0.3.0/IMPLEMENTATION_PLAN.md` → Scope decisions;
+research in `research/findings.md`. D2, D4, D10 and D11 were confirmed by the user.
+
+**Choice:**
+- **Feed (D1):** `SUFeedURL` = raw GitHub `appcast.xml` on `main`; enclosures are the notarized DMGs
+  on GitHub Releases; `sparkle:version` is the build number; release notes link to the Release page.
+  The feed is production — an item is added only after its DMG is live, and the previous release's
+  item is kept so a feed is never empty.
+- **Key (D2):** an EdDSA key of this app's own (`generate_keys --account LLM-UsageStatus`, login
+  Keychain), exported once to `99-AUTH`; public key and import steps in `docs/sparkle-signing.md`.
+- **Checks (D3):** automatic daily checks with no first-launch prompt; install only after the user
+  accepts; no system profiling. **UI (D4):** Check for Updates… after Settings… in both menus and a
+  Settings **Updates** section (AppKit controls). The updater never starts under XCTest.
+- **Version and plist (D5, D6):** 0.3.0 build 300; the Sparkle keys live in a committed partial
+  `Resources/Info.plist` merged with the generated one, because `INFOPLIST_KEY_` drops them.
+- **Package and pipeline (D7, D8):** Sparkle pinned `exactVersion: 2.10.1`; `scripts/sign-app.sh`
+  signs inside-out (XPC services, Autoupdate, Updater.app, framework, app), `--deep` only to verify;
+  zips use `ditto --sequesterRsrc`; `scripts/make-appcast-item.sh` signs the DMG and inserts or
+  replaces one item per version.
+- **Headlines (D9):** `ProviderSection.headlines` in display order (shorter window first), each with
+  a stable id and optional sub-meters; the Codex 5-hour toggle hides only Codex's 5-hour headline;
+  the 0.2.2 cache format still decodes.
+- **Fable and limit resets (D10):** the Fable allowance is the `limits[]` row with `kind`
+  `weekly_scoped` and a Fable scope, shown as a sub-meter of the 7-day headline. The "Limit resets"
+  inventory is deferred (Backlog #16): it is served only to requests presenting as the Claude CLI.
+- **Hygiene (D11):** tests delete the empty preference plists they leave behind; zero compiler
+  warnings.
+
+**Alternatives (as recorded in the plan):** sharing syncthingStatus's key in the default `ed25519`
+account (not chosen: a loss or compromise would touch both apps); Sparkle delta updates and silent
+installs (out of scope); presenting the app as Claude Code to read limit resets (a product decision,
+deferred to Backlog #16).
+
+**Consequences:** every release adds an appcast item after the DMG is live (`docs/homebrew.md`
+step 3), signed with the key that must never be lost; the cask is `auto_updates true`, so
+`brew upgrade` skips copies Sparkle already moved ahead. The Fable meter depends on an undocumented
+response field and disappears without a log line when Claude stops sending it.
+
+---
+
 ## 2026-11-12 — Open source, GitHub Releases and an in-repo Homebrew tap
 
 **Context:** 0.2.2 shipped as a notarized DMG on the apps website only, from a private repo, while

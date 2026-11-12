@@ -21,6 +21,8 @@ Your display preferences are saved: which providers are on, the Codex 5-hour tog
 ## What is sent over the network
 
 - Usage requests to the Codex and Claude usage services, as described above.
+- **Update checks** — once a day while **Check for updates automatically** is on, and whenever you choose **Check for Updates…**, the app downloads this project's release list (appcast.xml) from GitHub. The request names the app and its version; no system information or usage data is sent.
+- **Update downloads** — only after you choose **Install Update**, the app downloads the new version's disk image from GitHub Releases.
 - **Send Feedback…** sends your message to the developer's server only when you submit the form. No logs or usage data are attached.
 - **Leave a Tip** just opens a web page in your browser.
 

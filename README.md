@@ -15,15 +15,17 @@
   <img src="github/screenshots/panel.png" alt="The LLM Usage Status panel with Codex, Claude Code and Mistral Vibe sections" width="420">
 </div>
 
-## What's New in Version 0.2.2
+## What's New in Version 0.3.0
 
-- **Providers in Settings** — turn Codex, Claude Code or Mistral Vibe on or off. A provider that is
-  off is hidden from the panel and never read.
-- **Correct Vibe numbers** — earlier versions counted cached and reasoning tokens twice, so token
-  totals and the cost estimate were too high. Totals now match Vibe's own counters and survive
-  log rotation; sub-agent sessions fold into the session that started them.
-- **Shortcuts follow your keyboard layout** — refusals and Command-Comma work on QWERTZ and AZERTY,
-  and the ISO key next to Left Shift can be part of the shortcut.
+- **Automatic updates** — the app checks for a new version once a day and offers it in an alert;
+  nothing installs until you choose **Install Update**. **Check for Updates…** is in the right-click
+  menu, and Settings has a new **Updates** section.
+- **Claude's weekly limit gets its own headline** — the Claude Code section shows the 5-hour and the
+  7-day limit as two headlines, each with percent left, a countdown and a bar.
+- **Fable allowance** — on plans where Claude reports a separate Fable allowance, a smaller bar under
+  the 7-day headline shows how much of it is left.
+- **Codex 5-hour headline** — with **Show 5-hour limit** on, Codex shows the 5-hour limit as a
+  second headline. The toggle no longer hides Claude's 5-hour meter.
 
 See the [CHANGELOG](CHANGELOG.md) for every release.
 
@@ -44,15 +46,20 @@ allowances, and renewal times are one keystroke away.
 - Utilization meters and renewal countdowns per provider.
 - Estimated values are always visibly labeled as estimates — the panel never
   presents a guess as an authoritative allowance.
+- One headline per limit window: Claude Code shows its 5-hour and 7-day limits
+  as two headlines, plus a Fable allowance bar when Claude reports one.
 - Per-provider preferences in a right-click menu, including the optional Codex
-  five-hour limit line; settings persist across restarts and update the open
+  5-hour headline; settings persist across restarts and update the open
   panel immediately.
 - Refresh on open; a failed refresh retains the last successful values with a
   visible stale-data message and the last update time.
 - Hotkey fallback: when the shortcut cannot be registered, a warning menu-bar
-  item appears and offers Show HUD, Retry Shortcut, Settings, Help, and Quit.
+  item appears and offers Show HUD, Retry Shortcut, Settings, Check for
+  Updates…, Help, and Quit.
 - Settings window: turn each provider on or off, launch at login, a
-  rebindable show/hide shortcut, and the app's version.
+  rebindable show/hide shortcut, automatic update checks, and the app's version.
+- Automatic updates: a daily check, **Check for Updates…** in the right-click
+  menu, and signed updates that install only after you accept them.
 - A provider that is turned off is hidden from the panel and never read — no
   file, Keychain or network access for it.
 - Shortcut names follow your keyboard layout: on a German layout a chord
@@ -75,7 +82,7 @@ Rendered from the app with sample values.
 Press **Control-Option-Command-L** anywhere to toggle the panel. Clicking
 anywhere else dismisses it; drag the panel to move it. Opening the panel
 refreshes usage. Right-click the panel for section preferences, Settings,
-Help, Restart, Send Feedback…, Leave a Tip, and Quit.
+Check for Updates…, Help, Restart, Send Feedback…, Leave a Tip, and Quit.
 
 ### Settings
 
@@ -103,6 +110,9 @@ immediately; Escape or Command-W closes the window.
   key labelled Y is accepted. The ISO key next to Left Shift can be used. A
   chord another app already holds is refused and the previous shortcut keeps working. **Reset to Default** restores
   Control-Option-Command-L. The shortcut persists across restarts.
+- **Updates** — **Check for updates automatically** (on by default) runs one
+  check a day. **Check for Updates…** checks now, and the line below says when
+  the last check ran (or "Never checked").
 - **About** — name, version and build number.
 
 Shortcut names (in the recorder, the panel footer, and the warning menu) use
@@ -126,10 +136,11 @@ itself stays bound to the same physical key.
 ### What each section shows
 
 - **Codex** — weekly allowance and its renewal countdown, credits, available
-  reset passes, and an optional five-hour limit line.
-- **Claude Code** — subscription utilization (five-hour and seven-day windows)
-  with renewal times when you are signed in; otherwise, labeled local estimates
-  computed from your session logs.
+  reset passes, and an optional 5-hour limit headline.
+- **Claude Code** — when you are signed in, two headlines (5-hour limit and
+  7-day limit) with percent left, renewal countdowns and bars, and a smaller
+  Fable allowance bar under the 7-day headline when Claude reports one;
+  otherwise, labeled local estimates computed from your session logs.
 - **Mistral Vibe** — pay-per-token usage with no usage API: sessions, token
   totals (input plus output; cached and reasoning tokens are inside those and
   not counted twice) and an estimated cost line only when model prices
@@ -147,7 +158,17 @@ itself stays bound to the same physical key.
 
 ## Installation
 
-Updates are installed manually for now; built-in automatic updates are planned.
+### Updates
+
+The app checks for a new version once a day. When one is available, an alert offers it with its
+release notes; **Install Update** downloads the notarized disk image from GitHub Releases,
+verifies its signature, replaces the app and relaunches it. Nothing is installed until you accept. To check right away,
+choose **Check for Updates…** in the right-click menu; to stop the daily check, untick **Check for
+updates automatically** in Settings → Updates.
+
+If you installed with Homebrew, the cask is marked as updating itself (`auto_updates`), so
+`brew upgrade` leaves an app that has already updated itself alone. `brew upgrade --greedy` makes
+Homebrew reinstall its own copy anyway.
 
 ### Install with Homebrew
 
@@ -204,8 +225,12 @@ compiles.
 The app reads only local files owned by each CLI (`~/.codex/auth.json`,
 `~/.claude/projects/**/*.jsonl`, the Vibe session store under
 `~/.vibe/logs/session/unified/`) plus the Codex and Claude usage endpoints. Tokens are read in memory and sent
-only as authentication headers to their own usage service. The only other
-outgoing request is a feedback message you submit yourself through Send
+only as authentication headers to their own usage service. The update check
+fetches this project's release feed (`appcast.xml`) from GitHub once a day
+while automatic checks are on, and whenever you choose Check for Updates…; the
+request names the app and its version and sends no system information. An
+update is downloaded from GitHub Releases only after you accept it. The only
+other outgoing request is a feedback message you submit yourself through Send
 Feedback…. No credentials or telemetry are logged, stored, or transmitted
 elsewhere;
 sandboxing is disabled so the app can read these user-owned files outside an
@@ -237,7 +262,8 @@ LLM-UsageStatus/
 │   ├── Vendor/          # Vendored feedback and tip packages
 │   └── Tests/           # Unit tests mirroring source modules
 ├── Casks/               # Homebrew cask (this repository is its own tap)
-├── scripts/             # Release build and notarization scripts
+├── scripts/             # Release build, signing, notarization and appcast scripts
+├── appcast.xml          # Sparkle update feed (served from main)
 └── .github/workflows/   # CI: build + test on push
 ```
 
@@ -256,6 +282,11 @@ Settings. The item disappears once registration succeeds.
 **Solution:** The CLI is not installed, or its local data files are missing.
 Install the CLI and use it once; the section populates on the next refresh.
 
+### Problem: "An error occurred in retrieving update information"
+**Solution:** The update feed on GitHub could not be reached. Check your
+network connection and choose Check for Updates… again later; the app keeps
+working normally in the meantime.
+
 ### Problem: Values are stale or marked as estimates
 **Solution:** Endpoint-backed data refreshes when the panel opens; if a refresh
 fails, prior values are retained and marked stale. Claude and Mistral sections
@@ -270,5 +301,5 @@ Pull requests are welcome too; please run the tests before submitting.
 ## License
 
 MIT. See [LICENSE](LICENSE). Third-party notices (MarkdownUI, NetworkImage,
-cmark) ship in the app bundle as `ThirdPartyNotices.txt` and live in
+cmark, Sparkle) ship in the app bundle as `ThirdPartyNotices.txt` and live in
 `01_Project/Resources/Licenses/`.

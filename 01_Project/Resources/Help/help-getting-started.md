@@ -14,11 +14,11 @@ Click anywhere outside the panel to dismiss it. Drag the panel to move it.
 
 ## Refreshing
 
-Usage refreshes each time you open the panel. Each provider refreshes on its own, so one slow or failing provider never blocks the others. While the panel is open, a countdown also triggers a refresh when a reset time passes.
+Usage refreshes each time you open the panel. Updates to the app itself are covered in Settings and Shortcuts, under Updates. Each provider refreshes on its own, so one slow or failing provider never blocks the others. While the panel is open, a countdown also triggers a refresh when a reset time passes.
 
 ## Right-click menu
 
-Right-click the panel for **Show 5-hour limit**, **Set Vibe Monthly Budget…**, **Settings…**, **LLM Usage Status Help**, **Restart LLM Usage Status**, **Send Feedback…**, **Leave a Tip** and **Quit LLM Usage Status**.
+Right-click the panel for **Show 5-hour limit**, **Set Vibe Monthly Budget…**, **Settings…**, **Check for Updates…**, **LLM Usage Status Help**, **Restart LLM Usage Status**, **Send Feedback…**, **Leave a Tip** and **Quit LLM Usage Status**.
 
 ## Expand a section
 

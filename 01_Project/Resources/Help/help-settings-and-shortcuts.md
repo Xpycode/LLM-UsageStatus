@@ -31,6 +31,14 @@ The field under **Show or hide the panel** sets the global shortcut. Click the f
 
 Shortcut names follow your keyboard layout, so the key is named by the letter printed on your keycap. Your shortcut is remembered across restarts.
 
+## Updates
+
+- **Check for updates automatically** is on by default. The app then checks for a new version once a day. Untick it to stop the daily check; your choice is remembered.
+- **Check for Updates…** checks right away. The same item is in the right-click menu, after **Settings…**.
+- The line below says when the last check ran, for example "Last checked 12 Nov 2026 at 14:02", or "Never checked".
+
+When a new version is available, an alert shows its release notes. Nothing is installed until you choose **Install Update**. The app then downloads the update from GitHub, checks its signature, replaces itself and relaunches. If no newer version exists, the alert says you are up to date.
+
 ## About
 
 Shows the app name, version and build number.
