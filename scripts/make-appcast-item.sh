@@ -33,6 +33,10 @@ fi
 [[ "$build" =~ '^[0-9]+$' ]] || { print -u2 "Build number must be an integer, got: $build"; exit 1; }
 
 if [[ "${SKIP_SIGN:-0}" == 1 ]]; then
+  # The repository's appcast.xml is the production feed; a placeholder item must go elsewhere.
+  published="${0:A:h:h}/appcast.xml"
+  [[ "${appcast:A}" != "${published:A}" ]] || {
+    print -u2 'SKIP_SIGN=1 refuses to edit the published appcast.xml; set APPCAST (or ROOT) to a scratch copy.'; exit 1; }
   print -u2 '*** SKIP_SIGN=1: using a PLACEHOLDER edSignature. This item is for dry runs only and must never be published. ***'
   signature='SKIP_SIGN_PLACEHOLDER_NOT_A_REAL_SIGNATURE'
 else

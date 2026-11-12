@@ -1,4 +1,5 @@
 import Foundation
+import os
 
 /// One source of usage data shown as a single HUD section (Codex, Claude Code, Vibe).
 ///
@@ -119,11 +120,10 @@ struct ProviderSection: Equatable, Sendable, Codable {
         rows = try container.decode([SectionRow].self, forKey: .rows)
         meters = try container.decode([SectionMeter].self, forKey: .meters)
         deadlines = try container.decode([SectionDeadline].self, forKey: .deadlines)
-        if container.contains(.headlines) {
-            let decoded = try container.decode([LossyHeadline].self, forKey: .headlines)
+        // decodeIfPresent treats an explicit null like an absent key, so it never fails the file.
+        if let decoded = try container.decodeIfPresent([LossyHeadline].self, forKey: .headlines) {
             headlines = decoded.compactMap(\.value)
-        } else if container.contains(.legacyHeadline),
-                  let legacy = try container.decodeIfPresent(LossyHeadline.self, forKey: .legacyHeadline)?.value {
+        } else if let legacy = try container.decodeIfPresent(LossyHeadline.self, forKey: .legacyHeadline)?.value {
             headlines = [legacy]
         } else {
             headlines = []
@@ -146,14 +146,17 @@ struct ProviderSection: Equatable, Sendable, Codable {
 }
 
 /// Decodes a headline that failed validation as nil instead of throwing, so
-/// one bad stored headline cannot discard the whole cache file.
+/// one bad stored headline cannot discard the whole cache file. The drop is
+/// logged by error type only, never with stored values.
 private struct LossyHeadline: Decodable {
+    private static let logger = Logger(subsystem: "com.sim.LLM-UsageStatus", category: "SectionCache")
     let value: SectionHeadline?
 
     init(from decoder: Decoder) throws {
         do {
             value = try SectionHeadline(from: decoder)
         } catch {
+            Self.logger.notice("Dropped an undecodable cached headline: \(String(describing: type(of: error)), privacy: .public)")
             value = nil
         }
     }

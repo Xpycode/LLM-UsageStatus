@@ -62,6 +62,15 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
     Claude Code, and tools that polled it saw persistent 429s (October 2026). Shape, sources and the
     "N available" arithmetic are in `docs/plans/2026-11-12-v0.3.0/research/findings.md` (R2). Decide
     whether to impersonate the CLI surface at all before scoping a row like Codex's "Reset passes".
+17. **Claude decoder: pre-0.3.0 `try?` and the `util=` notice log** (2026-11-12, 0.3.0 review in 3.2;
+    should-fix, not blocking, predates 0.3.0 — all present in `v0.2.2`): `ClaudeOAuthUsageService.swift`
+    `Envelope.init` (`five_hour`/`seven_day`), `Window.init` (`utilization`, `resets_at`) and
+    `FlexibleReset` swallow decode errors with `try?` against the project rule, so a malformed window
+    becomes a missing headline with no log line. Replace with `do/catch` that logs the key name and
+    failure kind only (as `fableWindow` and `LimitRow.value` do since 3.2). Same file: the 2026-10-29 E1
+    diagnostic `Usage windows five_hour=present util=NN% …` logs utilization percentages at `.notice`,
+    `privacy: .public`, on every fetch — usage numbers, not credentials; decide whether to demote it to
+    `.debug` or drop `util=`.
 
 ## Inbox
 

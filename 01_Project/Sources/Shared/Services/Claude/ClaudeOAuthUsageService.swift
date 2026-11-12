@@ -219,6 +219,7 @@ struct ClaudeOAuthUsageService: Sendable {
             do {
                 container = try decoder.container(keyedBy: CodingKeys.self)
             } catch {
+                ClaudeOAuthUsageService.logger.debug("Usage limits row is not an object")
                 kind = nil
                 percent = nil
                 resetsAt = nil
@@ -236,6 +237,8 @@ struct ClaudeOAuthUsageService: Sendable {
             do {
                 return try container.decodeIfPresent(type, forKey: key)
             } catch {
+                // Lenient by design (one odd field must not hide the row); the key name only, never the value.
+                ClaudeOAuthUsageService.logger.debug("Usage limits row field undecodable: \(key.stringValue, privacy: .public)")
                 return nil
             }
         }

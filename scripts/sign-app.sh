@@ -49,8 +49,22 @@ unsetopt null_glob
 
 # --deep is for verification only.
 codesign --verify --deep --strict --verbose=2 "$app"
+
+# Every component must carry the outer app's team: an ad-hoc or foreign-team Autoupdate or
+# Updater.app can pass the deep verify yet fail library validation when an update installs.
+expected=""
+if [[ "$identity" != "-" ]]; then
+  expected="$(codesign -dv "$app" 2>&1 | sed -n 's/^TeamIdentifier=//p')"
+  [[ -n "$expected" && "$expected" != "not set" ]] || { print -u2 "The signed app has no TeamIdentifier."; exit 1; }
+fi
+mismatches=0
 for item in "${signed[@]}"; do
   team="$(codesign -dv "$item" 2>&1 | sed -n 's/^TeamIdentifier=//p')"
   print -- "TeamIdentifier ${team:-none}  ${item:t}"
+  if [[ -n "$expected" && "$team" != "$expected" ]]; then
+    print -u2 "Team mismatch: ${item:t} has ${team:-none}, expected $expected"
+    mismatches=$(( mismatches + 1 ))
+  fi
 done
+(( mismatches == 0 )) || { print -u2 "$mismatches component(s) not signed by team $expected."; exit 1; }
 print "Signed and verified: $app"

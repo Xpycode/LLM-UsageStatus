@@ -99,7 +99,8 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         updatesCheckbox.action = #selector(toggleAutomaticUpdates)
         updatesButton.target = self
         updatesButton.action = #selector(checkForUpdates)
-        updates.canCheckForUpdatesChanged = { [weak self] canCheck in self?.updatesButton.isEnabled = canCheck }
+        // canCheckForUpdates flips back when a check ends, so the "Last checked" caption follows too.
+        updates.canCheckForUpdatesChanged = { [weak self] _ in self?.refreshUpdates() }
         refreshUpdates()
         recorder.onMessageChange = { [weak self] text in self?.shortcutMessage.stringValue = text }
 

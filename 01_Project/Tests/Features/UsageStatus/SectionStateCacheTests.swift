@@ -103,6 +103,22 @@ final class SectionStateCacheTests: XCTestCase {
         XCTAssertTrue(section.headlines.isEmpty)
     }
 
+    func testExplicitNullHeadlinesNeverDropTheWholeFile() throws {
+        // A null `headlines` (hand-edited or partly written file) reads like an absent key:
+        // no headlines, or the legacy single headline when one is present.
+        let json = """
+        {"claude":{"rows":[],"meters":[],"deadlines":[],"headlines":null,"lastUpdated":800000000},
+        "vibe":{"rows":[],"meters":[],"deadlines":[],"headlines":null,
+        "headline":{"windowLabel":"Monthly budget","fractionLeft":0.4,"isEstimate":true},"lastUpdated":800000050},
+        "codex":{"rows":[],"meters":[],"deadlines":[],"headlines":[],"lastUpdated":800000100}}
+        """
+        try Data(json.utf8).write(to: fileURL)
+        let loaded = SectionStateCache(fileURL: fileURL).loadSections()
+        XCTAssertEqual(Set(loaded.keys), ["claude", "vibe", "codex"])
+        XCTAssertTrue(try XCTUnwrap(loaded["claude"]).headlines.isEmpty)
+        XCTAssertEqual(try XCTUnwrap(loaded["vibe"]).headlines.map(\.id), ["primary"])
+    }
+
     func testEncodedSectionWritesHeadlinesAndNoLegacyKey() throws {
         let section = ProviderSection(
             headlines: [SectionHeadline(id: "five-hour", windowLabel: "5-hour limit", fractionLeft: 0.5)!],

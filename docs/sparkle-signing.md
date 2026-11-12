@@ -45,7 +45,8 @@ a new, different key.
 4. Review the printed diff of `appcast.xml`, then commit and push to `main`.
 5. Raw GitHub caches for about five minutes; a new item may take that long to reach clients.
 
-Dry-run switches (never for a real release): `SKIP_SIGN=1` writes a placeholder signature,
+Dry-run switches (never for a real release): `SKIP_SIGN=1` writes a placeholder signature (and
+refuses to edit the repository's own `appcast.xml`, so it needs `APPCAST` or `ROOT`),
 `--allow-missing` skips the asset-live refusal, `APPCAST=file` edits another file, `ROOT=dir`
 relocates `dist/` and the default appcast, `BUILD=n` supplies the build number when the built app
 is absent.
