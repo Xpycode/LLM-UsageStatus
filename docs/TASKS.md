@@ -86,9 +86,9 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
   slice of the weekly limit, not a peer window) and a resets row like Codex's reset credits.
   Do not guess field names.
 
-- → **Planned 2026-11-12** (0.3.0 plan, 2.2, D11). Test hygiene (2026-11-12): the test suite leaves `LLMUsageStatusTests.UsagePreferences-<UUID>.plist` files in `~/Library/Preferences` (85 found). Tests should call `removePersistentDomain(forName:)` on their suite in tearDown; the leftovers can then be deleted.
+- → **Done 2026-11-12** (0.3.0 2.2: `TestDefaults` cleanup helper; the 96 leftovers deleted; local no-new-plist proof awaits a local test run). Test hygiene (2026-11-12): the test suite leaves `LLMUsageStatusTests.UsagePreferences-<UUID>.plist` files in `~/Library/Preferences` (85 found). Tests should call `removePersistentDomain(forName:)` on their suite in tearDown; the leftovers can then be deleted.
 
-- → **Planned 2026-11-12** (0.3.0 plan, 2.2, D11). 2026-11-10 (0.2.2 Wave 2 build): two Swift compiler warnings: `ShortcutRecorderField.swift:30` (unnecessary `nonisolated(unsafe)` on a `Sendable` `NotificationCenter`) and `ClaudeLogAggregator.swift:144` (deprecated `String(cString:)`). Unconfirmed whether they are new or depend on the Xcode version; the Wave 1 record said no warnings. Candidate for the 3.2 review.
+- → **Done 2026-11-12** (0.3.0 2.2: zero Swift warnings in integrated and Release builds). 2026-11-10 (0.2.2 Wave 2 build): two Swift compiler warnings: `ShortcutRecorderField.swift:30` (unnecessary `nonisolated(unsafe)` on a `Sendable` `NotificationCenter`) and `ClaudeLogAggregator.swift:144` (deprecated `String(cString:)`). Unconfirmed whether they are new or depend on the Xcode version; the Wave 1 record said no warnings. Candidate for the 3.2 review.
 - → **Done 2026-11-10 (0.2.1).** App icon (2026-11-10, E5): the app ships with no icon. A draft (three violet usage bars on a dark
   tile, `02_Design/Exports/icon-draft-1024.png`) is used on the website only, pending approval.
   Adopting an icon in the app needs 0.2.1 (rebuild, notarize, DMG, site swap).
