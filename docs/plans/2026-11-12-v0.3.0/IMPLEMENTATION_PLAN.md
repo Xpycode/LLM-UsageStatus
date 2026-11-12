@@ -5,8 +5,9 @@
 > Task state/evidence is authoritative here; TASKS links here and holds backlog/inbox.
 > Follow the master's `reference/task-state.md` for legacy reconciliation and archival.
 
-**Progress:** 0/10 tasks complete; external checks E0–E5 pending. D2, D4, D10 and D11 confirmed by the
-user 2026-11-12; Wave 0 (0.1) is ready. Execution has not been requested.
+**Progress:** 1/10 tasks complete (0.1); external checks E0–E5 pending. D2, D4, D10 and D11 confirmed
+by the user 2026-11-12. Wave 0 done 2026-11-12 (`109957c`); Wave 1 (1.1–1.4) is ready. Execution so
+far was requested for Wave 0 only.
 **Task states:** unchecked = pending / implemented-unverified / blocked (name gate);
 checked = complete with required evidence. Task identity includes this plan path plus ID.
 
@@ -199,7 +200,7 @@ confirmed all four (D2, D4, D10, D11) as written on 2026-11-12.
 
 ## Execution schedule and ownership
 
-- **Execution scope and limits.** Execution has not been requested yet. Each of these needs an
+- **Execution scope and limits.** Execution was requested for Wave 0 only (2026-11-12). Each of these needs an
   explicit go-ahead from the user when reached:
   - ~~generating the EdDSA key (login Keychain write) and exporting it to `99-AUTH` (D2)~~ —
     **given 2026-11-12**;
@@ -314,7 +315,7 @@ Wave 2 ownership (exclusive):
 
 ### Wave 0 (coordinator preparation — shared files)
 
-- [ ] **0.1**: Sparkle package, version 0.3.0 (300), partial Info.plist, EdDSA key, stubs
+- [x] **0.1**: Sparkle package, version 0.3.0 (300), partial Info.plist, EdDSA key, stubs
   - Depends on: none. External gates: none — the key go-ahead (D2) was given 2026-11-12.
   - Owns: `project.yml`, `.xcodeproj`, `Resources/Info.plist`, the stubs listed above.
   - Success:
@@ -333,6 +334,17 @@ Wave 2 ownership (exclusive):
       `Contents/Frameworks/Sparkle.framework` exists.
     - Stubs created; `xcodegen generate`; the project file committed before dispatch.
   - Backpressure: `build-for-testing` succeeds; the PlistBuddy lines above.
+  - **Evidence (2026-11-12, `109957c`):** Sparkle 2.10.1 resolved; tools in
+    `SourcePackages/artifacts/sparkle/Sparkle/bin/` (`generate_keys`, `sign_update`,
+    `generate_appcast`, `BinaryDelta`). **Public key** `8giDlCjMm8dDBkP3qu2C4hv80xmLg//AACmoHRnn624=`
+    (32 bytes), login Keychain item service `https://sparkle-project.org`, account `LLM-UsageStatus`
+    (no prior key under that account). Export `99-AUTH/LLM-UsageStatus-sparkle-eddsa.key`, 44 bytes,
+    mode 600; a CryptoKit check confirmed the export derives the same public key. Built Debug app:
+    `SUFeedURL` per D1, `SUPublicEDKey` as above, `SUEnableAutomaticChecks` true, `CFBundleDisplayName`
+    "LLM Usage Status", `LSUIElement` true, 0.3.0 / 300, `Contents/Frameworks/Sparkle.framework`
+    present (`Versions/B`: `Autoupdate`, `Updater.app`, `XPCServices/{Downloader,Installer}.xpc`);
+    no `Contents/Resources/Info.plist` copy. **TEST BUILD SUCCEEDED**; only the two known D11
+    warnings (2.2).
 
 ### Wave 1 (parallel — no mutual dependencies; disjoint ownership)
 
@@ -627,6 +639,7 @@ Wave 2 ownership (exclusive):
 |---|---|---|---|---|
 | — | Plan written 2026-11-12 by the coordinator from on-disk code reading (R1) and two parallel web research agents (R2 Claude endpoint fields, R3 Sparkle); scope from the TASKS Inbox, the 2026-11-12 decision and session log | `research/findings.md` | — | Next: user confirms D2, D4, D10, D11; then Wave 0 (0.1), once execution is requested |
 | — | Decisions confirmed by the user 2026-11-12: D2 (own key account + `99-AUTH` export; key go-ahead given), D4 (as drawn), D10 (limit resets deferred to Backlog #16), D11 (hygiene in scope; plist deletion still needs its own go-ahead) | User answers in session | — | Next: `/execute` Wave 0 (0.1) |
+| Wave 0 (0.1), 2026-11-12 | Serial by coordinator (shared files only: `project.yml`, project file, Info.plist, Keychain, stubs); no agents | `xcodebuild -resolvePackageDependencies` ok (Sparkle 2.10.1); key generated under account `LLM-UsageStatus`, exported and verified (see 0.1 evidence); scratch `build-for-testing` (session scratchpad `dd-0.1`) **TEST BUILD SUCCEEDED**; PlistBuddy on the built app shows all 0.1 keys, 0.3.0 / 300, Sparkle.framework embedded. Two known warnings only (`ShortcutRecorderField.swift:30`, `ClaudeLogAggregator.swift:144` → 2.2). Tests not run (app-hosted; CI at 3.2) | `109957c` 0.1 (project + stubs). Not pushed | Next: Wave 1 (1.1, 1.2, 1.3, 1.4 as 4 parallel agents) when execution is requested. 1.4 records the public key above in `docs/sparkle-signing.md` |
 
 ---
 *Keep active while required work or acceptance is incomplete. On completion, retire in place with
