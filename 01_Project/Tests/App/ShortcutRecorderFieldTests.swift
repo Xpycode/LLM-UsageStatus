@@ -243,6 +243,7 @@ final class ShortcutRecorderFieldTests: XCTestCase {
             shortcuts: HotKeyShortcutStore(defaults: defaults),
             launchAtLogin: LaunchAtLogin(),
             version: AppVersion(infoDictionary: nil),
+            updates: UpdateController(startingUpdater: false),
             commitShortcut: { _ in .accepted },
             recordingChanged: { _ in })
         XCTAssertEqual(controller.window.title, "LLM Usage Status Settings")

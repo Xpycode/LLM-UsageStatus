@@ -26,7 +26,7 @@ private final class SettingsWindow: NSWindow {
     }
 }
 
-/// Self-managed settings window (Providers, Startup, Shortcut, About) built from AppKit controls.
+/// Self-managed settings window (Providers, Startup, Shortcut, Updates, About) built from AppKit controls.
 ///
 /// Shortcut contract: the window never saves to `HotKeyShortcutStore`. Recording a chord and
 /// "Reset to Default" both go through `commitShortcut`; the caller registers the hotkey and
@@ -41,6 +41,11 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     private let launchAtLogin: LaunchAtLogin
     private let commitShortcut: (HotKeyShortcut) -> ShortcutCommitResult
     private let recordingChanged: (Bool) -> Void
+    private let updates: UpdateController
+
+    private let updatesCheckbox = NSButton(checkboxWithTitle: "Check for updates automatically", target: nil, action: nil)
+    private let updatesButton = NSButton(title: "Check for Updates\u{2026}", target: nil, action: nil)
+    private let updatesCaption = SettingsWindowController.wrappingLabel("")
 
     private let recorder: ShortcutRecorderField
     private let shortcutMessage = SettingsWindowController.wrappingLabel("")
@@ -62,6 +67,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         shortcuts: HotKeyShortcutStore,
         launchAtLogin: LaunchAtLogin,
         version: AppVersion,
+        updates: UpdateController,
         commitShortcut: @escaping (HotKeyShortcut) -> ShortcutCommitResult,
         recordingChanged: @escaping (Bool) -> Void
     ) {
@@ -70,6 +76,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         self.launchAtLogin = launchAtLogin
         self.commitShortcut = commitShortcut
         self.recordingChanged = recordingChanged
+        self.updates = updates
         self.recorder = ShortcutRecorderField(
             shortcut: shortcuts.current, commit: commitShortcut, recordingChanged: recordingChanged)
         self.window = SettingsWindow(
@@ -88,6 +95,12 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         loginItemsButton.action = #selector(openLoginItems)
         loginItemsButton.isHidden = true
         launchCheckbox.isEnabled = false
+        updatesCheckbox.target = self
+        updatesCheckbox.action = #selector(toggleAutomaticUpdates)
+        updatesButton.target = self
+        updatesButton.action = #selector(checkForUpdates)
+        updates.canCheckForUpdatesChanged = { [weak self] canCheck in self?.updatesButton.isEnabled = canCheck }
+        refreshUpdates()
         recorder.onMessageChange = { [weak self] text in self?.shortcutMessage.stringValue = text }
 
         buildContent(version: version)
@@ -133,6 +146,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
             section("Providers", providerRows),
             section("Startup", [launchCheckbox, launchStatus, loginItemsButton]),
             section("Shortcut", [shortcutTitle, shortcutRow, shortcutMessage]),
+            section("Updates", [updatesCheckbox, updatesButton, updatesCaption]),
             section("About", [name, description, versionLabel, copyright]),
         ]
         let stack = NSStackView()
@@ -201,6 +215,26 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     @objc private func toggleProvider(_ sender: NSButton) {
         guard let id = sender.identifier?.rawValue else { return }
         preferences.setEnabled(sender.state == .on, for: id)
+    }
+
+    // MARK: Updates
+
+    private func refreshUpdates() {
+        updatesCheckbox.state = updates.automaticallyChecksForUpdates ? .on : .off
+        updatesButton.isEnabled = updates.canCheckForUpdates
+        if let date = updates.lastUpdateCheckDate {
+            updatesCaption.stringValue = "Last checked \(date.formatted(date: .abbreviated, time: .shortened))"
+        } else {
+            updatesCaption.stringValue = "Never checked"
+        }
+    }
+
+    @objc private func toggleAutomaticUpdates() {
+        updates.automaticallyChecksForUpdates = updatesCheckbox.state == .on
+    }
+
+    @objc private func checkForUpdates() {
+        updates.checkForUpdates()
     }
 
     // MARK: Launch at login
@@ -292,6 +326,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
             recorder.message = ""  // An earlier failure is not news when the window comes back.
         }
         refreshLoginState()
+        refreshUpdates()
     }
 
     func windowDidResignKey(_ notification: Notification) {

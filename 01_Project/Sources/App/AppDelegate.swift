@@ -4,7 +4,7 @@ import Carbon.HIToolbox
 import SwiftUI
 import os
 
-@MainActor final class AppDelegate: NSObject, NSApplicationDelegate {
+@MainActor final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation, NSMenuDelegate {
     private static let logger = Logger(subsystem: "com.sim.LLM-UsageStatus", category: "App")
     private let stores: [UsageStore]
     private let preferences = UsagePreferences()
@@ -15,8 +15,13 @@ import os
     private var enabledObservation: AnyCancellable?
     private var knownEnabled: Set<String> = []
     private var layoutObserver: NSObjectProtocol?
+    // No updater inside the app-hosted test process: tests must not touch the network.
+    private let updates = UpdateController(
+        startingUpdater: ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil)
+    private var fallbackUpdateItem: NSMenuItem?
     private lazy var settings = SettingsWindowController(
         preferences: preferences, shortcuts: shortcutStore, launchAtLogin: launchAtLogin, version: .current,
+        updates: updates,
         commitShortcut: { [unowned self] in self.commitShortcut($0) },
         recordingChanged: { [unowned self] in self.shortcutRecordingChanged($0) })
 
@@ -126,6 +131,22 @@ import os
     }
 
     // Like Settings…, these windows come to the front, so the HUD gets out of the way first.
+    @objc private func checkForUpdates() {
+        hidePanel()
+        updates.checkForUpdates()
+    }
+
+    // The right-click menu auto-enables items, so Check for Updates… follows Sparkle here.
+    func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        if menuItem.action == #selector(checkForUpdates) { return updates.canCheckForUpdates }
+        return true
+    }
+
+    // The fallback menu opts out of auto-enabling, so refresh its update item as it opens.
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        fallbackUpdateItem?.isEnabled = updates.canCheckForUpdates
+    }
+
     @objc private func openHelp() {
         hidePanel()
         HelpSupport.show()
@@ -217,6 +238,10 @@ import os
         menu.addItem(withTitle: "Show HUD", action: #selector(showHUD), keyEquivalent: "")
         menu.addItem(withTitle: "Retry Shortcut", action: #selector(registerHotKey), keyEquivalent: "")
         menu.addItem(withTitle: "Settings…", action: #selector(openSettings), keyEquivalent: ",")
+        let updateItem = menu.addItem(withTitle: "Check for Updates…", action: #selector(checkForUpdates), keyEquivalent: "")
+        updateItem.isEnabled = updates.canCheckForUpdates
+        fallbackUpdateItem = updateItem
+        menu.delegate = self
         menu.addItem(withTitle: "LLM Usage Status Help", action: #selector(openHelp), keyEquivalent: "")
         menu.addItem(.separator())
         menu.addItem(withTitle: "Quit LLM Usage Status", action: #selector(quit), keyEquivalent: "q")
@@ -239,6 +264,7 @@ import os
         }
         if providerItems > 0 { menu.addItem(.separator()) }
         menu.addItem(withTitle: "Settings…", action: #selector(openSettings), keyEquivalent: ",")
+        menu.addItem(withTitle: "Check for Updates…", action: #selector(checkForUpdates), keyEquivalent: "")
         menu.addItem(withTitle: "LLM Usage Status Help", action: #selector(openHelp), keyEquivalent: "")
         menu.addItem(withTitle: "Restart LLM Usage Status", action: #selector(restart), keyEquivalent: "")
         menu.addItem(.separator())
