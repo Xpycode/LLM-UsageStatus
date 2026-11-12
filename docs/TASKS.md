@@ -56,6 +56,21 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
 
 ## Inbox
 
+- **0.3.0 — Claude weekly limit as prominent as the 5-hour one** (2026-11-12, user chose "two equal
+  headlines"): the Claude headline is the next-resetting window (`ClaudeUsageProvider.swift:82-99`),
+  nearly always the 5-hour one; 7-day is only a grey caption while collapsed
+  (`UsageStatusView.swift:141`). Design: stack two full headlines (% left, countdown, bar) for 5-hour
+  and 7-day; same for Codex when its 5-hour toggle is on. Needs `headlines: [SectionHeadline]` in the
+  model; the `SectionStateCache` format changes (old file decodes as empty, logged once — acceptable).
+- **0.3.0 — Claude Fable allowance + limit resets** (2026-11-12, from the claude.ai usage page): the
+  page shows a third bar "Fable — up to 50% of your weekly limit, resets with the week" and "Limit
+  resets: N available" (Full reset; Fable reset · 3, with expiry dates). The OAuth usage decoder
+  ignores every top-level key except `five_hour`/`seven_day` (`ClaudeOAuthUsageService.swift:127`),
+  so the field names are unknown. First step: a debug-level, key-names-only diagnostic of the
+  response's top-level and per-window keys (no values) to find the Fable window and reset fields;
+  then a third headline/meter "Fable (weekly)" and a resets row like Codex's reset credits.
+  Do not guess field names.
+
 - Test hygiene (2026-11-12): the test suite leaves `LLMUsageStatusTests.UsagePreferences-<UUID>.plist` files in `~/Library/Preferences` (85 found). Tests should call `removePersistentDomain(forName:)` on their suite in tearDown; the leftovers can then be deleted.
 
 - 2026-11-10 (0.2.2 Wave 2 build): two Swift compiler warnings: `ShortcutRecorderField.swift:30` (unnecessary `nonisolated(unsafe)` on a `Sendable` `NotificationCenter`) and `ClaudeLogAggregator.swift:144` (deprecated `String(cString:)`). Unconfirmed whether they are new or depend on the Xcode version; the Wave 1 record said no warnings. Candidate for the 3.2 review.
