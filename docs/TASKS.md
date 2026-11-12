@@ -3,7 +3,8 @@
 - **Plan (retired 2026-10-29):** `docs/plans/2026-10-29-multi-provider-hud/IMPLEMENTATION_PLAN.md` — **COMPLETE**: 17/17 code tasks, E1 passed, E2 passed (notarized 0.1.0, Apple verdict Accepted, stapled, spctl clean). It stays in place as the permanent execution record.
 - **Plan (retired 2026-11-08):** `docs/plans/2026-11-06-settings-window/IMPLEMENTATION_PLAN.md` — **COMPLETE**: Settings window (launch at login, shortcut rebinding, About), 8/8 tasks (CI 204 green, 288f5ab), E1 passed. It stays in place as the permanent execution record.
 - **Plan (retired 2026-11-10):** `docs/plans/2026-11-08-v0.2.0/IMPLEMENTATION_PLAN.md` — **COMPLETE**: 0.2.0 (layout-aware shortcut names, in-app Help, Send Feedback… / Leave a Tip), 11/11 tasks, E1–E5 passed; notarized DMG + detail page live. Follow-up 0.2.1 (app icon) shipped the same day, user acceptance passed. It stays in place as the permanent execution record.
-- **Active plan:** `docs/plans/2026-11-10-v0.2.2/IMPLEMENTATION_PLAN.md` — 0.2.2 (202): Vibe totals fix (snapshot source, no double count, children fold), layout-aware shortcut refusals + AZERTY Settings key + ISO key, provider on/off in Settings, `SectionStateCache` logging. 8/8 tasks done; E1 passed 2026-11-11; E2 notarized and E3 published 2026-11-11; E4 installed 2026-11-12 (toggle relaunch check pending). Then Sparkle as 0.3.0.
+- **Plan (retired 2026-11-12):** `docs/plans/2026-11-10-v0.2.2/IMPLEMENTATION_PLAN.md` — **COMPLETE**: 0.2.2 (202): Vibe totals fix (snapshot source, no double count, children fold), layout-aware shortcut refusals + AZERTY Settings key + ISO key, provider on/off in Settings, `SectionStateCache` logging. 8/8 tasks done; E1 passed 2026-11-11; E2 notarized and E3 published 2026-11-11; E4 installed 2026-11-12; provider toggles survive a relaunch (user, 2026-11-12). It stays in place as the permanent execution record.
+- **Active plan:** `docs/plans/2026-11-12-v0.3.0/IMPLEMENTATION_PLAN.md` — 0.3.0 (300): Sparkle auto-updates (EdDSA key, `appcast.xml` in this repo, Check for Updates…, Settings Updates section, inside-out signing in the release scripts), Claude 5-hour and 7-day as two equal headlines (Codex 5-hour headline with its toggle), Claude Fable allowance sub-meter after a key-names diagnostic, test/warning hygiene. 0/10 tasks, E0–E5 open. D2, D4, D10 and D11 confirmed by the user 2026-11-12 (key go-ahead given). First ready: 0.1 (coordinator). Execution not requested.
 
 ## Backlog
 
@@ -53,16 +54,24 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
 15. **Refuse macOS system hotkeys in the recorder** (2026-11-10, 0.2.2 research R1; deferred by user):
     check enabled `CopySymbolicHotKeys` entries (Spotlight, screenshots, Mission Control, user
     customisations) by key code + modifiers, as sindresorhus/KeyboardShortcuts and ShortcutRecorder do.
+16. **Claude "Limit resets" inventory** (2026-11-12, 0.3.0 research R2; deferred, confirmed by the user
+    2026-11-12 as D10): the claude.ai page's "Limit resets: N available" comes from the
+    `cedar_ember` object of `/api/oauth/usage`, which is returned only with `?cedar_ember=1` **and**
+    a `User-Agent: claude-cli/<version> (external, cli)` header — otherwise
+    `{eligible: false, ineligible_reason: "surface"}`. Reaching it means presenting this app as
+    Claude Code, and tools that polled it saw persistent 429s (October 2026). Shape, sources and the
+    "N available" arithmetic are in `docs/plans/2026-11-12-v0.3.0/research/findings.md` (R2). Decide
+    whether to impersonate the CLI surface at all before scoping a row like Codex's "Reset passes".
 
 ## Inbox
 
-- **0.3.0 — Claude weekly limit as prominent as the 5-hour one** (2026-11-12, user chose "two equal
+- → **Planned 2026-11-12** (0.3.0 plan, 1.2, D9). **0.3.0 — Claude weekly limit as prominent as the 5-hour one** (2026-11-12, user chose "two equal
   headlines"): the Claude headline is the next-resetting window (`ClaudeUsageProvider.swift:82-99`),
   nearly always the 5-hour one; 7-day is only a grey caption while collapsed
   (`UsageStatusView.swift:141`). Design: stack two full headlines (% left, countdown, bar) for 5-hour
   and 7-day; same for Codex when its 5-hour toggle is on. Needs `headlines: [SectionHeadline]` in the
   model; the `SectionStateCache` format changes (old file decodes as empty, logged once — acceptable).
-- **0.3.0 — Claude Fable allowance + limit resets** (2026-11-12, from the claude.ai usage page): the
+- → **Planned 2026-11-12** (0.3.0 plan, 1.3 diagnostic + Fable decode, 2.1 sub-meter, E0 live key names; limit resets split off to Backlog #16, D10). **0.3.0 — Claude Fable allowance + limit resets** (2026-11-12, from the claude.ai usage page): the
   page shows a third bar "Fable — up to 50% of your weekly limit, resets with the week" and "Limit
   resets: N available" (Full reset; Fable reset · 3, with expiry dates). The OAuth usage decoder
   ignores every top-level key except `five_hour`/`seven_day` (`ClaudeOAuthUsageService.swift:127`),
@@ -72,9 +81,9 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
   slice of the weekly limit, not a peer window) and a resets row like Codex's reset credits.
   Do not guess field names.
 
-- Test hygiene (2026-11-12): the test suite leaves `LLMUsageStatusTests.UsagePreferences-<UUID>.plist` files in `~/Library/Preferences` (85 found). Tests should call `removePersistentDomain(forName:)` on their suite in tearDown; the leftovers can then be deleted.
+- → **Planned 2026-11-12** (0.3.0 plan, 2.2, D11). Test hygiene (2026-11-12): the test suite leaves `LLMUsageStatusTests.UsagePreferences-<UUID>.plist` files in `~/Library/Preferences` (85 found). Tests should call `removePersistentDomain(forName:)` on their suite in tearDown; the leftovers can then be deleted.
 
-- 2026-11-10 (0.2.2 Wave 2 build): two Swift compiler warnings: `ShortcutRecorderField.swift:30` (unnecessary `nonisolated(unsafe)` on a `Sendable` `NotificationCenter`) and `ClaudeLogAggregator.swift:144` (deprecated `String(cString:)`). Unconfirmed whether they are new or depend on the Xcode version; the Wave 1 record said no warnings. Candidate for the 3.2 review.
+- → **Planned 2026-11-12** (0.3.0 plan, 2.2, D11). 2026-11-10 (0.2.2 Wave 2 build): two Swift compiler warnings: `ShortcutRecorderField.swift:30` (unnecessary `nonisolated(unsafe)` on a `Sendable` `NotificationCenter`) and `ClaudeLogAggregator.swift:144` (deprecated `String(cString:)`). Unconfirmed whether they are new or depend on the Xcode version; the Wave 1 record said no warnings. Candidate for the 3.2 review.
 - → **Done 2026-11-10 (0.2.1).** App icon (2026-11-10, E5): the app ships with no icon. A draft (three violet usage bars on a dark
   tile, `02_Design/Exports/icon-draft-1024.png`) is used on the website only, pending approval.
   Adopting an icon in the app needs 0.2.1 (rebuild, notarize, DMG, site swap).
@@ -88,7 +97,7 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
     in `feedback-submit.php` allow-list and `donate.html` registration on the user's site.
   - → **Planned 2026-11-08** (0.2.0 plan, 1.2/1.4/2.3/3.1). **In-app help** via the vendored HelpMenu approach, adapted to the dockless panel/menu
     (document Control-Option-Command-L, the Claude sign-in refresh behavior, estimates labeling).
-  - **Sparkle auto-update** with EdDSA appcast: gated on the public-distribution go-ahead and
+  - → **Planned 2026-11-12** (0.3.0 plan, 0.1/1.1/1.4/2.3, E2–E5). **Sparkle auto-update** with EdDSA appcast: gated on the public-distribution go-ahead and
     where the appcast is hosted; last in the sequence by design. Build numbers must stay
     monotonic (`sparkle:version` = build).
 - → **Planned 2026-11-10** (0.2.2 plan): Backlog #12 and #13 (above) and the Vibe all-time tokens item (below).
