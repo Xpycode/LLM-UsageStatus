@@ -5,13 +5,48 @@ import os
 struct ClaudeOAuthUsage: Equatable, Sendable {
     let fiveHour: ClaudeUsageWindow?
     let sevenDay: ClaudeUsageWindow?
+    let fable: ClaudeUsageWindow?
     let fetchedAt: Date
+
+    init(fiveHour: ClaudeUsageWindow?, sevenDay: ClaudeUsageWindow?, fable: ClaudeUsageWindow? = nil, fetchedAt: Date) {
+        self.fiveHour = fiveHour
+        self.sevenDay = sevenDay
+        self.fable = fable
+        self.fetchedAt = fetchedAt
+    }
 }
 
 struct ClaudeUsageWindow: Equatable, Sendable {
     /// Raw utilization as reported by the endpoint; presentation decides scaling.
     let utilization: Double?
     let resetsAt: Date?
+}
+
+/// Key names only, never values: the live response shape can be confirmed from the log
+/// without exposing account data.
+enum ClaudeUsageKeyDiagnostic {
+    static let nonObjectMarker = "body is not a JSON object"
+
+    static func summary(_ data: Data) -> String {
+        let object: Any
+        do {
+            object = try JSONSerialization.jsonObject(with: data)
+        } catch {
+            return nonObjectMarker
+        }
+        guard let dictionary = object as? [String: Any] else { return nonObjectMarker }
+        return dictionary.keys.sorted().map { key in
+            let value = dictionary[key]
+            if let nested = value as? [String: Any] {
+                return "\(key){\(nested.keys.sorted().joined(separator: ","))}"
+            }
+            if let array = value as? [Any] {
+                let first = array.lazy.compactMap { $0 as? [String: Any] }.first
+                return "\(key)[\((first?.keys.sorted() ?? []).joined(separator: ","))]"
+            }
+            return key
+        }.joined(separator: " ")
+    }
 }
 
 /// Reads the current Claude OAuth usage; the token never leaves the request path and nothing is persisted.
@@ -99,6 +134,7 @@ struct ClaudeOAuthUsageService: Sendable {
         default: throw FetchError.usageUnavailable
         }
 
+        Self.logger.debug("Usage response keys: \(ClaudeUsageKeyDiagnostic.summary(data), privacy: .public)")
         do {
             let usage = try JSONDecoder().decode(Envelope.self, from: data).usage(fetchedAt: now())
             // Privacy-safe window diagnostics: presence and utilization percentage
@@ -124,22 +160,121 @@ struct ClaudeOAuthUsageService: Sendable {
     private struct Envelope: Decodable {
         let fiveHour: Window?
         let sevenDay: Window?
+        let fable: Window?
 
         // Unknown top-level keys (per-model windows, extra_usage, future fields) are ignored.
         init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             fiveHour = try? container.decodeIfPresent(Window.self, forKey: .fiveHour)
             sevenDay = try? container.decodeIfPresent(Window.self, forKey: .sevenDay)
+            fable = Self.fableWindow(in: container)
+        }
+
+        /// Absent or null `limits` is silent; a present-but-undecodable value logs only its failure kind.
+        private static func fableWindow(in container: KeyedDecodingContainer<CodingKeys>) -> Window? {
+            guard container.contains(.limits) else { return nil }
+            do {
+                if try container.decodeNil(forKey: .limits) { return nil }
+                let rows = try container.decode([LimitRow].self, forKey: .limits)
+                return rows.lazy.compactMap(\.fableWindow).first
+            } catch let error as DecodingError {
+                let kind: String
+                switch error {
+                case .typeMismatch: kind = "type mismatch"
+                case .valueNotFound: kind = "value not found"
+                case .keyNotFound: kind = "key not found"
+                case .dataCorrupted: kind = "data corrupted"
+                @unknown default: kind = "unknown"
+                }
+                ClaudeOAuthUsageService.logger.debug("Usage limits undecodable: \(kind, privacy: .public)")
+                return nil
+            } catch {
+                ClaudeOAuthUsageService.logger.debug("Usage limits undecodable: other")
+                return nil
+            }
         }
 
         func usage(fetchedAt: Date) -> ClaudeOAuthUsage {
-            ClaudeOAuthUsage(fiveHour: fiveHour?.window, sevenDay: sevenDay?.window, fetchedAt: fetchedAt)
+            ClaudeOAuthUsage(fiveHour: fiveHour?.window, sevenDay: sevenDay?.window,
+                              fable: fable?.window, fetchedAt: fetchedAt)
         }
 
         enum CodingKeys: String, CodingKey {
             case fiveHour = "five_hour"
             case sevenDay = "seven_day"
+            case limits
         }
+    }
+
+    /// One `limits[]` row. Never throws on content: a malformed row decodes to an empty row so
+    /// it cannot fail the surrounding array.
+    private struct LimitRow: Decodable {
+        let kind: String?
+        let percent: Double?
+        let resetsAt: Date?
+        let scopeName: String?
+
+        init(from decoder: any Decoder) throws {
+            let container: KeyedDecodingContainer<CodingKeys>
+            do {
+                container = try decoder.container(keyedBy: CodingKeys.self)
+            } catch {
+                kind = nil
+                percent = nil
+                resetsAt = nil
+                scopeName = nil
+                return
+            }
+            kind = Self.value(String.self, in: container, forKey: .kind)
+            percent = Self.value(Double.self, in: container, forKey: .percent)
+            resetsAt = Self.value(FlexibleReset.self, in: container, forKey: .resetsAt)?.date
+            scopeName = Self.value(Scope.self, in: container, forKey: .scope)?.modelName
+        }
+
+        private static func value<T: Decodable>(_ type: T.Type, in container: KeyedDecodingContainer<CodingKeys>,
+                                                forKey key: CodingKeys) -> T? {
+            do {
+                return try container.decodeIfPresent(type, forKey: key)
+            } catch {
+                return nil
+            }
+        }
+
+        /// Fable's allowance is the weekly-scoped row whose model display name is "Fable".
+        var fableWindow: Window? {
+            guard kind == "weekly_scoped",
+                  scopeName?.caseInsensitiveCompare("Fable") == .orderedSame,
+                  let percent, percent.isFinite else { return nil }
+            return Window(utilization: min(max(percent / 100, 0), 1), resetsAt: resetsAt)
+        }
+
+        enum CodingKeys: String, CodingKey {
+            case kind
+            case percent
+            case resetsAt = "resets_at"
+            case scope
+        }
+    }
+
+    /// `scope` is a plain string in older responses and `{model: {display_name}}` in current ones.
+    private struct Scope: Decodable {
+        let modelName: String?
+
+        init(from decoder: any Decoder) throws {
+            let single = try decoder.singleValueContainer()
+            do {
+                modelName = try single.decode(String.self)
+                return
+            } catch DecodingError.typeMismatch {
+                // Not the legacy string form; fall through to the object form.
+            }
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            let model = try container.nestedContainer(keyedBy: ModelKeys.self, forKey: .model)
+            modelName = try model.decodeIfPresent(String.self, forKey: .displayName)
+        }
+
+        enum CodingKeys: String, CodingKey { case model }
+        enum ModelKeys: String, CodingKey { case displayName = "display_name" }
     }
 
     private struct Window: Decodable {
@@ -148,6 +283,11 @@ struct ClaudeOAuthUsageService: Sendable {
         /// vendor page's "2% used"; seven_day 0.0 ↔ "0% used").
         let utilization: Double?
         let resetsAt: Date?
+
+        init(utilization: Double?, resetsAt: Date?) {
+            self.utilization = utilization
+            self.resetsAt = resetsAt
+        }
 
         init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
