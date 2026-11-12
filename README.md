@@ -1,10 +1,31 @@
-# LLM Usage Status
+<div align="center">
+  <img src="github/icons/app-icon.png" alt="LLM Usage Status icon" width="128">
+  <h1>LLM Usage Status</h1>
+  <p>A dockless macOS HUD that shows usage for multiple LLM command-line tools — Codex, Claude Code and Mistral Vibe — in one panel, on a hotkey.</p>
 
-> A dockless macOS HUD that shows usage status for multiple LLM command-line tools — Codex, Claude Code, and Mistral Vibe — in one panel.
+  ![macOS](https://img.shields.io/badge/macOS-15%2B-blue)
+  ![Swift](https://img.shields.io/badge/Swift-6.0-orange)
+  ![License](https://img.shields.io/badge/license-MIT-green)
+  ![Version](https://img.shields.io/badge/version-0.2.2-brightgreen)
+  [![Download](https://img.shields.io/badge/Download-v0.2.2-blue?style=flat-square)](https://github.com/Xpycode/LLM-UsageStatus/releases/latest)
+  [![Homebrew](https://img.shields.io/badge/Homebrew-Install-FBB040?logo=homebrew&logoColor=white)](#install-with-homebrew)
+  ![Downloads](https://img.shields.io/github/downloads/Xpycode/LLM-UsageStatus/total?style=flat-square)
 
-[![Platform](https://img.shields.io/badge/platform-macOS%2015-blue)]()
-[![Swift](https://img.shields.io/badge/swift-6.0-orange)]()
-[![License](https://img.shields.io/badge/license-MIT-green)]()
+  <br><br>
+  <img src="github/screenshots/panel.png" alt="The LLM Usage Status panel with Codex, Claude Code and Mistral Vibe sections" width="420">
+</div>
+
+## What's New in Version 0.2.2
+
+- **Providers in Settings** — turn Codex, Claude Code or Mistral Vibe on or off. A provider that is
+  off is hidden from the panel and never read.
+- **Correct Vibe numbers** — earlier versions counted cached and reasoning tokens twice, so token
+  totals and the cost estimate were too high. Totals now match Vibe's own counters and survive
+  log rotation; sub-agent sessions fold into the session that started them.
+- **Shortcuts follow your keyboard layout** — refusals and Command-Comma work on QWERTZ and AZERTY,
+  and the ISO key next to Left Shift can be part of the shortcut.
+
+See the [CHANGELOG](CHANGELOG.md) for every release.
 
 ## Why This Tool Exists
 
@@ -39,6 +60,15 @@ allowances, and renewal times are one keystroke away.
   and other special keys keep their spelled-out names.
 - Built-in Help window with searchable topics, plus Send Feedback… and Leave a
   Tip in the right-click menu.
+
+## Screenshots
+
+Rendered from the app with sample values.
+
+<p align="center">
+  <img src="github/screenshots/codex-expanded.png" alt="Codex section expanded: limits, credits, resets" width="380">
+  <img src="github/screenshots/claude-and-vibe.png" alt="Claude Code limits and Vibe estimates" width="380">
+</p>
 
 ## Quick Start
 
@@ -117,16 +147,36 @@ itself stays bound to the same physical key.
 
 ## Installation
 
-Updates are installed manually; the app has no auto-updater.
+Updates are installed manually for now; built-in automatic updates are planned.
+
+### Install with Homebrew
+
+With [Homebrew](https://brew.sh/) installed, add the project's own tap and install:
+
+```sh
+brew tap xpycode/llm-usagestatus https://github.com/Xpycode/LLM-UsageStatus.git
+brew install --cask xpycode/llm-usagestatus/llm-usagestatus
+```
+
+To upgrade later:
+
+```sh
+brew update
+brew upgrade --cask xpycode/llm-usagestatus/llm-usagestatus
+```
+
+This is the project's own tap, not a listing in Homebrew's official catalogue. You can inspect the
+[cask definition](Casks/llm-usagestatus.rb); maintenance notes are in [docs/homebrew.md](docs/homebrew.md).
 
 ### Download
 
-Download the notarized disk image from the apps site:
-**[LLM-UsageStatus 0.2.1 (DMG)](https://apps.lucesumbrarum.com/dl.php?app=llm-usagestatus)**
+Download the notarized disk image from
+**[GitHub Releases](https://github.com/Xpycode/LLM-UsageStatus/releases/latest)** or the
+[apps site](https://apps.lucesumbrarum.com/dl.php?app=llm-usagestatus)
 (macOS 15 or newer, Apple silicon and Intel).
 
-SHA-256 of `LLM-UsageStatus-0.2.1.dmg`:
-`9b42e74e78c9b593a7c654be133cb0b174927145142370c578a34f697ee2771e`
+SHA-256 of `LLM-UsageStatus-0.2.2.dmg`:
+`a4fbe57aa2fb864e9b6d7181073ce36800746fed5c5f91044957afa59d20136a`
 
 1. Optionally check the download: `shasum -a 256 <file>` should print the value above.
 2. Quit any older copy of LLM Usage Status normally.
@@ -136,7 +186,7 @@ SHA-256 of `LLM-UsageStatus-0.2.1.dmg`:
 ### Build from Source
 
 ```sh
-git clone <repository-url> LLM-UsageStatus
+git clone https://github.com/Xpycode/LLM-UsageStatus.git
 cd LLM-UsageStatus/01_Project
 xcodegen generate
 xcodebuild -project LLM-UsageStatus.xcodeproj -scheme LLM-UsageStatus -configuration Release -destination 'platform=macOS' build
@@ -183,6 +233,7 @@ LLM-UsageStatus/
 │   ├── HelpMenu/        # Vendored Help window package (MarkdownUI)
 │   ├── Vendor/          # Vendored feedback and tip packages
 │   └── Tests/           # Unit tests mirroring source modules
+├── Casks/               # Homebrew cask (this repository is its own tap)
 ├── scripts/             # Release build and notarization scripts
 └── .github/workflows/   # CI: build + test on push
 ```
@@ -207,6 +258,11 @@ Install the CLI and use it once; the section populates on the next refresh.
 fails, prior values are retained and marked stale. Claude and Mistral sections
 label local estimates explicitly whenever endpoint data is unavailable — this
 is expected behavior, not an error.
+
+## Contributing
+
+Bug reports and ideas are welcome — open an issue, or use Send Feedback… in the app.
+Pull requests are welcome too; please run the tests before submitting.
 
 ## License
 
