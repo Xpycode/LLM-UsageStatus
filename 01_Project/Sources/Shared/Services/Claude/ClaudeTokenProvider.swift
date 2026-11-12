@@ -102,7 +102,8 @@ struct ClaudeTokenProvider: ClaudeTokenProviding {
             return nil
         }
         // Key names only (structural, never values) to diagnose credential-shape drift.
-        logger.notice("Credentials blob keys \(root.keys.sorted().joined(separator: ","), privacy: .public)")
+        // Debug level: not persisted by default, so routine reads leave no structural trace.
+        logger.debug("Credentials blob keys \(root.keys.sorted().joined(separator: ","), privacy: .public)")
         guard let oauth = root["claudeAiOauth"] as? [String: Any],
               let token = oauth["accessToken"] as? String else { return nil }
         let trimmed = token.trimmingCharacters(in: .whitespacesAndNewlines)

@@ -13,7 +13,9 @@ xcodebuild -scheme LLM-UsageStatus -configuration Debug -destination 'platform=m
 
 - Swift / SwiftUI — macOS 15 or newer baseline
 - Architecture: provider protocol + per-provider services, HUD panel via NSPanel (following CodexUsageStatus)
-- Persistence: display preferences only (UserDefaults); no credentials or usage history stored
+- Persistence: display preferences (UserDefaults) plus the last-seen display values per provider
+  (`~/Library/Application Support/LLM-UsageStatus/last-sections.json`, via `SectionStateCache`) so
+  a relaunch shows them with timestamps; no credentials, tokens, paths or longer history are stored
 
 ## Project Structure
 
