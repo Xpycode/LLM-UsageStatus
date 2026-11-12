@@ -5,9 +5,11 @@
 > Task state/evidence is authoritative here; TASKS links here and holds backlog/inbox.
 > Follow the master's `reference/task-state.md` for legacy reconciliation and archival.
 
-**Progress:** 1/10 tasks complete (0.1); external checks E0–E5 pending. D2, D4, D10 and D11 confirmed
-by the user 2026-11-12. Wave 0 done 2026-11-12 (`109957c`); Wave 1 (1.1–1.4) is ready. Execution so
-far was requested for Wave 0 only.
+**Progress:** 1/10 tasks complete (0.1); 1.1–1.4 implemented and integrated (build-for-testing green),
+unchecked until their gates (CI for 1.1–1.3, 2.3 for 1.4); external checks E0–E5 pending. D2, D4, D10
+and D11 confirmed by the user 2026-11-12. Wave 0 done 2026-11-12 (`109957c`); Wave 1 done 2026-11-12
+(`1581e8a`, `0349627`, `2835494`, `0ffbc79`); Wave 2 (2.1, 2.2, 2.3) is ready. Execution so far was
+requested wave by wave (Wave 0, then Wave 1).
 **Task states:** unchecked = pending / implemented-unverified / blocked (name gate);
 checked = complete with required evidence. Task identity includes this plan path plus ID.
 
@@ -200,8 +202,8 @@ confirmed all four (D2, D4, D10, D11) as written on 2026-11-12.
 
 ## Execution schedule and ownership
 
-- **Execution scope and limits.** Execution was requested for Wave 0 only (2026-11-12). Each of these needs an
-  explicit go-ahead from the user when reached:
+- **Execution scope and limits.** Execution has been requested wave by wave (Wave 0, then Wave 1, both
+  2026-11-12). Each of these needs an explicit go-ahead from the user when reached:
   - ~~generating the EdDSA key (login Keychain write) and exporting it to `99-AUTH` (D2)~~ —
     **given 2026-11-12**;
   - deleting the 96 leftover test plists in `~/Library/Preferences` (D11);
@@ -376,6 +378,17 @@ Wave 2 ownership (exclusive):
       `ShortcutRecorderFieldTests` smoke test passes the new `updates:` argument with a non-starting
       controller.
   - Backpressure: `build-for-testing`; the test list is reported to the coordinator.
+  - **Evidence (2026-11-12, `0349627`; implemented, unverified until CI):** `UpdateController` per the
+    interface; KVO hop to the main actor re-reads the updater (no stale payload); delegate via
+    `@preconcurrency SPUStandardUserDriverDelegate`; activation = `NSApp.activate(ignoringOtherApps:)`
+    in `checkForUpdates()` and `standardUserDriverWillHandleShowingUpdate` (the `.regular` fallback is
+    **not** implemented — E1 confirms a scheduled alert reaches the front on macOS 27). Right-click
+    menu enablement via `NSMenuItemValidation`; fallback menu (`autoenablesItems = false`) via
+    `menuNeedsUpdate`. Sparkle 2.10.1 source check: setting `automaticallyChecksForUpdates` on a
+    non-started updater only writes `SUEnableAutomaticChecks` to the host defaults (observer is
+    registered in `startUpdater`), so the toggle test is safe and restores the host's real value in
+    tearDown. Tests: `UpdateControllerTests` (6: feed URL, 32-byte key, automatic checks, display
+    name/LSUIElement kept, framework embedded, non-starting toggle); smoke call site updated.
 
 - [ ] **1.2**: Two headlines — model, view, Claude/Codex/Vibe mapping, cache compatibility (D9)
   - Depends on: 0.1. External gates: E1 (visual check).
@@ -400,6 +413,18 @@ Wave 2 ownership (exclusive):
       `SectionFixtures` Claude/Codex sections carry two headlines and the collapsed headline
       scenarios render both; `UsageStoreTests` compile against the new init.
   - Backpressure: `build-for-testing`; `grep -rn "\.headline\b" 01_Project/Sources` is empty.
+  - **Evidence (2026-11-12, `2835494`; implemented, unverified until CI and E1):** model, Codable
+    compatibility (legacy `headline` → one `primary` headline; a stored headline failing validation
+    is dropped, not fatal), view (`SectionVisibility` helpers; the toggle filter applies only to
+    `codex`), and the three providers as specified. Claude's log-estimate path never had a headline
+    and still has none. The `.headline` grep returns only SwiftUI's `Font.headline`
+    (`UsageStatusView.swift:97`), no model use. The live 0.2.2 `last-sections.json` on this Mac has
+    the key shape the legacy decoder handles (`headline` without `id`/`subMeters`; read-only `jq`
+    key listing). Sub-meter bar is `scaleEffect(y: 0.6)` and keeps full layout height — 2.1 may
+    replace it with a genuinely thinner bar; E1 checks it visually. New/changed tests in
+    `ProviderModelsTests` (5 new), `SectionStateCacheTests` (3 new incl. the literal 0.2.2 fixture),
+    `CodexUsageProviderTests` (2 new), `ClaudeUsageProviderTests` (2 new/renamed), Vibe assertions,
+    fixtures with two headlines.
 
 - [ ] **1.3**: Claude usage decoder — key-names diagnostic and Fable window (D10)
   - Depends on: 0.1. External gates: **E0** (live key names) for acceptance of the Fable decode;
@@ -419,6 +444,14 @@ Wave 2 ownership (exclusive):
       summary for a known payload is asserted exactly and shown to contain no values.
   - Backpressure: `build-for-testing`; `grep -n "utilization\|percent" Tests/…/ClaudeOAuthUsageServiceTests.swift`
     shows the new fixtures.
+  - **Evidence (2026-11-12, `1581e8a`; implemented, unverified until CI; Fable decode awaits E0):**
+    diagnostic format `key{a,b}` / `key[a,b]` (first object element) / bare `key`, sorted, one level;
+    non-object bodies give the fixed marker "body is not a JSON object"; logged at `.debug`, public,
+    after the 2xx check and before decoding. Fable: `weekly_scoped` row with a finite `percent` and a
+    scope naming Fable (object or legacy string, case-insensitive); rows never throw; absent/null
+    `limits` is silent; an undecodable `limits` logs one `.debug` failure-kind line. 15 new tests;
+    the grep shows 51 `utilization|percent` lines. Pre-existing `try?` in the unchanged
+    `five_hour`/`seven_day` decoding was left as it was.
 
 - [ ] **1.4**: Release pipeline — inside-out signing, appcast tooling, signing notes (D1, D2, D8)
   - Depends on: 0.1 (public key for `docs/sparkle-signing.md`). External gates: 2.3 (dry run on
@@ -447,6 +480,20 @@ Wave 2 ownership (exclusive):
   - Backpressure: `zsh -n` on all three scripts; `xmllint --noout appcast.xml`; a shell dry run of
     `make-appcast-item.sh --allow-missing` against a dummy file in scratch producing a parseable
     item (the EdDSA signature step may be skipped with `SKIP_SIGN=1` in that dry run only).
+  - **Evidence (2026-11-12, `0ffbc79`; implemented, unverified until 2.3):** `zsh -n` ok on all four
+    scripts, `xmllint --noout appcast.xml` ok (coordinator re-ran both after integration). Dry run in
+    scratch (`ROOT=`, `APPCAST=`, `SKIP_SIGN=1`, 9.9.9 `--allow-missing`, HEAD 404 tolerated) produced
+    a valid item; a rerun replaced it (one item); 9.9.8 and 9.9.10 inserted in order. Without
+    `--allow-missing` it refused with "Release asset not live (HTTP 404)". Ad-hoc `SIGN_ID=-` run of
+    `sign-app.sh` on a copy of a Debug build signed Downloader.xpc (entitlements preserved),
+    Installer.xpc, Autoupdate, Updater.app, the framework and the app; verify passed; rerun
+    idempotent; no `get-task-allow`. Outer app is signed with the tracked
+    `Resources/LLM-UsageStatus.entitlements` (deterministic). Env overrides added: `ROOT=`,
+    `APPCAST=`, `BUILD=`, `SKIP_SIGN=1`, `SIGN_ONLY=1`. **For 2.3:** the Developer ID TeamIdentifier
+    printout and the `sign_update` output parse (`sparkle:edSignature="…"`) are unproven;
+    `notarize-release.sh` still checks the notary key files before `SIGN_ONLY` applies, so 2.3 runs
+    `sign-app.sh` directly on the scratch build. Coordinator fixes at integration: feed description
+    wording (dockless HUD, as the README) and the signing notes name `scripts/package-dmg.sh`.
 
 ### Wave 2 (parallel — disjoint; prerequisites integrated and validated)
 
@@ -624,6 +671,10 @@ Wave 2 ownership (exclusive):
   `~/Library/Caches/<bundle-id>/…/Installation` folder for non-sandboxed Developer-ID apps in
   2.9.1/2.9.2; the fixing release is unconfirmed. E5 on this macOS 27 Mac is the proof; if it
   reproduces, the fix belongs in the pipeline or a Sparkle bump, not in a key or feed change.
+- Parallel Swift agents (Wave 1): one git worktree per agent in the session scratchpad (outside
+  Syncthing) plus its own DerivedData, so a half-done edit in one task never breaks another task's
+  build; the coordinator applies each `git diff` to `main`, checks the files are byte-identical,
+  runs one integrated build, then removes the worktrees.
 
 ## Blocked Tasks
 
@@ -640,6 +691,7 @@ Wave 2 ownership (exclusive):
 | — | Plan written 2026-11-12 by the coordinator from on-disk code reading (R1) and two parallel web research agents (R2 Claude endpoint fields, R3 Sparkle); scope from the TASKS Inbox, the 2026-11-12 decision and session log | `research/findings.md` | — | Next: user confirms D2, D4, D10, D11; then Wave 0 (0.1), once execution is requested |
 | — | Decisions confirmed by the user 2026-11-12: D2 (own key account + `99-AUTH` export; key go-ahead given), D4 (as drawn), D10 (limit resets deferred to Backlog #16), D11 (hygiene in scope; plist deletion still needs its own go-ahead) | User answers in session | — | Next: `/execute` Wave 0 (0.1) |
 | Wave 0 (0.1), 2026-11-12 | Serial by coordinator (shared files only: `project.yml`, project file, Info.plist, Keychain, stubs); no agents | `xcodebuild -resolvePackageDependencies` ok (Sparkle 2.10.1); key generated under account `LLM-UsageStatus`, exported and verified (see 0.1 evidence); scratch `build-for-testing` (session scratchpad `dd-0.1`) **TEST BUILD SUCCEEDED**; PlistBuddy on the built app shows all 0.1 keys, 0.3.0 / 300, Sparkle.framework embedded. Two known warnings only (`ShortcutRecorderField.swift:30`, `ClaudeLogAggregator.swift:144` → 2.2). Tests not run (app-hosted; CI at 3.2) | `109957c` 0.1 (project + stubs). Not pushed | Next: Wave 1 (1.1, 1.2, 1.3, 1.4 as 4 parallel agents) when execution is requested. 1.4 records the public key above in `docs/sparkle-signing.md` |
+| Wave 1 (1.1, 1.2, 1.3, 1.4), 2026-11-12 | 4 parallel fresh-context `developer` agents, exclusive ownership per the table, each in its **own git worktree in the session scratchpad** (outside Syncthing) with its own DerivedData, so no agent's half-done edit could break another's build. Schedule repair: `SectionFixtureRenderTests.swift` added to 1.2's ownership (fixture API consumer; ended up unchanged). Coordinator reviewed each diff, applied the four patches to `main` (worktree files byte-identical to the commits except the two 1.4 wording fixes), then removed the worktrees and branches | Each task: `build-for-testing` **TEST BUILD SUCCEEDED** alone on `c8e34b9`. Integrated (1.1+1.2+1.3 on `main`, scratch `dd-int`): **TEST BUILD SUCCEEDED**, only the two known D11 warnings (→ 2.2). 1.4 touches no Swift; `zsh -n` ×4 and `xmllint` re-run after integration. 275 test functions (244 + 31). Tests not run locally (app-hosted; CI at 3.2). Details in each task's Evidence | `1581e8a` 1.3 · `0349627` 1.1 · `2835494` 1.2 · `0ffbc79` 1.4. Not pushed | 1.1–1.3 unchecked until CI; 1.4 until 2.3. Next: Wave 2 — 2.1 (agent, Fable sub-meter), 2.2 (agent, hygiene; plist deletion needs its go-ahead), 2.3 (coordinator: Developer ID signing dry run, launch of the signed scratch build, first appcast item — its push needs a go-ahead) |
 
 ---
 *Keep active while required work or acceptance is incomplete. On completion, retire in place with
