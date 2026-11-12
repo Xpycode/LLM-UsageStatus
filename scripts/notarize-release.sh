@@ -15,15 +15,18 @@ key_id="$(basename "$key" .p8 | sed 's/^AuthKey_//')"
 out="$root/dist/$version"
 app="$out/LLM-UsageStatus.app"
 archive="$out/LLM-UsageStatus-${version}.zip"
-codesign --force --options runtime --timestamp --sign "$identity" "$app"
-codesign --verify --strict --verbose=2 "$app"
-ditto -c -k --keepParent "$app" "$archive"
+SIGN_ID="$identity" "$root/scripts/sign-app.sh" "$app"
+if [[ "${SIGN_ONLY:-0}" == 1 ]]; then
+  print "SIGN_ONLY=1: signed and verified $app; skipped notarization, stapling and zip upload."
+  exit 0
+fi
+ditto -c -k --sequesterRsrc --keepParent "$app" "$archive"
 xcrun notarytool submit "$archive" --key "$key" --key-id "$key_id" --issuer "$issuer" --wait --output-format json > "$out/notarization.json"
 # A completed submission is not necessarily accepted. Check Apple's actual verdict.
 /usr/bin/plutil -extract status raw -o - "$out/notarization.json" | /usr/bin/grep -qx Accepted
 xcrun stapler staple "$app"
 xcrun stapler validate "$app"
-ditto -c -k --keepParent "$app" "$archive"
+ditto -c -k --sequesterRsrc --keepParent "$app" "$archive"
 codesign --verify --strict --verbose=2 "$app"
 spctl -a -vvv -t exec "$app"
 (cd "$out" && shasum -a 256 "LLM-UsageStatus-${version}.zip" > SHA256SUMS.txt)

@@ -23,5 +23,5 @@ actual_version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString'
 print -- "$commit" > "$output/SOURCE_COMMIT.txt"
 # Retain the exact artifact for signing, verification and user-operated smoke testing.
 ditto "$app" "$output/LLM-UsageStatus.app"
-ditto -c -k --keepParent "$output/LLM-UsageStatus.app" "$output/LLM-UsageStatus-$version.zip"
+ditto -c -k --sequesterRsrc --keepParent "$output/LLM-UsageStatus.app" "$output/LLM-UsageStatus-$version.zip"
 print "Created $output/LLM-UsageStatus-$version.zip (not yet notarized)"
