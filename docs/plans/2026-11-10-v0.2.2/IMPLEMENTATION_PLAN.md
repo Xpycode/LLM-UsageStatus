@@ -355,7 +355,7 @@ Wave 1 ownership (exclusive):
     version (`data-field="version"`, released date) and the roster version, as for 0.2.1
     (App-Websites 94a8150). Live bytes match and `dl.php` serves 0.2.2. Commit in App-Websites;
     the README link stays valid.
-- [ ] **E4**: Install and smoke test (go-ahead to replace `/Applications` copy; user-operated checks)
+- [x] **E4**: Install and smoke test (go-ahead to replace `/Applications` copy; user-operated checks) — **installed 2026-11-12**: Debug build quit normally, 0.2.1 moved to the Trash, notarized 0.2.2 (202) copied in; `spctl` Notarized Developer ID, stapler ok, running from `/Applications`, executable identical to `dist/0.2.2`. User check of provider toggles across relaunch pending.
   - Depends on: E3.
   - Success: graceful quit of 0.2.1, install of the notarized 0.2.2, `spctl` ok, About 0.2.2 (202),
     and the provider toggles survive a relaunch.
