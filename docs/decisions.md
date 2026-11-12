@@ -4,6 +4,32 @@ Durable, project-specific decisions. Newest first.
 
 ---
 
+## 2026-11-12 — Open source, GitHub Releases and an in-repo Homebrew tap
+
+**Context:** 0.2.2 shipped as a notarized DMG on the apps website only, from a private repo, while
+the website and LICENSE already claimed MIT. The user wanted the app "published" the way
+syncthingStatus is.
+
+**Choice:**
+- The repo is public with its **full history**. A full-history scan (2026-11-12) found no keys,
+  tokens, passwords or credential files. Exposed and accepted: local `/Users/sim` paths, the Team ID
+  (already in every signed binary) and the notary key ID (no issuer, no `.p8`).
+- Each release is a **GitHub Release** on a `vX.Y.Z` tag at the exact source commit, with the
+  versioned notarized DMG. The website keeps serving its own copy of the same bytes via `dl.php`.
+- **Homebrew:** the repo is its own tap (`Casks/llm-usagestatus.rb`; tap `xpycode/llm-usagestatus`),
+  as in syncthingStatus. Current Homebrew requires `brew trust --cask` for third-party taps.
+- **Sparkle (next, 0.3.0):** its feed will be `appcast.xml` in this repo, pointing at GitHub Releases.
+
+**Alternatives:** a fresh single-commit public history (rejected: loses the honest dev record);
+website-only downloads for the cask (rejected: a fixed URL whose checksum changes breaks installs
+between updates); Mac App Store (rejected: the sandbox conflicts with reading other CLIs' files and
+Claude Code's keychain item); Sparkle inside 0.2.2 (rejected: would void the accepted release).
+
+**Consequences:** every release now updates GitHub, the cask, the website (and later the appcast)
+together — procedure in `docs/homebrew.md`. Session logs and plans are public from now on.
+
+---
+
 ## 2026-11-10 — 0.2.2: Vibe counting, layout-aware refusals, provider on/off
 
 Plan: `docs/plans/2026-11-10-v0.2.2/IMPLEMENTATION_PLAN.md` (research in its `research/findings.md`).
