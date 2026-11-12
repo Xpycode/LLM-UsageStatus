@@ -284,6 +284,9 @@ enum SectionVisibility {
 /// height under any transform, so the track and fill are drawn directly.
 private struct ThinMeterBar: View {
     let fraction: Double
+    /// Native linear bars use the accent colour only in the key window and grey
+    /// otherwise (the HUD panel is normally not key); follow the same rule.
+    @Environment(\.controlActiveState) private var controlActiveState
 
     var body: some View {
         Capsule()
@@ -292,7 +295,8 @@ private struct ThinMeterBar: View {
             .overlay(alignment: .leading) {
                 GeometryReader { proxy in
                     Capsule()
-                        .fill(Color.accentColor)
+                        .fill(controlActiveState == .key ? AnyShapeStyle(Color.accentColor)
+                                                          : AnyShapeStyle(.secondary))
                         .frame(width: proxy.size.width * min(max(fraction, 0), 1))
                 }
             }
