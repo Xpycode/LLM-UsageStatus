@@ -3,6 +3,14 @@ import SwiftUI
 
 private final class Host<V: View>: NSHostingView<V> {
     var menuProvider: (() -> NSMenu)?
+    /// Runs after SwiftUI has laid out, inside the same AppKit layout pass and so
+    /// before the frame is drawn.
+    var didLayout: (() -> Void)?
+
+    override func layout() {
+        super.layout()
+        didLayout?()
+    }
 
     override func acceptsFirstMouse(for: NSEvent?) -> Bool { true }
 
@@ -18,21 +26,15 @@ private final class Host<V: View>: NSHostingView<V> {
     }
 }
 
-@MainActor private struct MeasuredPanelContent<Content: View>: View {
+@MainActor private struct PanelContent<Content: View>: View {
     let content: Content
-    let sizeChanged: @MainActor (CGSize) -> Void
 
     var body: some View {
         content
-            // Measure the content's ideal size, independently of the panel's viewport.
+            // The panel follows the content's ideal size, independently of its viewport.
             .fixedSize()
-            .background {
-                GeometryReader { geometry in
-                    Color.clear
-                        .onAppear { sizeChanged(geometry.size) }
-                        .onChange(of: geometry.size) { _, size in sizeChanged(size) }
-                }
-            }
+            // Pin to the top so any host/frame mismatch never centers the content.
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 }
 
@@ -40,8 +42,6 @@ private final class Host<V: View>: NSHostingView<V> {
     private var panel: NSPanel?
     private var scrollView: NSScrollView?
     private var presentationID: UUID?
-    private var pendingSize: CGSize?
-    private var sizeUpdateScheduled = false
 
     var isVisible: Bool { panel?.isVisible ?? false }
     var menuProvider: (() -> NSMenu)?
@@ -54,13 +54,12 @@ private final class Host<V: View>: NSHostingView<V> {
 
         let id = UUID()
         presentationID = id
-        let host = Host(rootView: MeasuredPanelContent(content: view()) { [weak self] size in
-            self?.scheduleResize(to: size, presentation: id)
-        })
+        let host = Host(rootView: PanelContent(content: view()))
         host.menuProvider = menuProvider
-        let initialSize = validSize(host.fittingSize) ?? CGSize(width: 1, height: 1)
-        // The document keeps its natural size; the controller owns its frame.
-        host.sizingOptions = []
+        // The SwiftUI ideal size is read as the intrinsic size; the controller owns the
+        // document's frame (no Auto Layout constraints position it).
+        host.sizingOptions = [.intrinsicContentSize]
+        let initialSize = validSize(host.intrinsicContentSize) ?? CGSize(width: 1, height: 1)
         host.autoresizingMask = []
         host.frame = NSRect(origin: .zero, size: initialSize)
 
@@ -86,36 +85,26 @@ private final class Host<V: View>: NSHostingView<V> {
 
         resize(to: initialSize, panel: p, screen: screen,
                preferredOrigin: NSPoint(x: cursor.x - initialSize.width / 2, y: cursor.y + 16))
+
+        // Resize in the same layout pass that changed the content (for example a section
+        // expanding), so the panel frame and its content reach the screen together.
+        // A deferred resize showed one frame of new content in the old frame.
+        host.didLayout = { [weak self, weak host] in
+            guard let self, let host, self.presentationID == id,
+                  let panel = self.panel, panel.isVisible,
+                  let size = self.validSize(host.intrinsicContentSize),
+                  let screen = panel.screen ?? NSScreen.main ?? NSScreen.screens.first else { return }
+            self.resize(to: size, panel: panel, screen: screen, display: false)
+        }
         p.orderFrontRegardless()
     }
 
     func hide() {
-        // Invalidate before ordering out: queued callbacks may belong to this old host.
+        // Invalidate before ordering out: a late layout pass may belong to this old host.
         presentationID = nil
-        pendingSize = nil
-        sizeUpdateScheduled = false
         panel?.orderOut(nil)
         panel = nil
         scrollView = nil
-    }
-
-    private func scheduleResize(to size: CGSize, presentation id: UUID) {
-        guard presentationID == id, let size = validSize(size) else { return }
-        pendingSize = size
-        guard !sizeUpdateScheduled else { return }
-        sizeUpdateScheduled = true
-
-        // Do not change AppKit frames inside SwiftUI's layout callback. Coalesce changes
-        // and recheck identity after the hop, including hide -> show replacements.
-        DispatchQueue.main.async { [weak self] in
-            guard let self, self.presentationID == id else { return }
-            self.sizeUpdateScheduled = false
-            guard let panel = self.panel, panel.isVisible,
-                  let size = self.pendingSize,
-                  let screen = panel.screen ?? NSScreen.main ?? NSScreen.screens.first else { return }
-            self.pendingSize = nil
-            self.resize(to: size, panel: panel, screen: screen)
-        }
     }
 
     private func validSize(_ size: CGSize) -> CGSize? {
@@ -127,7 +116,7 @@ private final class Host<V: View>: NSHostingView<V> {
     }
 
     private func resize(to naturalSize: CGSize, panel: NSPanel, screen: NSScreen,
-                        preferredOrigin: NSPoint? = nil) {
+                        preferredOrigin: NSPoint? = nil, display: Bool = true) {
         guard let viewport = scrollView, let document = viewport.documentView else { return }
         // AppKit screen coordinates: points, bottom-left origin; never Retina pixels.
         let visible = screen.visibleFrame
@@ -145,7 +134,9 @@ private final class Host<V: View>: NSHostingView<V> {
         if viewport.hasVerticalScroller != scrollsVertically { viewport.hasVerticalScroller = scrollsVertically }
         if viewport.hasHorizontalScroller != scrollsHorizontally { viewport.hasHorizontalScroller = scrollsHorizontally }
         if document.frame.size != naturalSize { document.setFrameSize(naturalSize) }
-        if panel.frame != frame { panel.setFrame(frame, display: true) }
+        // Inside a layout pass, AppKit draws the new frame right after layout; never
+        // force a display from there.
+        if panel.frame != frame { panel.setFrame(frame, display: display) }
 
         // Oversized content remains reachable by scrolling instead of extending beyond
         // the visible screen. Start at its top when it first overflows vertically.
