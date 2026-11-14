@@ -743,6 +743,11 @@ Wave 2 ownership (exclusive):
     `last-sections.json` in the 0.3.0 format (format keys checked read-only: `headlines` ×3, `headline`
     ×0), and restoring a 0.2.2 file would be a live-profile change. Its evidence is the CI unit test on the
     literal 0.2.2 JSON, plus the user's recollection of the first W2 launch if available.
+  - Notes (2026-11-14): the build under test is now `04_Exports/0.3.0-header-Debug/LLM-UsageStatus.app`
+    (`9f8ede0`, ad-hoc signed, 0.3.0 / 300). It adds two user-reported fixes outside the 10 tasks: the
+    panel no longer jumps on expand/collapse (`7af531a`, user confirmed), and the header shows the
+    shortcut plus a Settings gear under an underlined title (`9f8ede0`, user confirmed). E1's four
+    checks are still open.
 - [ ] **E2**: Notarize 0.3.0 (go-ahead — Apple, `99-AUTH` key)
   - Depends on: E1.
   - Success: clean tree; `scripts/notarize-release.sh 0.3.0` → Accepted, stapled, `spctl`

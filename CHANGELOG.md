@@ -26,8 +26,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   similar plans). It resets with the weekly limit.
 - With **Show 5-hour limit** on, Codex shows the 5-hour limit as a second
   headline under its weekly limit.
+- A **Settings** gear in the panel header, next to the show/hide shortcut.
+
+### Changed
+
+- The panel header shows just the show/hide shortcut under the underlined
+  app name; clicking elsewhere still dismisses the panel.
 
 ### Fixed
+
+- Expanding or collapsing a section no longer makes the panel or its text
+  jump for a moment.
 
 - The Codex **Show 5-hour limit** toggle no longer hides Claude's 5-hour
   meter and countdown.
