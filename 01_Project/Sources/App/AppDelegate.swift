@@ -75,7 +75,8 @@ import os
     @objc private func showHUD() {
         let shortcutName = shortcutStore.current.displayName
         panel.show { [stores, preferences] in
-            UsageStatusView(stores: stores, preferences: preferences, shortcutName: shortcutName)
+            UsageStatusView(stores: stores, preferences: preferences, shortcutName: shortcutName,
+                            onOpenSettings: { [weak self] in self?.openSettings() })
         }
         // Refresh on open: every enabled provider fetches current values independently;
         // a disabled provider is never read or fetched.

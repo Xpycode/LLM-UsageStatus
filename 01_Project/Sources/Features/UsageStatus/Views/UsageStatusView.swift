@@ -9,6 +9,8 @@ struct UsageStatusView: View {
     @ObservedObject var preferences: UsagePreferences
     /// Spelled-out toggle chord, passed in by the app so the view never reads the store.
     let shortcutName: String
+    /// Opens Settings; the app owns the window, so the view only signals the request.
+    let onOpenSettings: () -> Void
     @State private var now = Date()
     @State private var requestedRenewals: Set<String> = []
 
@@ -17,9 +19,18 @@ struct UsageStatusView: View {
             VStack(spacing: 6) {
                 Text("LLM Usage Status")
                     .font(.title2.weight(.semibold))
-                Text("\(shortcutName) to toggle · click elsewhere to dismiss")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .underline()
+                HStack(spacing: 8) {
+                    Text(shortcutName)
+                    Button(action: onOpenSettings) {
+                        Image(systemName: "gearshape")
+                    }
+                    .buttonStyle(.borderless)
+                    .help("Settings (Command-Comma)")
+                    .accessibilityLabel("Settings")
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity)
 
