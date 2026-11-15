@@ -5,8 +5,8 @@
 > Task state/evidence is authoritative here; TASKS links here and holds backlog/inbox.
 > Follow the master's `reference/task-state.md` for legacy reconciliation and archival.
 
-**Progress:** 10/10 tasks complete (0.1, 1.1–1.4, 2.1–2.3, 3.1–3.2); E0, E1 and E2 passed; E3 published except the website; E4 and E5 passed
-(2026-11-15; only open: website in App-Websites). D2, D4, D10 and D11 confirmed by the user 2026-11-12. Wave 0 done 2026-11-12
+**Progress:** 10/10 tasks complete (0.1, 1.1–1.4, 2.1–2.3, 3.1–3.2); **COMPLETE 2026-11-15** — E0–E5 passed (E3's website step marked done by the user while the
+App-Websites session finishes it). Retired in place; D11 local-run proof deferred to Backlog #19. D2, D4, D10 and D11 confirmed by the user 2026-11-12. Wave 0 done 2026-11-12
 (`109957c`); Wave 1 done 2026-11-12 (`1581e8a`, `0349627`, `2835494`, `0ffbc79`); Wave 2 done 2026-11-12
 (`b327b10`, `b987e61`, `04d0ece`, `3c83c41`); Wave 3 done 2026-11-12 (`023ad9f`, `4ae5cc9`; CI green on
 `4ae5cc9`, 280 tests). Execution was requested wave by wave (Wave 0, 1, 2, 3).
@@ -169,39 +169,45 @@ confirmed all four (D2, D4, D10, D11) as written on 2026-11-12.
 - [x] The built app's `Info.plist` has `SUFeedURL` (D1), a 32-byte base64 `SUPublicEDKey` and
       `SUEnableAutomaticChecks` true, **and** keeps `CFBundleDisplayName` and `LSUIElement`;
       `Contents/Frameworks/Sparkle.framework` is present.
-- [ ] "Check for Updates…" exists in the right-click menu and the fallback menu; Settings has the
+- [x] "Check for Updates…" exists in the right-click menu and the fallback menu; Settings has the
       Updates section (D4). In a 0.3.0 build against a feed whose newest item is 202, the alert
       appears **in front** and says the app is up to date. Unticking automatic checks persists.
+      (E1 + E4 2026-11-15: menu item and Updates section seen; up-to-date alert against the live 300
+      feed, not a 202-only feed.)
 - [x] The updater does not start inside the app-hosted test process (no network from tests).
       (`AppDelegate` passes `startingUpdater: false` under `XCTestConfigurationFilePath`; tests build
       `UpdateController(startingUpdater: false)`; no `URLSession`/Keychain in tests — 3.2 review; CI green.)
-- [ ] A lower-versioned, Developer-ID-signed local build updates to the published 0.3.0 through the
-      live feed, verifies the signature, relaunches and shows Version 0.3.0 (300) (E5).
-- [ ] `notarize-release.sh` output passes `codesign --verify --deep --strict`; the nested
+- [x] A lower-versioned, Developer-ID-signed local build updates to the published 0.3.0 through the
+      live feed, verifies the signature, relaunches and shows Version 0.3.0 (300) (E5). (E5 passed 2026-11-15.)
+- [x] `notarize-release.sh` output passes `codesign --verify --deep --strict`; the nested
       `Sparkle.framework` and its executables carry the Developer ID team `FDMSRXXN73` and the
-      hardened runtime; Apple's verdict is Accepted with no issues in `notarytool log`.
-- [ ] `appcast.xml` validates, holds one item per version, newest first, with `length` and
-      `sparkle:edSignature` matching the published DMG; the raw URL serves it with HTTP 200.
-- [ ] Claude (endpoint path): headlines are exactly `five-hour` then `seven-day`, each with percent
+      hardened runtime; Apple's verdict is Accepted with no issues in `notarytool log`. (E2.)
+- [x] `appcast.xml` validates, holds one item per version, newest first, with `length` and
+      `sparkle:edSignature` matching the published DMG; the raw URL serves it with HTTP 200. (E3.3.)
+- [x] Claude (endpoint path): headlines are exactly `five-hour` then `seven-day`, each with percent
       left, countdown and bar; no grey collapsed caption remains for the 7-day window. Codex:
       `weekly` always, `five-hour` only while the toggle is on; the daily-budget quote is on `weekly`
       only. Vibe: unchanged (`budget`). The Codex toggle never changes the Claude section.
+      (E1 2026-11-15; bars became pace gauges by user decision.)
 - [x] A 0.2.2-format `last-sections.json` decodes into one-headline sections without a log line; a
       0.3.0 file round-trips every field including `subMeters`. (`SectionStateCacheTests` literal 0.2.2
       JSON, round trip and null cases on CI 280; the legacy path has no log for valid headlines.)
-- [ ] With a `limits[]` Fable row in the response, the 7-day headline carries one sub-meter
+- [x] With a `limits[]` Fable row in the response, the 7-day headline carries one sub-meter
       `fable-allowance` "Fable allowance" with fraction = percent / 100 (clamped), rendered as a
       smaller bar under the headline and in the tooltip; without the row, nothing is rendered and no
       log line appears. The diagnostic logs key names only (top level and one level down), at
-      `.debug`, never values.
+      `.debug`, never values. (E1 2026-11-15; rendered as a small Fable gauge beside 7-day instead of a bar.)
 - [x] E0 shows the live response's key names; the Fable row's presence or absence is recorded.
 - [x] Help, README, CHANGELOG, `docs/homebrew.md`, `ThirdPartyNotices.txt` (Sparkle MIT) and the
       cask (`auto_updates true`) describe the new behaviour; no "Updates are installed manually for
       now" text remains; no shortcut glyphs; the help manifest is valid JSON. (3.1)
-- [ ] Notarized 0.3.0 (300): GitHub Release, appcast item, cask, website and `dl.php` all serve the
-      same DMG checksum; About shows Version 0.3.0 (300) after installation.
+- [x] Notarized 0.3.0 (300): GitHub Release, appcast item, cask, website and `dl.php` all serve the
+      same DMG checksum; About shows Version 0.3.0 (300) after installation. (GitHub, appcast, cask
+      verified in E3; About in E4. Website/`dl.php` marked done by the user 2026-11-15 while the
+      App-Websites session finishes it — `dl.php` still served the 0.2.2 file, 3294714 bytes, at that check.)
 - [ ] (D11) After a full local or CI test run no `LLMUsageStatusTests.*`/`VibeUsageProviderTests.*`
       plist is left in `~/Library/Preferences`; the Release build log has zero Swift warnings.
+      (Zero warnings verified in 2.2; the local-run plist proof is deferred to Backlog #19.)
 
 ## Execution schedule and ownership
 
@@ -769,7 +775,7 @@ Wave 2 ownership (exclusive):
     Sparkle.framework and app `flags=0x10000(runtime)`, secure timestamp; entitlements only
     `app-sandbox = false`. `dist/0.3.0/SOURCE_COMMIT.txt` = `1ddea1a…`; zip SHA-256 `adfcc366…a05d`
     (`shasum -c` OK).
-- [ ] **E3**: Publish — DMG, GitHub Release, appcast item, cask, website (go-aheads)
+- [x] **E3**: Publish — DMG, GitHub Release, appcast item, cask, website (go-aheads)
   - Depends on: E2. Order is part of the success criteria.
   - Success:
     1. `scripts/package-dmg.sh 0.3.0` → Accepted, stapled DMG; SHA-256 recorded.
@@ -802,6 +808,8 @@ Wave 2 ownership (exclusive):
     5. CHANGELOG `[0.3.0] - 2026-11-15`; README version/download badges and SHA-256 line → 0.3.0.
        **Website still open** (App-Websites: DMG upload, page/roster version and date, `dl.php`).
     6. `brew fetch --cask` SHA-256 = GitHub asset = appcast length's DMG; `dl.php` waits for the website.
+  - **Closed 2026-11-15 by the user:** website step marked done — the App-Websites session is
+    carrying it out (at closing, `dl.php` → `/downloads/llm-usagestatus.dmg` still 3294714 bytes = 0.2.2).
 - [x] **E4**: Install and smoke test (go-ahead to replace the `/Applications` copy)
   - Depends on: E3.
   - Success: graceful quit of the identified 0.2.2 instance, notarized 0.3.0 copied in, `spctl` ok,

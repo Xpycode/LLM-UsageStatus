@@ -1,6 +1,6 @@
 # PROJECT_STATE — LLM-UsageStatus
 
-**Last updated:** 2026-11-15 (0.3.0 released and installed; in-app update proven; next: website)
+**Last updated:** 2026-11-15 (0.3.0 released, plan retired; next: pick from the backlog)
 
 ## Identity
 
@@ -15,10 +15,9 @@ Developer ID signed, notarized, zero configuration for end users.
 
 ## Now
 
-- **Funnel:** release → 0.3.0 (300) **published** (GitHub Release, appcast, Homebrew cask) and installed; only the website is open.
-- **Execution:** `docs/plans/2026-11-12-v0.3.0/IMPLEMENTATION_PLAN.md` — 10/10 tasks; E0, E1, E2, E4, E5 passed; E3 done except step 5 (website, App-Websites session). Archive the plan once the website is done.
-- **Next:** website for 0.3.0 in App-Websites (DMG upload, page/roster version and date, `dl.php`); until then the README apps-site link serves 0.2.2. Deferred: Backlog #14, #15, #16, #17.
-- Running: installed **0.3.0** (pid 69801) from `/Applications/LLM-UsageStatus.app`, identical to `dist/0.3.0`. No test builds remain (`04_Exports/` emptied 2026-11-15).
+- **Funnel:** released — 0.3.0 (300) is out (GitHub Release, appcast, Homebrew cask) and installed; the 0.3.0 plan is retired (`docs/plans/2026-11-12-v0.3.0/`). The website update is being finished in the App-Websites session.
+- **Next:** no active plan — choose the next work from Backlog #14–#17 and #19 (D11 local-run proof) or the Inbox, then `/spec` or `/make-plan`.
+- Running: installed **0.3.0** (pid 69801) from `/Applications/LLM-UsageStatus.app`, identical to `dist/0.3.0`. No test builds remain.
 - 0.2.2 has no updater: 0.2.2 users update once by hand or `brew upgrade`; in-app updates start with 0.3.0.
 - `03_Screenshots/` untracked by choice; on this Mac it is in `.git/info/exclude` so the release scripts' clean-tree check passes.
 - GitHub remote **public since 2026-11-12** (Releases + Homebrew tap `xpycode/llm-usagestatus`) + CI green (295 tests on Xcode 16.4).
@@ -33,5 +32,5 @@ Developer ID signed, notarized, zero configuration for end users.
 
 ## Handoff
 
-- Current handoff: `docs/sessions/2026-11-15.md` → **Resume (post-release)** — 0.3.0 released and installed; next: website in App-Websites, then archive the plan. Earlier Resume blocks are historical.
+- Current handoff: `docs/sessions/2026-11-15.md` → **Resume (plan retired)** — 0.3.0 released, plan retired; next: pick from the backlog. Earlier Resume blocks are historical.
 - Decisions: `docs/decisions.md`
