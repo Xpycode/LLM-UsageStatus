@@ -48,6 +48,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - Expanding or collapsing a section no longer makes the panel or its text
   jump for a moment.
+- The panel no longer grows and shrinks by a line on every refresh: Updating…
+  now takes the place of the Last updated line.
 - The Codex **Show 5-hour limit** toggle no longer hides Claude's 5-hour
   meter and countdown.
 - The last-seen values saved by 0.2.2 still load after updating, so the panel

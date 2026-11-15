@@ -20,7 +20,7 @@ The panel has one section per provider: **Codex**, **Claude Code** and **Mistral
 
 Small lines at the bottom of each section tell you its state:
 
-- **Updating…** — a refresh is in progress.
+- **Updating…** — a refresh is in progress. It takes the place of the Last updated line until the refresh finishes.
 - **Update failed · showing previous values** — the last refresh failed. The previous values stay on screen. Close and reopen the panel to try again.
 - **Last updated** — when the values were last fetched.
 - **Reset time passed · awaiting updated usage** — a reset time has passed and fresh numbers have not arrived yet.

@@ -181,11 +181,8 @@ struct ProviderSectionView: View {
                     Text("Update failed · showing previous values")
                         .foregroundStyle(.orange)
                 }
-                if store.loading {
-                    Text("Updating…")
-                }
-                if let lastUpdated = store.lastUpdated {
-                    Text("Last updated \(lastUpdated.formatted(date: .abbreviated, time: .standard))")
+                if let line = Self.refreshLine(loading: store.loading, lastUpdated: store.lastUpdated) {
+                    Text(line)
                 }
             }
             .font(.caption)
@@ -210,6 +207,15 @@ struct ProviderSectionView: View {
 
     /// Compact collapsed line for one secondary window, with its reset countdown
     /// when a same-label deadline exists.
+    /// One line for refresh state: "Updating…" takes the place of
+    /// "Last updated" while a refresh runs, so the section keeps its height
+    /// and the panel does not grow and shrink around every refresh.
+    nonisolated static func refreshLine(loading: Bool, lastUpdated: Date?) -> String? {
+        if loading { return "Updating…" }
+        guard let lastUpdated else { return nil }
+        return "Last updated \(lastUpdated.formatted(date: .abbreviated, time: .standard))"
+    }
+
     private static func smallWindowLine(_ meter: SectionMeter, section: ProviderSection, now: Date) -> String {
         var text = "\(meter.label): \(Int((meter.fractionLeft * 100).rounded()))% left"
         if let deadline = section.deadlines.first(where: { $0.label == meter.label }) {

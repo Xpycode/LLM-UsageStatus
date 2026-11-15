@@ -271,3 +271,20 @@ private actor FetchGate {
         continuation = nil
     }
 }
+
+/// The refresh caption is always at most one line, so a refresh never changes
+/// the section's height.
+final class RefreshLineTests: XCTestCase {
+    func testUpdatingReplacesLastUpdatedWhileLoading() {
+        let date = Date(timeIntervalSince1970: 1_800_000_000)
+        XCTAssertEqual(ProviderSectionView.refreshLine(loading: true, lastUpdated: date), "Updating…")
+        XCTAssertEqual(ProviderSectionView.refreshLine(loading: true, lastUpdated: nil), "Updating…")
+    }
+
+    func testLastUpdatedShowsWhenIdle() throws {
+        let date = Date(timeIntervalSince1970: 1_800_000_000)
+        let line = try XCTUnwrap(ProviderSectionView.refreshLine(loading: false, lastUpdated: date))
+        XCTAssertTrue(line.hasPrefix("Last updated "))
+        XCTAssertNil(ProviderSectionView.refreshLine(loading: false, lastUpdated: nil))
+    }
+}
