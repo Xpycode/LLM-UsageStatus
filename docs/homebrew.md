@@ -49,6 +49,9 @@ For each public release, keep GitHub, Homebrew and the website on the same versi
    `Casks/llm-usagestatus.rb`; keep `auto_updates true` and the `livecheck` block. Run
    `brew style Casks/llm-usagestatus.rb` and
    `brew audit --cask --online xpycode/llm-usagestatus/llm-usagestatus`, then commit and push.
+   Before the push the audit fails only on livecheck (the live feed still has the old version);
+   run it again after the push. The `livecheck` block must use `strategy :sparkle, &:short_version` —
+   plain `:sparkle` reports `0.2.2,202` (short,build), which never equals the cask version.
 5. **Website:** in App-Websites, upload the DMG to `downloads/llm-usagestatus.dmg` and bump the
    page and roster version and release date (see the 0.2.2 E3 record in
    `docs/plans/2026-11-10-v0.2.2/IMPLEMENTATION_PLAN.md`).

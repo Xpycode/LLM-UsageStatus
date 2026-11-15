@@ -5,8 +5,8 @@
 > Task state/evidence is authoritative here; TASKS links here and holds backlog/inbox.
 > Follow the master's `reference/task-state.md` for legacy reconciliation and archival.
 
-**Progress:** 10/10 tasks complete (0.1, 1.1–1.4, 2.1–2.3, 3.1–3.2); E0, E1 and E2 passed; E3–E5 open
-(E2 passed 2026-11-15; E3 publish is next, needs go-ahead). D2, D4, D10 and D11 confirmed by the user 2026-11-12. Wave 0 done 2026-11-12
+**Progress:** 10/10 tasks complete (0.1, 1.1–1.4, 2.1–2.3, 3.1–3.2); E0, E1 and E2 passed; E3 published except the website; E4 and E5 passed
+(2026-11-15; only open: website in App-Websites). D2, D4, D10 and D11 confirmed by the user 2026-11-12. Wave 0 done 2026-11-12
 (`109957c`); Wave 1 done 2026-11-12 (`1581e8a`, `0349627`, `2835494`, `0ffbc79`); Wave 2 done 2026-11-12
 (`b327b10`, `b987e61`, `04d0ece`, `3c83c41`); Wave 3 done 2026-11-12 (`023ad9f`, `4ae5cc9`; CI green on
 `4ae5cc9`, 280 tests). Execution was requested wave by wave (Wave 0, 1, 2, 3).
@@ -785,12 +785,36 @@ Wave 2 ownership (exclusive):
        badges updated; CHANGELOG `[0.3.0] - Unreleased` gets the release date; `brew livecheck`
        reports 0.3.0 from the feed.
     6. Verify live: GitHub asset, `brew fetch`, `dl.php` and the appcast `length` agree.
-- [ ] **E4**: Install and smoke test (go-ahead to replace the `/Applications` copy)
+  - **Evidence (2026-11-15, user go-ahead; steps 1–4 and 6 except `dl.php` done, step 5 website open):**
+    1. `scripts/package-dmg.sh 0.3.0` → submission `aec510e7-c1b1-4e50-99cc-582472b24d80` Accepted, stapled,
+       `spctl -t open` Notarized Developer ID; DMG 4459642 bytes, SHA-256 `29701e0c…d0b0`.
+    2. Annotated tag `v0.3.0` ("LLM Usage Status 0.3.0 (300)") on `1ddea1a` (= `SOURCE_COMMIT.txt`); GitHub
+       Release "LLM Usage Status 0.3.0" with the DMG, CHANGELOG entry as notes; downloaded asset has the same
+       SHA-256 and size.
+    3. `dist/0.3.0/release-notes.html` written from the CHANGELOG entry (15 items) before
+       `make-appcast-item.sh 0.3.0` → item 300 / 0.3.0 / length 4459642; edSignature verified with CryptoKit
+       against the app's `SUPublicEDKey` over the downloaded asset; `xmllint` ok; pushed in `7794d0e`; raw feed
+       shows 0.3.0 above 0.2.2 (byte-identical once raw GitHub's cache settled).
+    4. Cask 0.3.0 + sha256; **livecheck fix:** `strategy :sparkle` returned "short,build" ("0.2.2,202"), which
+       never equals the cask version, so the block is now `strategy :sparkle, &:short_version` (tested against
+       a locally served 0.3.0 feed → 0.3.0). `brew style` ok; `brew audit --cask --online` passes after the
+       push (before it, only the expected live-feed livecheck mismatch); `brew livecheck` 0.3.0 ==> 0.3.0.
+    5. CHANGELOG `[0.3.0] - 2026-11-15`; README version/download badges and SHA-256 line → 0.3.0.
+       **Website still open** (App-Websites: DMG upload, page/roster version and date, `dl.php`).
+    6. `brew fetch --cask` SHA-256 = GitHub asset = appcast length's DMG; `dl.php` waits for the website.
+- [x] **E4**: Install and smoke test (go-ahead to replace the `/Applications` copy)
   - Depends on: E3.
   - Success: graceful quit of the identified 0.2.2 instance, notarized 0.3.0 copied in, `spctl` ok,
     launched from `/Applications`, About 0.3.0 (300), Check for Updates… says up to date, Sparkle's
     scheduled check leaves a `com.sim.LLM-UsageStatus` defaults entry for the last check date.
-- [ ] **E5**: Self-update smoke test through the live feed (go-ahead; install click user-operated)
+  - **Evidence (2026-11-15, user go-ahead; after E5):** the running E5 copy (pid 62471, already 0.3.0)
+    quit via a quit Apple Event, exit confirmed; `/Applications` 0.2.2 (202) was not running and was moved
+    to a scratch backup (`dist/0.2.2` keeps the release copy); `dist/0.3.0/LLM-UsageStatus.app` copied in
+    with `ditto`: 0.3.0 (300), `codesign --verify --deep --strict` ok, stapler validate ok, `spctl`
+    Notarized Developer ID, executable byte-identical to `dist/0.3.0` (SHA-256 `ec8a0880…`). Launched
+    pid 69801 from `/Applications/LLM-UsageStatus.app`. `SULastCheckTime` defaults entry present. User
+    "pass": About 0.3.0 (300), Launch at login available, Check for Updates… up to date.
+- [x] **E5**: Self-update smoke test through the live feed (go-ahead; install click user-operated)
   - Depends on: E3 (and E4 for the final relaunch of the installed copy).
   - Success: a scratch Release build with `MARKETING_VERSION=0.2.9 CURRENT_PROJECT_VERSION=299`
     overrides, signed with `scripts/sign-app.sh`; the installed 0.3.0 is quit (identified
@@ -801,6 +825,17 @@ Wave 2 ownership (exclusive):
     `log show --predicate 'process == "LLM-UsageStatus" AND eventMessage CONTAINS "Sparkle"' --last 30m`.
   - If it fails: the signature, feed or signing step is wrong and 0.3.0 users could not update to
     0.3.1 — fix (re-sign the DMG and the item, never the key) before announcing the release.
+  - **Evidence (2026-11-15, user go-ahead; done before E4, so the final relaunch of the
+    `/Applications` copy moves to E4):** scratch Release build `MARKETING_VERSION=0.2.9
+    CURRENT_PROJECT_VERSION=299` from `7794d0e`, signed with `scripts/sign-app.sh` (six components
+    `FDMSRXXN73`), at `04_Exports/0.2.9-E5-update-test/`. The 0.3.0 refresh-line build (pid 23100) quit
+    via a quit Apple Event, exit confirmed; 0.2.9 launched (pid 61063). User: Check for Updates… offered
+    "0.3.0 is now available—you have 0.2.9" with the HTML notes (Added/Changed/Fixed); Install Update →
+    Ready to Install → Install and Relaunch; Settings About "Version 0.3.0 (300)", Last checked 19:28;
+    panel shows gauges (screenshots in chat). On disk after the update: 0.3.0 (300), executable
+    byte-identical to `dist/0.3.0`, stapler validate ok, `spctl` Notarized Developer ID; relaunched
+    pid 62471 runs from the same path. No Sparkle entries in `log show` (it does not log successful
+    updates at default level).
 
 ---
 
