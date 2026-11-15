@@ -5,8 +5,8 @@
 > Task state/evidence is authoritative here; TASKS links here and holds backlog/inbox.
 > Follow the master's `reference/task-state.md` for legacy reconciliation and archival.
 
-**Progress:** 10/10 tasks complete (0.1, 1.1–1.4, 2.1–2.3, 3.1–3.2); E0 and E1 passed; E2–E5 open
-(E2 notarize is next, needs go-ahead). D2, D4, D10 and D11 confirmed by the user 2026-11-12. Wave 0 done 2026-11-12
+**Progress:** 10/10 tasks complete (0.1, 1.1–1.4, 2.1–2.3, 3.1–3.2); E0, E1 and E2 passed; E3–E5 open
+(E2 passed 2026-11-15; E3 publish is next, needs go-ahead). D2, D4, D10 and D11 confirmed by the user 2026-11-12. Wave 0 done 2026-11-12
 (`109957c`); Wave 1 done 2026-11-12 (`1581e8a`, `0349627`, `2835494`, `0ffbc79`); Wave 2 done 2026-11-12
 (`b327b10`, `b987e61`, `04d0ece`, `3c83c41`); Wave 3 done 2026-11-12 (`023ad9f`, `4ae5cc9`; CI green on
 `4ae5cc9`, 280 tests). Execution was requested wave by wave (Wave 0, 1, 2, 3).
@@ -755,12 +755,20 @@ Wave 2 ownership (exclusive):
     gauge and hover tips, folded into 0.3.0 by user decision). One user nit, fixed after E1: the panel
     grew and shrank by a line on every refresh ("Updating…" was an extra line) — `8f06132`, user
     looked at build `04_Exports/0.3.0-refresh-line-Debug` and approved. E2 builds from `main` at or after `8f06132`.
-- [ ] **E2**: Notarize 0.3.0 (go-ahead — Apple, `99-AUTH` key)
+- [x] **E2**: Notarize 0.3.0 (go-ahead — Apple, `99-AUTH` key)
   - Depends on: E1.
   - Success: clean tree; `scripts/notarize-release.sh 0.3.0` → Accepted, stapled, `spctl`
     "Notarized Developer ID"; `codesign --verify --deep --strict` passes; `codesign -dv` on
     `Contents/Frameworks/Sparkle.framework` shows team `FDMSRXXN73` and `runtime`; `notarytool log`
     has no issues; `dist/0.3.0/` has `SHA256SUMS.txt` and `SOURCE_COMMIT.txt`.
+  - **Evidence (2026-11-15, user go-ahead):** clean `main` @ `1ddea1a` (`03_Screenshots/` put in local
+    `.git/info/exclude` so the clean-tree check passes; still untracked by user choice). Universal
+    (x86_64 arm64) 0.3.0 (300); submission `99bff6a4-0417-4aaf-86d7-7807f42cc15a` Accepted, notarytool
+    log "Ready for distribution", issues null; stapled and validated; `spctl` accepted, source=Notarized
+    Developer ID; `codesign --verify --deep --strict` valid; all six components TeamIdentifier `FDMSRXXN73`,
+    Sparkle.framework and app `flags=0x10000(runtime)`, secure timestamp; entitlements only
+    `app-sandbox = false`. `dist/0.3.0/SOURCE_COMMIT.txt` = `1ddea1a…`; zip SHA-256 `adfcc366…a05d`
+    (`shasum -c` OK).
 - [ ] **E3**: Publish — DMG, GitHub Release, appcast item, cask, website (go-aheads)
   - Depends on: E2. Order is part of the success criteria.
   - Success:
