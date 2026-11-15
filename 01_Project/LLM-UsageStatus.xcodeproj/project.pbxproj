@@ -26,6 +26,7 @@
 		344091B7C8C138115DF271A2 /* help-reading-the-panel.md in Resources */ = {isa = PBXBuildFile; fileRef = 5E28AA1B477A708F879D0613 /* help-reading-the-panel.md */; };
 		39754E2FD22B2219C1363E1A /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 188283FA2AA0B55CC9E37C00 /* Sparkle */; };
 		3A306998483488C7972C5E88 /* ThirdPartyNotices.txt in Resources */ = {isa = PBXBuildFile; fileRef = 88214827E3763CC4E7455532 /* ThirdPartyNotices.txt */; };
+		416CD9A6A42710DB083BA0D1 /* HoverTipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 808027F6F0C2EC736309D69F /* HoverTipTests.swift */; };
 		440EC10CBFBE485DC69B8A41 /* CitizenshipSupportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86039F312015B4BC640CE679 /* CitizenshipSupportTests.swift */; };
 		48CD3554BAAAAE0E5F2DA52F /* ClaudeTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1DA9A29E1DFD828D59DD02 /* ClaudeTokenProvider.swift */; };
 		50E84E605C398D452D8958A8 /* VibeBudgetEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1990B3291A76DB3D3CCFDA80 /* VibeBudgetEditor.swift */; };
@@ -35,6 +36,7 @@
 		558F53E04CD7DEEC5D3D265A /* UsageSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D86D18557950E0CAFEA9A68 /* UsageSnapshotTests.swift */; };
 		58EB06E0BC31EB981AE007E2 /* SectionFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6406DBE5BC91A2BCB8C679E /* SectionFixtures.swift */; };
 		5B221A6EB9DD838E8C805193 /* ClaudeLogAggregator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653152AA58139EA42CDC87C5 /* ClaudeLogAggregator.swift */; };
+		5B2F27C8C7D49AEC617BC85A /* HoverTip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3510262D508BEE6D3957D7C2 /* HoverTip.swift */; };
 		69136A175B2F1E5835FDF54E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F6753BBC944B341814A3CA22 /* Assets.xcassets */; };
 		691DB206BEB7D941B2D7F81D /* VibeJournalAggregatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1962AB6F02C1A3B93B3B8A7B /* VibeJournalAggregatorTests.swift */; };
 		697D9A8B98046E2FC4AA04EE /* KeyboardLayoutNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF79556401A23B9063E8A487 /* KeyboardLayoutNames.swift */; };
@@ -107,6 +109,7 @@
 		2D86D18557950E0CAFEA9A68 /* UsageSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageSnapshotTests.swift; sourceTree = "<group>"; };
 		2EC692C15F291BE643A748AB /* UsageSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageSnapshot.swift; sourceTree = "<group>"; };
 		31C6F20829570EFFC12C69A6 /* CodexUsageServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexUsageServiceTests.swift; sourceTree = "<group>"; };
+		3510262D508BEE6D3957D7C2 /* HoverTip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverTip.swift; sourceTree = "<group>"; };
 		3D79B6AFFD91BA3A799CC6F8 /* VibeUsageProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeUsageProviderTests.swift; sourceTree = "<group>"; };
 		3E513A5ED1CFC017B7335D39 /* UsageResponseDecoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageResponseDecoderTests.swift; sourceTree = "<group>"; };
 		3F354F5B4C1191EB9D120C56 /* help-codex.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "help-codex.md"; sourceTree = "<group>"; };
@@ -129,6 +132,7 @@
 		7A91A276F08FF60DEAA238BC /* ClaudeOAuthUsageServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeOAuthUsageServiceTests.swift; sourceTree = "<group>"; };
 		7AC39F644D4F732B0A73938A /* LLM-UsageStatus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "LLM-UsageStatus.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B080AE406F2EC0DB4A7E232 /* HotKeyShortcutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyShortcutTests.swift; sourceTree = "<group>"; };
+		808027F6F0C2EC736309D69F /* HoverTipTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverTipTests.swift; sourceTree = "<group>"; };
 		853AB380986CA290F24B25F4 /* VibeJournalAggregator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeJournalAggregator.swift; sourceTree = "<group>"; };
 		86039F312015B4BC640CE679 /* CitizenshipSupportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CitizenshipSupportTests.swift; sourceTree = "<group>"; };
 		88214827E3763CC4E7455532 /* ThirdPartyNotices.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = ThirdPartyNotices.txt; sourceTree = "<group>"; };
@@ -200,6 +204,7 @@
 		200CC8176CCE292915379814 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				3510262D508BEE6D3957D7C2 /* HoverTip.swift */,
 				4544AE9F60C86AC4D81C5729 /* UsageStatusView.swift */,
 			);
 			path = Views;
@@ -310,6 +315,7 @@
 		76A3C94EE12E44A6C7C30150 /* UsageStatus */ = {
 			isa = PBXGroup;
 			children = (
+				808027F6F0C2EC736309D69F /* HoverTipTests.swift */,
 				FD4BFCFF3361AA07A6D11521 /* SectionFixturePreviews.swift */,
 				900D40998E18F3691B8C96F4 /* SectionFixtureRenderTests.swift */,
 				A6406DBE5BC91A2BCB8C679E /* SectionFixtures.swift */,
@@ -585,6 +591,7 @@
 				33D5EC94411959A61CAADA70 /* GlobalHotKeyTests.swift in Sources */,
 				A97FB8287595283CB4BC41C7 /* HelpSupportTests.swift in Sources */,
 				5588004976C8171D5B310086 /* HotKeyShortcutTests.swift in Sources */,
+				416CD9A6A42710DB083BA0D1 /* HoverTipTests.swift in Sources */,
 				93C1EF80A41B6F535200E8A1 /* LaunchAtLoginTests.swift in Sources */,
 				79A7E53EC8C50A8C822C428F /* ProviderModelsTests.swift in Sources */,
 				C59E4F1F9224542582C13DF0 /* SectionFixturePreviews.swift in Sources */,
@@ -621,6 +628,7 @@
 				1E99FE25CBCF9A47B7145512 /* GlobalHotKey.swift in Sources */,
 				7A02EC576E0B9FFCF167DC0B /* HelpSupport.swift in Sources */,
 				A0AD7EA483F9D4C78D98F1A0 /* HotKeyShortcut.swift in Sources */,
+				5B2F27C8C7D49AEC617BC85A /* HoverTip.swift in Sources */,
 				697D9A8B98046E2FC4AA04EE /* KeyboardLayoutNames.swift in Sources */,
 				6AF5B6CC6BABEA3B54FB1B2C /* LLMUsageStatusApp.swift in Sources */,
 				557AAC5CE58B290D72DD68F3 /* LaunchAtLogin.swift in Sources */,

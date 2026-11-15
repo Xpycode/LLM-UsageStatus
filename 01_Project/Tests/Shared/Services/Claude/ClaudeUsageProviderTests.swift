@@ -55,9 +55,9 @@ final class ClaudeUsageProviderTests: XCTestCase {
         // Both windows headline in fixed order, whichever resets first.
         XCTAssertEqual(section.headlines, [
             SectionHeadline(id: "five-hour", windowLabel: "5-hour limit", fractionLeft: 1 - 0.42,
-                            resetsAt: Date(timeIntervalSince1970: 1_893_456_000))!,
+                            resetsAt: Date(timeIntervalSince1970: 1_893_456_000), windowDuration: 18_000)!,
             SectionHeadline(id: "seven-day", windowLabel: "7-day limit", fractionLeft: 1 - 0.81,
-                            resetsAt: Self.isoDate("2027-01-21T00:00:00Z"))!,
+                            resetsAt: Self.isoDate("2027-01-21T00:00:00Z"), windowDuration: 604_800)!,
         ])
     }
 
@@ -70,9 +70,9 @@ final class ClaudeUsageProviderTests: XCTestCase {
         let section = ClaudeUsageProvider.section(for: usage)
         XCTAssertEqual(section.headlines, [
             SectionHeadline(id: "five-hour", windowLabel: "5-hour limit", fractionLeft: 1 - 0.42,
-                            resetsAt: fiveHourReset)!,
+                            resetsAt: fiveHourReset, windowDuration: ResetWindow.fiveHours)!,
             SectionHeadline(id: "seven-day", windowLabel: "7-day limit", fractionLeft: 1 - 0.81,
-                            resetsAt: Self.now.addingTimeInterval(600_000))!,
+                            resetsAt: Self.now.addingTimeInterval(600_000), windowDuration: ResetWindow.sevenDays)!,
         ])
         XCTAssertNil(section.note)
     }
@@ -83,7 +83,8 @@ final class ClaudeUsageProviderTests: XCTestCase {
             sevenDay: ClaudeUsageWindow(utilization: 0.5, resetsAt: nil),
             fetchedAt: Self.now)
         XCTAssertEqual(ClaudeUsageProvider.section(for: sevenDayOnly).headlines, [
-            SectionHeadline(id: "seven-day", windowLabel: "7-day limit", fractionLeft: 0.5, resetsAt: nil)!,
+            SectionHeadline(id: "seven-day", windowLabel: "7-day limit", fractionLeft: 0.5, resetsAt: nil,
+                            windowDuration: ResetWindow.sevenDays)!,
         ])
 
         let fiveHourWithoutUtilization = ClaudeOAuthUsage(
@@ -104,7 +105,7 @@ final class ClaudeUsageProviderTests: XCTestCase {
         XCTAssertEqual(section.headlines.map(\.id), ["five-hour", "seven-day"])
         XCTAssertTrue(section.headlines[0].subMeters.isEmpty)
         XCTAssertEqual(section.headlines[1].subMeters,
-                       [SectionMeter(id: "fable-allowance", label: "Fable allowance", fraction: 0.35)!])
+                       [SectionMeter(id: "fable-allowance", label: "Fable", fraction: 0.35)!])
         XCTAssertEqual(section.headlines[1].subMeters.first?.fraction, 0.35)
         // The Fable reset equals the weekly reset: no extra meter or deadline.
         XCTAssertEqual(section.meters.map(\.id), ["five-hour-limit", "seven-day-limit"])

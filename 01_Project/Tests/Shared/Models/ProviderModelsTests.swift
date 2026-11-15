@@ -65,14 +65,14 @@ final class ProviderModelsTests: XCTestCase {
                        [five, seven])
     }
 
-    func testCollapsedSecondaryMetersExcludeThoseWithAHeadline() throws {
+    func testSecondaryMetersExcludeThoseWithAHeadline() throws {
         let five = try XCTUnwrap(SectionHeadline(id: "five-hour", windowLabel: "5-hour limit", fractionLeft: 0.5))
         let extra = try XCTUnwrap(SectionMeter(id: "extra", label: "Extra", fraction: 0.1))
         let section = ProviderSection(
             meters: [try XCTUnwrap(SectionMeter(id: "five-hour-limit", label: "5-hour limit", fraction: 0.5)), extra],
             headlines: [five], lastUpdated: referenceDate)
-        XCTAssertEqual(SectionVisibility.collapsedSecondaryMeters(section, providerID: "claude",
-                                                                  showFiveHourLimit: true), [extra])
+        XCTAssertEqual(SectionVisibility.secondaryMeters(section, providerID: "claude",
+                                                         showFiveHourLimit: true), [extra])
     }
 
     func testEstimateFlagsDefaultToAuthoritativeAndParticipateInEquality() {
@@ -135,5 +135,81 @@ final class ProviderModelsTests: XCTestCase {
                 XCTAssertFalse(text.contains(leak), "Published copy must not contain \(leak)")
             }
         }
+    }
+
+    // MARK: - Pace gauge: time left and countdown
+
+    func testTimeFractionLeftIsRemainingOverWindowLength() {
+        let resetsAt = referenceDate.addingTimeInterval(9_000)
+        XCTAssertEqual(ResetWindow.timeFractionLeft(resetsAt: resetsAt, windowDuration: 18_000,
+                                                    now: referenceDate), 0.5)
+        // A reset further out than one window length clamps to a full window.
+        XCTAssertEqual(ResetWindow.timeFractionLeft(resetsAt: referenceDate.addingTimeInterval(20_000),
+                                                    windowDuration: 18_000, now: referenceDate), 1)
+    }
+
+    func testTimeFractionLeftIsUnknownWithoutLengthResetOrFutureReset() {
+        let resetsAt = referenceDate.addingTimeInterval(60)
+        XCTAssertNil(ResetWindow.timeFractionLeft(resetsAt: resetsAt, windowDuration: nil, now: referenceDate))
+        XCTAssertNil(ResetWindow.timeFractionLeft(resetsAt: nil, windowDuration: 18_000, now: referenceDate))
+        XCTAssertNil(ResetWindow.timeFractionLeft(resetsAt: referenceDate, windowDuration: 18_000,
+                                                  now: referenceDate))
+        XCTAssertNil(ResetWindow.timeFractionLeft(resetsAt: referenceDate.addingTimeInterval(-1),
+                                                  windowDuration: 18_000, now: referenceDate))
+        for bad in [0, -5, Double.nan, .infinity] {
+            XCTAssertNil(ResetWindow.timeFractionLeft(resetsAt: resetsAt, windowDuration: bad, now: referenceDate))
+        }
+    }
+
+    func testPaceComparesTheShownWholePercentages() {
+        XCTAssertTrue(ResetWindow.isBehindPace(usageLeft: 0.35, timeLeft: 0.60))
+        XCTAssertFalse(ResetWindow.isBehindPace(usageLeft: 0.68, timeLeft: 0.50))
+        // 49.6% and 50.4% both read as 50%: on pace, so the colour matches the numbers.
+        XCTAssertFalse(ResetWindow.isBehindPace(usageLeft: 0.496, timeLeft: 0.504))
+    }
+
+    func testCountdownAppendsTimeLeftOnlyWhenTheWindowLengthIsKnown() {
+        let resetsAt = referenceDate.addingTimeInterval(302_400)  // 3d 12h 0m
+        XCTAssertEqual(ResetWindow.countdownText(resetsAt, now: referenceDate),
+                       "Resets in 3d 12h 0m")
+        XCTAssertEqual(ResetWindow.countdownText(resetsAt, now: referenceDate, windowDuration: ResetWindow.sevenDays),
+                       "Resets in 3d 12h 0m (50% time left)")
+        XCTAssertEqual(ResetWindow.countdownText(referenceDate.addingTimeInterval(9_000), now: referenceDate,
+                                                 windowDuration: ResetWindow.fiveHours),
+                       "Resets in 2h 30m (50% time left)")
+        XCTAssertEqual(ResetWindow.countdownText(referenceDate.addingTimeInterval(30), now: referenceDate,
+                                                 windowDuration: ResetWindow.fiveHours),
+                       "Resets in less than a minute (0% time left)")
+        XCTAssertEqual(ResetWindow.countdownText(referenceDate, now: referenceDate,
+                                                 windowDuration: ResetWindow.fiveHours),
+                       "Reset time passed · awaiting updated usage")
+    }
+
+    func testHeadlineWindowDurationIsValidatedAndRoundTrips() throws {
+        let headline = try XCTUnwrap(SectionHeadline(id: "seven-day", windowLabel: "7-day limit", fractionLeft: 0.68,
+                                                     resetsAt: referenceDate, windowDuration: ResetWindow.sevenDays))
+        XCTAssertEqual(headline.windowDuration, 604_800)
+        XCTAssertEqual(headline.timeFractionLeft(now: referenceDate.addingTimeInterval(-302_400)), 0.5)
+        XCTAssertNil(SectionHeadline(id: "x", windowLabel: "X", fractionLeft: 0.5, windowDuration: -1)?.windowDuration)
+
+        let decoded = try JSONDecoder().decode(SectionHeadline.self, from: JSONEncoder().encode(headline))
+        XCTAssertEqual(decoded, headline)
+    }
+
+    func testCachedHeadlineWithoutWindowDurationDecodesAsUnknown() throws {
+        let legacy = Data(#"{"id":"weekly","windowLabel":"Weekly limit","fractionLeft":0.5}"#.utf8)
+        XCTAssertNil(try JSONDecoder().decode(SectionHeadline.self, from: legacy).windowDuration)
+        let invalid = Data(#"{"windowLabel":"Weekly limit","fractionLeft":0.5,"windowDuration":0}"#.utf8)
+        XCTAssertNil(try JSONDecoder().decode(SectionHeadline.self, from: invalid).windowDuration)
+    }
+
+    func testDeadlineTakesWindowLengthFromTheSameLabelHeadline() throws {
+        let weekly = try XCTUnwrap(SectionHeadline(id: "weekly", windowLabel: "Weekly limit", fractionLeft: 0.5,
+                                                   windowDuration: ResetWindow.sevenDays))
+        let section = ProviderSection(rows: [], deadlines: [], headlines: [weekly], lastUpdated: referenceDate)
+        XCTAssertEqual(section.windowDuration(for: SectionDeadline(id: "weekly-reset", label: "Weekly limit",
+                                                                   date: referenceDate)), 604_800)
+        XCTAssertNil(section.windowDuration(for: SectionDeadline(id: "pass-expiry", label: "Next reset-pass expiry",
+                                                                 date: referenceDate)))
     }
 }

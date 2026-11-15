@@ -12,7 +12,7 @@
   ![Downloads](https://img.shields.io/github/downloads/Xpycode/LLM-UsageStatus/total?style=flat-square)
 
   <br><br>
-  <img src="github/screenshots/panel.png" alt="The LLM Usage Status panel with Codex, Claude Code and Mistral Vibe sections" width="420">
+  <img src="github/screenshots/panel.png" alt="The LLM Usage Status panel: Codex and Claude Code sections with pace gauges and a Fable gauge" width="386">
 </div>
 
 ## What's New in Version 0.3.0
@@ -20,10 +20,13 @@
 - **Automatic updates** — the app checks for a new version once a day and offers it in an alert;
   nothing installs until you choose **Install Update**. **Check for Updates…** is in the right-click
   menu, and Settings has a new **Updates** section.
+- **Pace gauges** — each limit is a round gauge: the outer ring is usage left, the inner pie is time
+  left, and the ring turns orange when you are behind pace. Hover a gauge for its countdown, reset
+  time and pace verdict.
 - **Claude's weekly limit gets its own headline** — the Claude Code section shows the 5-hour and the
-  7-day limit as two headlines, each with percent left, a countdown and a bar.
-- **Fable allowance** — on plans where Claude reports a separate Fable allowance, a smaller bar under
-  the 7-day headline shows how much of it is left.
+  7-day limit as two headlines, each with its own gauge.
+- **Fable allowance** — on plans where Claude reports a separate Fable allowance, a smaller gauge
+  beside the 7-day gauge shows how much of it is left.
 - **Codex 5-hour headline** — with **Show 5-hour limit** on, Codex shows the 5-hour limit as a
   second headline. The toggle no longer hides Claude's 5-hour meter.
 
@@ -43,11 +46,12 @@ allowances, and renewal times are one keystroke away.
 - One panel, one section per provider — Codex, Claude Code, and Mistral Vibe.
   A CLI that is not installed shows "not detected"; one provider failing never
   breaks the other sections.
-- Utilization meters and renewal countdowns per provider.
+- Pace gauges per limit (usage left against time left) with renewal countdowns
+  and details on hover.
 - Estimated values are always visibly labeled as estimates — the panel never
   presents a guess as an authoritative allowance.
 - One headline per limit window: Claude Code shows its 5-hour and 7-day limits
-  as two headlines, plus a Fable allowance bar when Claude reports one.
+  as two headlines, plus a Fable allowance gauge when Claude reports one.
 - Per-provider preferences in a right-click menu, including the optional Codex
   5-hour headline; settings persist across restarts and update the open
   panel immediately.
@@ -70,11 +74,11 @@ allowances, and renewal times are one keystroke away.
 
 ## Screenshots
 
-Rendered from the app with sample values.
+Captured from the running app; the Mistral Vibe section is not shown.
 
 <p align="center">
-  <img src="github/screenshots/codex-expanded.png" alt="Codex section expanded: limits, credits, resets" width="380">
-  <img src="github/screenshots/claude-and-vibe.png" alt="Claude Code limits and Vibe estimates" width="380">
+  <img src="github/screenshots/codex-expanded.png" alt="Codex section expanded: weekly gauge, credits, reset passes and countdowns" width="380">
+  <img src="github/screenshots/claude-expanded.png" alt="Claude Code section expanded: 5-hour and 7-day gauges, Fable gauge and countdowns" width="380">
 </p>
 
 ## Quick Start
@@ -138,8 +142,8 @@ itself stays bound to the same physical key.
 - **Codex** — weekly allowance and its renewal countdown, credits, available
   reset passes, and an optional 5-hour limit headline.
 - **Claude Code** — when you are signed in, two headlines (5-hour limit and
-  7-day limit) with percent left, renewal countdowns and bars, and a smaller
-  Fable allowance bar under the 7-day headline when Claude reports one;
+  7-day limit) with percent left, pace gauges and renewal countdowns, and a
+  smaller Fable allowance gauge beside the 7-day gauge when Claude reports one;
   otherwise, labeled local estimates computed from your session logs.
 - **Mistral Vibe** — pay-per-token usage with no usage API: sessions, token
   totals (input plus output; cached and reasoning tokens are inside those and

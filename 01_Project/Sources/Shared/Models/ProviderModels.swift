@@ -145,6 +145,14 @@ struct ProviderSection: Equatable, Sendable, Codable {
     }
 }
 
+extension ProviderSection {
+    /// Window length for a deadline, taken from the headline that names the
+    /// same window (the providers label both alike); nil when none does.
+    func windowDuration(for deadline: SectionDeadline) -> TimeInterval? {
+        headlines.first { $0.windowLabel == deadline.label }?.windowDuration
+    }
+}
+
 /// Decodes a headline that failed validation as nil instead of throwing, so
 /// one bad stored headline cannot discard the whole cache file. The drop is
 /// logged by error type only, never with stored values.
@@ -191,14 +199,18 @@ struct SectionHeadline: Equatable, Sendable, Identifiable, Codable {
     /// True when the headline derives from estimated rather than authoritative
     /// data, so the view can label it.
     var isEstimate = false
-    /// Smaller meters rendered under this headline's bar (e.g. a per-model
-    /// allowance within the weekly window).
+    /// Smaller meters rendered beside this headline's gauge (e.g. a per-model
+    /// allowance within the weekly window). They share the headline's reset.
     var subMeters: [SectionMeter] = []
+    /// Full length of the window that ends at `resetsAt`, in seconds; nil when
+    /// unknown, which leaves the time-left share out of the presentation.
+    var windowDuration: TimeInterval?
 
     /// Rejects non-finite input so a broken payload cannot reach presentation.
+    /// A non-finite or non-positive window duration is treated as unknown.
     init?(id: String, windowLabel: String, fractionLeft: Double, resetsAt: Date? = nil,
           dailyBudget: SectionDailyBudget? = nil, isEstimate: Bool = false,
-          subMeters: [SectionMeter] = []) {
+          subMeters: [SectionMeter] = [], windowDuration: TimeInterval? = nil) {
         guard fractionLeft.isFinite else { return nil }
         self.id = id
         self.windowLabel = windowLabel
@@ -207,10 +219,16 @@ struct SectionHeadline: Equatable, Sendable, Identifiable, Codable {
         self.dailyBudget = dailyBudget
         self.isEstimate = isEstimate
         self.subMeters = subMeters
+        self.windowDuration = ResetWindow.validDuration(windowDuration)
+    }
+
+    /// Share of the window still to run at `now`, or nil when it cannot be known.
+    func timeFractionLeft(now: Date) -> Double? {
+        ResetWindow.timeFractionLeft(resetsAt: resetsAt, windowDuration: windowDuration, now: now)
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, windowLabel, fractionLeft, resetsAt, dailyBudget, isEstimate, subMeters
+        case id, windowLabel, fractionLeft, resetsAt, dailyBudget, isEstimate, subMeters, windowDuration
     }
 
     /// Applies the failable initializer's validation. Missing `id` and
@@ -229,6 +247,67 @@ struct SectionHeadline: Equatable, Sendable, Identifiable, Codable {
         dailyBudget = try container.decodeIfPresent(SectionDailyBudget.self, forKey: .dailyBudget)
         isEstimate = try container.decodeIfPresent(Bool.self, forKey: .isEstimate) ?? false
         subMeters = try container.decodeIfPresent([SectionMeter].self, forKey: .subMeters) ?? []
+        // Absent before 0.3.1; an invalid stored value degrades to unknown.
+        windowDuration = try ResetWindow.validDuration(
+            container.decodeIfPresent(TimeInterval.self, forKey: .windowDuration))
+    }
+}
+
+/// Window lengths and the time-left arithmetic behind the pace gauge. Pure
+/// functions of their inputs; the view supplies the ticking `now`.
+enum ResetWindow {
+    static let fiveHours: TimeInterval = 18_000
+    static let sevenDays: TimeInterval = 604_800
+
+    /// A usable window length, or nil for missing, non-finite or non-positive input.
+    static func validDuration(_ duration: TimeInterval?) -> TimeInterval? {
+        guard let duration, duration.isFinite, duration > 0 else { return nil }
+        return duration
+    }
+
+    /// Remaining time over the window length, clamped to 0...1. Nil when the
+    /// reset or the length is unknown, or the reset time has already passed.
+    static func timeFractionLeft(resetsAt: Date?, windowDuration: TimeInterval?, now: Date) -> Double? {
+        guard let resetsAt, let duration = validDuration(windowDuration) else { return nil }
+        let remaining = resetsAt.timeIntervalSince(now)
+        guard remaining > 0 else { return nil }
+        return min(remaining / duration, 1)
+    }
+
+    /// Whole percent as presented, so the pace verdict always agrees with the
+    /// numbers the user reads.
+    static func percent(_ fraction: Double) -> Int {
+        Int((min(max(fraction, 0), 1) * 100).rounded())
+    }
+
+    /// True when less usage than time is left: the allowance is running out
+    /// faster than the window. Equal shown percentages count as on pace.
+    static func isBehindPace(usageLeft: Double, timeLeft: Double) -> Bool {
+        percent(usageLeft) < percent(timeLeft)
+    }
+
+    /// Shared countdown phrasing for deadlines, headlines and tooltips, with
+    /// the window's time-left share appended when its length is known.
+    static func countdownText(_ date: Date, now: Date, windowDuration: TimeInterval? = nil) -> String {
+        guard date > now else {
+            return "Reset time passed · awaiting updated usage"
+        }
+        let minutes = Int(min(date.timeIntervalSince(now) / 60, Double(Int.max / 2)))
+        let days = minutes / 1_440
+        let hours = (minutes % 1_440) / 60
+        let remainder = minutes % 60
+        let countdown: String
+        if days > 0 {
+            countdown = "Resets in \(days)d \(hours)h \(remainder)m"
+        } else if hours > 0 {
+            countdown = "Resets in \(hours)h \(remainder)m"
+        } else {
+            countdown = minutes > 0 ? "Resets in \(minutes)m" : "Resets in less than a minute"
+        }
+        guard let timeLeft = timeFractionLeft(resetsAt: date, windowDuration: windowDuration, now: now) else {
+            return countdown
+        }
+        return "\(countdown) (\(percent(timeLeft))% time left)"
     }
 }
 

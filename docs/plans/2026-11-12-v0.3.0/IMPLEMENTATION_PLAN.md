@@ -726,9 +726,11 @@ Wave 2 ownership (exclusive):
 - [ ] **E1**: Manual acceptance in a fresh Debug build (user-operated)
   - Depends on: 3.2. Gates: the UI acceptance criteria; E2.
   - Success:
-    1. Claude section: two headlines (5-hour, 7-day) with countdowns and bars; expanded shows meters
-       and reset times; the Fable allowance sub-meter if E0 confirmed it; "Show 5-hour limit" off →
-       Claude unchanged, Codex loses its 5-hour headline; on → it returns.
+    1. Claude section: two headlines (5-hour, 7-day), each a pace gauge (ring orange when behind
+       pace) with the Fable gauge beside 7-day if E0 confirmed it; hovering a gauge while another
+       app is in front shows its tip (countdown, reset time, pace); expanded shows reset times and no
+       bar that repeats a gauge; "Show 5-hour limit" off → Claude unchanged, Codex loses its 5-hour
+       headline; on → it returns. (Gauge folded into 0.3.0 by user decision 2026-11-15.)
     2. Right-click → Check for Updates… → the Sparkle alert is frontmost and says up to date
        (feed newest item 202 < 300). Settings → Updates: untick automatic checks, close and reopen
        Settings → still unticked; "Last checked" shows the time of the manual check.

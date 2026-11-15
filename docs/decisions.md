@@ -4,6 +4,60 @@ Durable, project-specific decisions. Newest first.
 
 ---
 
+## 2026-11-15 — HUD hover tips: own tip panel instead of `.help`; no bars that repeat a gauge
+
+**Context:** after the pace gauge moved countdown and pace into tooltips, no tooltip appeared
+anywhere in the HUD. The HUD is a `.nonactivatingPanel`, so the app is almost never active while
+it is on screen, and AppKit tool tips (SwiftUI `.help`) are only shown for the active app. The
+user confirmed it: with Settings open (app active) the tooltip appeared.
+
+**Choice:** `.hoverTip(_:)` (`HoverTip.swift`) — a click-through overlay `NSView` with an
+`.activeAlways` tracking area feeds one `HoverTipController`, which shows a borderless,
+non-activating, mouse-ignoring panel after 0.6 s; innermost (smallest) hovered area wins; text
+updates live; click/scroll suppresses until the pointer leaves; the HUD dismisses it on hide;
+VoiceOver reads the text as a hint. All four HUD `.help` uses replaced. Separately (user choice),
+the expanded section shows bars only for meters without a gauge — the gauge already shows them.
+
+**Alternatives:** keep `.help` and accept tips only while Settings/Help is open — rejected, hover is
+now the only place for countdown and pace; activate the app on hover — would steal focus from the
+user's frontmost app, against the HUD's design; a `.popover` — anchors to and activates differently,
+heavier for plain text; SwiftUI `.onHover` + overlay — the panel sizes to its content, so an
+overlay would clip or resize the HUD.
+
+**Consequences:** tips appear while the app is inactive (user-confirmed, build 3); an area that
+appears under a resting pointer shows its tip only after the next mouse move; `ImageRenderer`
+fixtures turn tips off via `hoverTipsEnabled`; future HUD tooltips must use `.hoverTip`, not `.help`
+(Settings and other normal windows can keep `.help`).
+
+---
+
+## 2026-11-14 — Pace gauge replaces the headline bar (branch `feature/pace-gauge`)
+
+**Context:** a headline showed usage left ("68% left") and a countdown, but not how much of the
+window was left, so pace had to be worked out in the head. The user asked for the time share, then
+proposed a two-layer circle.
+
+**Choice:** each headline is a gauge — outer ring = usage left, inner pie = time left, both anchored
+at 12 o'clock and running down clockwise (the spent part opens like a clock hand). The ring is
+orange when the shown usage percent is below the shown time percent (whole-percent comparison so the
+colour agrees with the numbers), otherwise accent; sub-meters (Fable) use purple. Visible: gauge,
+percent left, window name. On hover: countdown with "(N% time left)", reset date/time, per-day
+quote, pace verdict. Countdowns everywhere append "(N% time left)" when the window length is known.
+Window length is a model field (`SectionHeadline.windowDuration`): 5 h and 7 d for Codex/Claude, the
+real budget-month length for Vibe; deadline rows borrow it from the same-label headline. Fable label
+shortened to "Fable".
+
+**Alternatives:** text only ("Resets in 3d 12h 0m (50% time left)") — kept as the hover/expanded
+text, not the glance; a pace tick on the linear bar — same information, less striking, not chosen;
+showing time elapsed — rejected so both shares read as "left"; Fable as an indented or full-size
+row — the user preferred it beside the 7-day gauge.
+
+**Consequences:** old caches decode without a length (ring only until refresh); the
+countdown formatter moved to `ResetWindow` and is unit-tested; tooltips are per gauge (open issue:
+none showed in the second build — see 2026-11-14 session Resume; resolved 2026-11-15, see above).
+
+---
+
 ## 2026-11-12 — 0.3.0: Sparkle updates, one headline per limit window, Fable allowance
 
 **Context:** updates were manual; Claude's 7-day limit was a grey caption under the 5-hour headline;

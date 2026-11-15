@@ -12,7 +12,7 @@ The Codex section reads your Codex sign-in and asks Codex's usage service for yo
 
 ## Show 5-hour limit
 
-Right-click the panel and choose **Show 5-hour limit** to add the 5-hour limit as a second headline, with its percent left, countdown and bar, plus its meter and reset time in the expanded section. A checkmark means it is on. Choose it again to hide it. The setting is remembered, and the open panel updates immediately. It only affects the Codex section; Claude Code always shows its 5-hour limit.
+Right-click the panel and choose **Show 5-hour limit** to add the 5-hour limit as a second headline, with its own gauge and percent left (countdown on hover), plus its reset countdown in the expanded section. A checkmark means it is on. Choose it again to hide it. The setting is remembered, and the open panel updates immediately. It only affects the Codex section; Claude Code always shows its 5-hour limit.
 
 ## If the section is empty
 

@@ -184,13 +184,20 @@ struct VibeUsageProvider: Provider {
         let fractionLeft = min(max(1 - spent / budget.amountUSD, 0), 1)
         let raw = amount - cost.total
         let remaining = raw < 0 ? Decimal(0) : raw
+        let resetsAt = nextResetDate(onOrAfter: now, dayOfMonth: budget.resetDay, calendar: calendar)
+        // The budget month runs from the previous reset to the next one, so
+        // its length follows the calendar (28 to 31 days).
+        let windowDuration = resetsAt.flatMap { next in
+            previousResetDate(before: next, dayOfMonth: budget.resetDay, calendar: calendar)
+                .map { next.timeIntervalSince($0) }
+        }
         return SectionHeadline(id: "budget", windowLabel: "Monthly budget",
                                fractionLeft: fractionLeft,
-                               resetsAt: nextResetDate(onOrAfter: now, dayOfMonth: budget.resetDay,
-                                                       calendar: calendar),
+                               resetsAt: resetsAt,
                                dailyBudget: SectionDailyBudget(amount: remaining, unitText: "$",
                                                               isEstimate: true),
-                               isEstimate: true)
+                               isEstimate: true,
+                               windowDuration: windowDuration)
     }
 
     /// Next monthly occurrence of `day`, clamped to the month's length
@@ -208,6 +215,20 @@ struct VibeUsageProvider: Provider {
             if candidate > now { return candidate }
         }
         return nil
+    }
+
+    /// The reset one month before `next`, with the same clamping as
+    /// `nextResetDate` (day 31 after a 30-day month falls on the 30th).
+    static func previousResetDate(before next: Date, dayOfMonth day: Int,
+                                  calendar: Calendar = .current) -> Date? {
+        guard (1...31).contains(day),
+              let anchor = calendar.date(byAdding: .month, value: -1, to: next),
+              let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: anchor))
+        else { return nil }
+        let days = calendar.range(of: .day, in: .month, for: monthStart)?.count ?? 30
+        guard let candidate = calendar.date(bySetting: .day, value: min(day, days), of: monthStart),
+              candidate < next else { return nil }
+        return candidate
     }
 
     /// Input plus output; cached and reasoning tokens are already inside those.

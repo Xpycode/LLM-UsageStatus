@@ -4,10 +4,17 @@ The panel has one section per provider: **Codex**, **Claude Code** and **Mistral
 
 ## What a section shows
 
-- One headline per limit window, each with the percent left until its reset (for example, "68% left"), the window's name (such as "5-hour limit" or "Weekly limit"), a live countdown such as "Resets in 2d 4h 10m" and a bar. Claude Code shows two headlines, the 5-hour and the 7-day limit; Codex shows its weekly limit, plus the 5-hour limit while **Show 5-hour limit** is on.
-- Some headlines carry a smaller bar underneath for a related allowance, such as Claude's **Fable allowance**.
-- Where a remaining amount exists, an approximate per-day amount (for example, "≈ 7417273 credits/day").
-- Click the section to expand it for meters, rows and reset times.
+- One headline per limit window: a round gauge, the percent left until its reset (for example, "68% left") and the window's name (such as "5-hour limit" or "Weekly limit"). Claude Code shows two headlines, the 5-hour and the 7-day limit; Codex shows its weekly limit, plus the 5-hour limit while **Show 5-hour limit** is on.
+- Some headlines carry a smaller gauge beside them for a related allowance, such as Claude's **Fable** gauge.
+- Hold the pointer over a gauge for its details: the countdown with the share of time left (for example, "Resets in 3d 12h 0m (50% time left)"), the exact reset time, an approximate per-day amount where a remaining amount exists, and whether you are on pace.
+- Click the section to expand it for the details the gauges don't show, such as Codex credits and reset passes, and each window's reset countdown.
+
+## Reading a gauge
+
+- The **outer ring** is the usage left; the **inner pie** is the time left until the reset. Both start at 12 o'clock and run down clockwise, like a clock hand sweeping.
+- If the ring reaches as far round as the pie or further, you have at least as much usage left as time: you are on pace. The ring is blue (purple for a smaller gauge such as Fable).
+- If the ring falls short of the pie, usage is running out faster than time and the ring turns **orange**.
+- A gauge without a pie has no known reset time or window length.
 
 ## Status lines
 

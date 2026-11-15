@@ -26,7 +26,7 @@ struct UsageStatusView: View {
                         Image(systemName: "gearshape")
                     }
                     .buttonStyle(.borderless)
-                    .help("Settings (Command-Comma)")
+                    .hoverTip("Settings (Command-Comma)")
                     .accessibilityLabel("Settings")
                 }
                 .font(.caption)
@@ -158,16 +158,18 @@ struct ProviderSectionView: View {
                 }
             }
             if expanded {
-                // The Codex 5-hour display is optional; the provider owns these
-                // stable ids. Hiding the meter hides its reset countdown with it.
-                ForEach(visibleMeters(section)) { meter in
+                // Bars only for windows without a gauge; the gauges above already
+                // show the rest. The Codex 5-hour display is optional; the provider
+                // owns these stable ids. Hiding the meter hides its reset countdown with it.
+                ForEach(secondaryMeters(section)) { meter in
                     SectionMeterView(meter: meter)
                 }
                 ForEach(section.rows) { row in
                     SectionRowView(row: row)
                 }
                 ForEach(visibleDeadlines(section)) { deadline in
-                    SectionDeadlineView(deadline: deadline, now: now)
+                    SectionDeadlineView(deadline: deadline, now: now,
+                                        windowDuration: section.windowDuration(for: deadline))
                 }
             }
 
@@ -191,11 +193,7 @@ struct ProviderSectionView: View {
         }
         .contentShape(Rectangle())
         .onTapGesture { expanded.toggle() }
-        .help(tooltip(section))
-    }
-
-    private func visibleMeters(_ section: ProviderSection) -> [SectionMeter] {
-        SectionVisibility.meters(section, providerID: store.providerID, showFiveHourLimit: showFiveHourLimit)
+        .hoverTip(tooltip(section))
     }
 
     private var visibleHeadlines: [SectionHeadline] {
@@ -204,9 +202,9 @@ struct ProviderSectionView: View {
         } ?? []
     }
 
-    /// Meters without a same-label headline, shown small while collapsed.
+    /// Meters without a same-label headline: small lines while collapsed, bars when expanded.
     private func secondaryMeters(_ section: ProviderSection) -> [SectionMeter] {
-        SectionVisibility.collapsedSecondaryMeters(section, providerID: store.providerID,
+        SectionVisibility.secondaryMeters(section, providerID: store.providerID,
                                                    showFiveHourLimit: showFiveHourLimit)
     }
 
@@ -215,7 +213,9 @@ struct ProviderSectionView: View {
     private static func smallWindowLine(_ meter: SectionMeter, section: ProviderSection, now: Date) -> String {
         var text = "\(meter.label): \(Int((meter.fractionLeft * 100).rounded()))% left"
         if let deadline = section.deadlines.first(where: { $0.label == meter.label }) {
-            text += " · \(SectionDeadlineView.countdownText(deadline.date, now: now))"
+            let countdown = ResetWindow.countdownText(deadline.date, now: now,
+                                                      windowDuration: section.windowDuration(for: deadline))
+            text += " · \(countdown)"
         }
         if meter.isEstimate {
             text += " (estimated)"
@@ -240,7 +240,7 @@ struct ProviderSectionView: View {
         if headlines.isEmpty, let glance = section.glanceLine {
             lines.append(glance.text)
         }
-        for meter in visibleMeters(section) {
+        for meter in secondaryMeters(section) {
             lines.append("\(meter.label): \(Int((meter.fractionLeft * 100).rounded()))% left")
         }
         for row in section.rows {
@@ -282,7 +282,7 @@ enum SectionVisibility {
     }
 
     /// Visible meters that no visible headline already presents under the same label.
-    static func collapsedSecondaryMeters(_ section: ProviderSection, providerID: String,
+    static func secondaryMeters(_ section: ProviderSection, providerID: String,
                                          showFiveHourLimit: Bool) -> [SectionMeter] {
         let labels = Set(headlines(section, providerID: providerID, showFiveHourLimit: showFiveHourLimit)
             .map(\.windowLabel))
@@ -316,56 +316,110 @@ private struct ThinMeterBar: View {
     }
 }
 
-/// The glance line: percent left for the primary window, its live reset
-/// countdown, and — when a remaining quantity exists — the estimated
-/// per-day amount for the remaining days.
+/// The glance line: a pace gauge for the primary window (outer ring usage
+/// left, inner pie time left) with its percent left and label, plus a smaller
+/// gauge per sub-meter. Countdown, reset date, daily quote and pace verdict
+/// are on hover.
 private struct SectionHeadlineView: View {
     let headline: SectionHeadline
     let now: Date
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Text("\(Int((headline.fractionLeft * 100).rounded()))% left")
-                    .font(.title3.weight(.semibold))
-                Text(headline.windowLabel)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                if headline.isEstimate {
-                    estimateTag
-                }
-            }
-            if let resetsAt = headline.resetsAt {
-                HStack(spacing: 8) {
-                    Text(countdown(resetsAt))
-                    if let quote = dailyQuote {
-                        Text(quote)
+        let timeLeft = headline.timeFractionLeft(now: now)
+        HStack(alignment: .center, spacing: 10) {
+            HStack(alignment: .center, spacing: 10) {
+                PaceGauge(usageLeft: headline.fractionLeft, timeLeft: timeLeft, size: 40)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("\(ResetWindow.percent(headline.fractionLeft))% left")
+                        .font(.title3.weight(.semibold))
+                        .lineLimit(1)
+                        .fixedSize()
+                    Text(headline.windowLabel)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .fixedSize()
+                    if headline.isEstimate {
+                        estimateTag
                     }
                 }
-                .font(.caption)
-                .foregroundStyle(.secondary)
             }
-            ProgressView(value: headline.fractionLeft)
-                .progressViewStyle(.linear)
+            .hoverTip(Self.tooltip(for: headline, now: now))
+            if !headline.subMeters.isEmpty {
+                Spacer(minLength: 12)
+            }
             ForEach(headline.subMeters) { sub in
-                VStack(alignment: .leading, spacing: 3) {
-                    HStack(spacing: 4) {
-                        Text("\(sub.label): \(Int((sub.fractionLeft * 100).rounded()))% left")
+                HStack(alignment: .center, spacing: 6) {
+                    // A sub-meter shares its headline's reset, so the same time
+                    // pie; its own ring colour sets it apart from the headline.
+                    PaceGauge(usageLeft: sub.fractionLeft, timeLeft: timeLeft, size: 28,
+                              tint: PaceGauge.subMeterTint)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("\(ResetWindow.percent(sub.fractionLeft))% left")
+                            .font(.subheadline.weight(.semibold))
+                            .lineLimit(1)
+                            .fixedSize()
+                        Text(sub.label)
                             .font(.caption)
                             .foregroundStyle(.secondary)
+                            .lineLimit(1)
                         if sub.isEstimate {
                             estimateTag
                         }
                     }
-                    ThinMeterBar(fraction: sub.fractionLeft)
                 }
+                .hoverTip(Self.tooltip(for: sub, in: headline, now: now))
             }
         }
     }
 
+    /// Hover detail for the headline gauge.
+    static func tooltip(for headline: SectionHeadline, now: Date) -> String {
+        var lines = ["\(headline.windowLabel): \(ResetWindow.percent(headline.fractionLeft))% left"
+                     + (headline.isEstimate ? " (estimated)" : "")]
+        if let resetsAt = headline.resetsAt {
+            lines.append(ResetWindow.countdownText(resetsAt, now: now,
+                                                           windowDuration: headline.windowDuration))
+            lines.append("Resets \(resetsAt.formatted(Self.resetDateStyle))")
+        }
+        if let quote = dailyQuote(headline, now: now) {
+            lines.append(quote)
+        }
+        if let pace = paceLine(usageLeft: headline.fractionLeft, timeLeft: headline.timeFractionLeft(now: now)) {
+            lines.append(pace)
+        }
+        return lines.joined(separator: "\n")
+    }
+
+    /// Hover detail for a sub-meter gauge, which runs on its headline's window.
+    static func tooltip(for sub: SectionMeter, in headline: SectionHeadline, now: Date) -> String {
+        var lines = ["\(sub.label): \(ResetWindow.percent(sub.fractionLeft))% left"
+                     + (sub.isEstimate ? " (estimated)" : "")]
+        if let resetsAt = headline.resetsAt {
+            lines.append("Shares the \(headline.windowLabel) reset")
+            lines.append(ResetWindow.countdownText(resetsAt, now: now,
+                                                           windowDuration: headline.windowDuration))
+        }
+        if let pace = paceLine(usageLeft: sub.fractionLeft, timeLeft: headline.timeFractionLeft(now: now)) {
+            lines.append(pace)
+        }
+        return lines.joined(separator: "\n")
+    }
+
+    /// Ahead or behind, matching the ring colour; nil without a time share.
+    static func paceLine(usageLeft: Double, timeLeft: Double?) -> String? {
+        guard let timeLeft else { return nil }
+        return ResetWindow.isBehindPace(usageLeft: usageLeft, timeLeft: timeLeft)
+            ? "Behind pace: usage is running out faster than time"
+            : "On pace: as much usage left as time, or more"
+    }
+
+    private static let resetDateStyle = Date.FormatStyle()
+        .weekday(.abbreviated).day().month(.abbreviated).hour().minute()
+
     /// Remaining quantity divided by the days until reset; an arithmetic
     /// projection, always presented as an estimate.
-    private var dailyQuote: String? {
+    static func dailyQuote(_ headline: SectionHeadline, now: Date) -> String? {
         guard let budget = headline.dailyBudget, let resetsAt = headline.resetsAt else { return nil }
         let seconds = resetsAt.timeIntervalSince(now)
         guard seconds > 0 else { return nil }
@@ -378,9 +432,74 @@ private struct SectionHeadlineView: View {
             ? "≈ $\(value)/day\(tail)"
             : "≈ \(value) \(budget.unitText)/day\(tail)"
     }
+}
 
-    private func countdown(_ date: Date) -> String {
-        SectionDeadlineView.countdownText(date, now: now)
+/// Two concentric shares of one window, both anchored at 12 o'clock: the
+/// outer ring is usage left, the inner pie is time left. Each runs down the
+/// way a clock hand sweeps — the spent part opens clockwise from 12. The ring
+/// turns orange when less usage than time is left.
+struct PaceGauge: View {
+    let usageLeft: Double
+    /// Nil draws the ring alone (no known window length or reset).
+    let timeLeft: Double?
+    let size: CGFloat
+    /// Ring colour while on pace; behind pace is always orange.
+    var tint: Color = .accentColor
+
+    /// Sub-meters (e.g. Fable) use their own on-pace colour.
+    static let subMeterTint = Color.purple
+
+    var body: some View {
+        let usage = min(max(usageLeft, 0), 1)
+        let ring = size * 0.13
+        let behind = timeLeft.map { ResetWindow.isBehindPace(usageLeft: usage, timeLeft: $0) } ?? false
+        ZStack {
+            Circle()
+                .stroke(Color.primary.opacity(0.12), lineWidth: ring)
+            if usage > 0 {
+                Circle()
+                    .trim(from: 1 - usage, to: 1)
+                    .stroke(behind ? Color.orange : tint,
+                            style: StrokeStyle(lineWidth: ring, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+            }
+            if let timeLeft {
+                ZStack {
+                    Circle().fill(Color.primary.opacity(0.08))
+                    RemainingSlice(fraction: min(max(timeLeft, 0), 1))
+                        .fill(Color.primary.opacity(0.45))
+                }
+                .frame(width: size - ring * 2 - size * 0.16, height: size - ring * 2 - size * 0.16)
+            }
+        }
+        .padding(ring / 2)
+        .frame(width: size, height: size)
+        .accessibilityElement()
+        .accessibilityLabel("Usage gauge")
+        .accessibilityValue(Self.accessibilityValue(usageLeft: usage, timeLeft: timeLeft))
+    }
+
+    static func accessibilityValue(usageLeft: Double, timeLeft: Double?) -> String {
+        let usage = "\(ResetWindow.percent(usageLeft)) percent usage left"
+        guard let timeLeft else { return usage }
+        return "\(usage), \(ResetWindow.percent(timeLeft)) percent time left"
+    }
+}
+
+/// The remaining sector of a pie: from the swept edge clockwise back to 12.
+private struct RemainingSlice: Shape {
+    let fraction: Double
+
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        guard fraction > 0 else { return path }
+        let center = CGPoint(x: rect.midX, y: rect.midY)
+        path.move(to: center)
+        path.addArc(center: center, radius: min(rect.width, rect.height) / 2,
+                    startAngle: .degrees(-90 + 360 * (1 - fraction)), endAngle: .degrees(270),
+                    clockwise: false)
+        path.closeSubpath()
+        return path
     }
 }
 
@@ -426,6 +545,8 @@ private struct SectionMeterView: View {
 private struct SectionDeadlineView: View {
     let deadline: SectionDeadline
     let now: Date
+    /// Length of the window this deadline ends, when a headline knows it.
+    var windowDuration: TimeInterval?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
@@ -442,22 +563,9 @@ private struct SectionDeadlineView: View {
     }
 
     private var countdown: String {
-        Self.countdownText(deadline.date, now: now)
+        ResetWindow.countdownText(deadline.date, now: now, windowDuration: windowDuration)
     }
 
-    /// Shared countdown phrasing for deadlines and headlines.
-    static func countdownText(_ date: Date, now: Date) -> String {
-        guard date > now else {
-            return "Reset time passed · awaiting updated usage"
-        }
-        let minutes = Int(min(date.timeIntervalSince(now) / 60, Double(Int.max / 2)))
-        let days = minutes / 1_440
-        let hours = (minutes % 1_440) / 60
-        let remainder = minutes % 60
-        if days > 0 { return "Resets in \(days)d \(hours)h \(remainder)m" }
-        if hours > 0 { return "Resets in \(hours)h \(remainder)m" }
-        return minutes > 0 ? "Resets in \(minutes)m" : "Resets in less than a minute"
-    }
 }
 
 /// Visible estimate labeling required wherever fallback data is shown.
@@ -486,7 +594,8 @@ private struct SectionPreview: View {
             headlines: [SectionHeadline(id: "weekly", windowLabel: "Weekly limit", fractionLeft: 0.68,
                                         resetsAt: now.addingTimeInterval(90_000),
                                         dailyBudget: SectionDailyBudget(amount: Decimal(string: "7417273")!,
-                                                                        unitText: "credits", isEstimate: false))!],
+                                                                        unitText: "credits", isEstimate: false),
+                                        windowDuration: ResetWindow.sevenDays)!],
             lastUpdated: now)
         ProviderSectionView(store: store(section: section), now: now, showFiveHourLimit: true)
     }

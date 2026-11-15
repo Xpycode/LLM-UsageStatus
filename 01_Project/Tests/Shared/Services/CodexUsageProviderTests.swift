@@ -36,10 +36,12 @@ final class CodexUsageProviderTests: XCTestCase {
         ])
         XCTAssertTrue(section.deadlines.isEmpty)
         XCTAssertEqual(section.headlines, [
-            SectionHeadline(id: "five-hour", windowLabel: "5-hour limit", fractionLeft: 0.93, resetsAt: nil)!,
+            SectionHeadline(id: "five-hour", windowLabel: "5-hour limit", fractionLeft: 0.93, resetsAt: nil,
+                            windowDuration: ResetWindow.fiveHours)!,
             SectionHeadline(id: "weekly", windowLabel: "Weekly limit", fractionLeft: 0.8, resetsAt: nil,
                             dailyBudget: SectionDailyBudget(amount: Decimal(string: "12.5")!,
-                                                            unitText: "credits", isEstimate: false))!,
+                                                            unitText: "credits", isEstimate: false),
+                            windowDuration: ResetWindow.sevenDays)!,
         ])
     }
 
@@ -66,9 +68,10 @@ final class CodexUsageProviderTests: XCTestCase {
         ])
         XCTAssertEqual(section.headlines, [
             SectionHeadline(id: "five-hour", windowLabel: "5-hour limit", fractionLeft: 0.82,
-                            resetsAt: now.addingTimeInterval(3_600))!,
+                            resetsAt: now.addingTimeInterval(3_600), windowDuration: 18_000)!,
             SectionHeadline(id: "weekly", windowLabel: "Weekly limit", fractionLeft: 0.68,
-                            resetsAt: now.addingTimeInterval(90_000), dailyBudget: nil)!,
+                            resetsAt: now.addingTimeInterval(90_000), dailyBudget: nil,
+                            windowDuration: 604_800)!,
         ])
         XCTAssertEqual(section.lastUpdated, now)
     }

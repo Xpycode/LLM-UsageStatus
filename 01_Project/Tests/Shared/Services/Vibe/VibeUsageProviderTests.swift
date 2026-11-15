@@ -201,7 +201,9 @@ final class VibeUsageProviderTests: XCTestCase {
             fractionLeft: 1 - Double(truncating: cost as NSDecimalNumber) / 300,
             resetsAt: calendar.date(from: DateComponents(year: 2025, month: 1, day: 15)),
             dailyBudget: SectionDailyBudget(amount: Decimal(300) - cost, unitText: "$", isEstimate: true),
-            isEstimate: true)
+            isEstimate: true,
+            // 15 Dec 2024 to 15 Jan 2025: a 31-day budget month.
+            windowDuration: 31 * 86_400)
         XCTAssertEqual(section.headlines, [expectedHeadline!])
     }
 
@@ -314,6 +316,23 @@ final class VibeUsageProviderTests: XCTestCase {
                        calendar.date(from: DateComponents(year: 2025, month: 2, day: 28)))
         // Out-of-range day yields nil.
         XCTAssertNil(VibeUsageProvider.nextResetDate(onOrAfter: jan20, dayOfMonth: 0, calendar: calendar))
+    }
+
+    func testPreviousResetDateIsOneMonthBackWithTheSameClamp() {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        func day(_ year: Int, _ month: Int, _ day: Int) -> Date {
+            calendar.date(from: DateComponents(year: year, month: month, day: day))!
+        }
+        XCTAssertEqual(VibeUsageProvider.previousResetDate(before: day(2025, 2, 15), dayOfMonth: 15,
+                                                           calendar: calendar), day(2025, 1, 15))
+        // Day 31: the clamped 28 Feb reset follows 31 Jan; 31 Mar follows the clamped 28 Feb.
+        XCTAssertEqual(VibeUsageProvider.previousResetDate(before: day(2025, 2, 28), dayOfMonth: 31,
+                                                           calendar: calendar), day(2025, 1, 31))
+        XCTAssertEqual(VibeUsageProvider.previousResetDate(before: day(2025, 3, 31), dayOfMonth: 31,
+                                                           calendar: calendar), day(2025, 2, 28))
+        XCTAssertNil(VibeUsageProvider.previousResetDate(before: day(2025, 3, 31), dayOfMonth: 0,
+                                                         calendar: calendar))
     }
 
     func testBudgetReadIgnoresMalformedDefaults() throws {

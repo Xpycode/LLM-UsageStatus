@@ -84,20 +84,22 @@ struct ClaudeUsageProvider: Provider {
         var headlines: [SectionHeadline] = []
         if let window = usage.fiveHour, let utilization = window.utilization,
            let headline = SectionHeadline(id: "five-hour", windowLabel: "5-hour limit",
-                                          fractionLeft: 1 - utilization, resetsAt: window.resetsAt) {
+                                          fractionLeft: 1 - utilization, resetsAt: window.resetsAt,
+                                          windowDuration: ResetWindow.fiveHours) {
             headlines.append(headline)
         }
         // The Fable allowance shares the weekly reset, so it rides under the
         // 7-day headline as a sub-meter; without that headline it is not shown.
         var sevenDaySubMeters: [SectionMeter] = []
         if let fableUtilization = usage.fable?.utilization,
-           let meter = SectionMeter(id: "fable-allowance", label: "Fable allowance", fraction: fableUtilization) {
+           let meter = SectionMeter(id: "fable-allowance", label: "Fable", fraction: fableUtilization) {
             sevenDaySubMeters.append(meter)
         }
         if let window = usage.sevenDay, let utilization = window.utilization,
            let headline = SectionHeadline(id: "seven-day", windowLabel: "7-day limit",
                                           fractionLeft: 1 - utilization, resetsAt: window.resetsAt,
-                                          subMeters: sevenDaySubMeters) {
+                                          subMeters: sevenDaySubMeters,
+                                          windowDuration: ResetWindow.sevenDays) {
             headlines.append(headline)
         }
 

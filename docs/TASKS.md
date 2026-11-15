@@ -71,9 +71,21 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
     diagnostic `Usage windows five_hour=present util=NN% …` logs utilization percentages at `.notice`,
     `privacy: .public`, on every fetch — usage numbers, not credentials; decide whether to demote it to
     `.debug` or drop `util=`.
+18. **Pace gauge (in progress on `feature/pace-gauge`, 2026-11-14)** — ADR in `decisions.md`
+    (2026-11-14). 2026-11-15: tooltips fixed — `.help` only shows while the app is active (confirmed
+    by the user), replaced by `HoverTip.swift` (own click-through tip panel, works inactive; user
+    confirmed section and gauge tips in build 3); expanded-view bars that duplicate a gauge removed
+    (user choice; build 4, accepted "looks good"). Open: CHANGELOG entry; commit + push and CI (local
+    run is app-hosted, needs go-ahead); whether it ships in 0.3.0 or 0.3.1.
 
 ## Inbox
 
+- **Hover tip waits for a mouse move when the panel opens under the pointer** (2026-11-15, from the
+  `HoverTip` design, not observed by the user): AppKit sends no entered event for a tracking area
+  created under a resting pointer; `mouseMoved` corrects it on the next move. Unconfirmed whether it matters.
+- **"Last updated 14. Nov 2026 at 22:08:15" mixes locales** (2026-11-14, seen in the user's
+  screenshots, predates the gauge, not confirmed as worth fixing): the date follows the system
+  locale (German) but "at" is English text around it.
 - **Claude usage key diagnostic truncated; new response fields** (2026-11-12, E0, unconfirmed whether worth acting on): the
   `.debug` key-names line is cut by os_log at about 1 KB (ends at `weekly_scoped_shares[allowance_percent<…>`), so later
   keys are invisible — splitting the summary over several lines would fix it. The live response also carries

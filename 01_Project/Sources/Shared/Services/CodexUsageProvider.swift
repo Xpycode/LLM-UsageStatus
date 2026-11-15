@@ -70,7 +70,8 @@ extension CodexUsageService: Provider {
         if let fiveHour = snapshot.fiveHour,
            let headline = SectionHeadline(id: "five-hour", windowLabel: "5-hour limit",
                                           fractionLeft: fiveHour.remainingPercentage / 100,
-                                          resetsAt: fiveHour.resetsAt) {
+                                          resetsAt: fiveHour.resetsAt,
+                                          windowDuration: ResetWindow.fiveHours) {
             headlines.append(headline)
         }
         if let weekly = snapshot.weekly {
@@ -85,7 +86,8 @@ extension CodexUsageService: Provider {
             if let headline = SectionHeadline(id: "weekly", windowLabel: "Weekly limit",
                                               fractionLeft: weekly.remainingPercentage / 100,
                                               resetsAt: weekly.resetsAt,
-                                              dailyBudget: dailyBudget) {
+                                              dailyBudget: dailyBudget,
+                                              windowDuration: ResetWindow.sevenDays) {
                 headlines.append(headline)
             }
         }

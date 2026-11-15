@@ -96,6 +96,7 @@ enum SectionFixture {
         if let store {
             ProviderSectionView(store: store, now: now, showFiveHourLimit: true, expanded: expanded)
                 .frame(width: 320, alignment: .topLeading)
+                .environment(\.hoverTipsEnabled, false)
         } else {
             ProgressView().frame(width: 320)
         }
@@ -151,11 +152,12 @@ enum SectionFixture {
             ],
             headlines: [
                 SectionHeadline(id: "five-hour", windowLabel: "5-hour limit", fractionLeft: 0.82,
-                                resetsAt: now.addingTimeInterval(4_500))!,
+                                resetsAt: now.addingTimeInterval(4_500), windowDuration: ResetWindow.fiveHours)!,
                 SectionHeadline(id: "weekly", windowLabel: "Weekly limit", fractionLeft: 0.68,
                                 resetsAt: now.addingTimeInterval(90_000),
                                 dailyBudget: SectionDailyBudget(amount: Decimal(string: "7417273")!,
-                                                                unitText: "credits", isEstimate: false))!,
+                                                                unitText: "credits", isEstimate: false),
+                                windowDuration: ResetWindow.sevenDays)!,
             ],
             lastUpdated: now)
     }
@@ -209,11 +211,12 @@ enum SectionFixture {
             ],
             headlines: [
                 SectionHeadline(id: "five-hour", windowLabel: "5-hour limit", fractionLeft: 0.58,
-                                resetsAt: now.addingTimeInterval(4_500))!,
+                                resetsAt: now.addingTimeInterval(4_500), windowDuration: ResetWindow.fiveHours)!,
                 SectionHeadline(id: "seven-day", windowLabel: "7-day limit", fractionLeft: 0.19,
                                 resetsAt: now.addingTimeInterval(90_000),
-                                subMeters: [SectionMeter(id: "fable-allowance", label: "Fable allowance",
-                                                         fraction: 0.35)!])!,
+                                subMeters: [SectionMeter(id: "fable-allowance", label: "Fable",
+                                                         fraction: 0.35)!],
+                                windowDuration: ResetWindow.sevenDays)!,
             ],
             lastUpdated: now)
     }
@@ -288,7 +291,7 @@ enum SectionFixture {
                                 resetsAt: now.addingTimeInterval(172_800),
                                 dailyBudget: SectionDailyBudget(amount: Decimal(string: "297.67")!,
                                                                 unitText: "$", isEstimate: true),
-                                isEstimate: true)!,
+                                isEstimate: true, windowDuration: 30 * 86_400)!,
             ],
             lastUpdated: now)
     }

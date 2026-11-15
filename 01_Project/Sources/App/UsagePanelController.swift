@@ -102,6 +102,7 @@ private final class Host<V: View>: NSHostingView<V> {
     func hide() {
         // Invalidate before ordering out: a late layout pass may belong to this old host.
         presentationID = nil
+        HoverTipController.shared.dismissAll()
         panel?.orderOut(nil)
         panel = nil
         scrollView = nil

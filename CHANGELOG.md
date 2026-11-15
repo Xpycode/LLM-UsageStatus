@@ -18,12 +18,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   warning menu-bar item that appears when the shortcut cannot be registered.
 - Settings has a new **Updates** section: Check for updates automatically (on
   by default), a Check for Updates… button and the time of the last check.
+- **Pace gauges.** Each limit headline is now a round gauge instead of a bar:
+  the outer ring is the usage left, the inner pie is the time left in that
+  window. The ring turns orange when you have less usage left than time left,
+  so you can see at a glance whether you are ahead of or behind pace.
+- **Hover for details.** Point at a gauge to see its countdown with the share
+  of time left, the reset date and time and whether you are on pace; where a
+  budget is known, it also estimates how much you can use per day. The tips
+  also appear while another app is in front. Countdowns now add
+  "(N% time left)" when the window length is known.
 - Claude Code shows the 5-hour and the 7-day limit as **two headlines**, each
-  with percent left, a countdown and a bar. The 7-day limit is no longer a
-  grey line under the 5-hour headline.
-- A smaller **Fable allowance** bar under Claude's 7-day headline shows the
-  percent left of your Fable allowance, when Claude reports one (Max and
-  similar plans). It resets with the weekly limit.
+  with its own gauge and percent left. The 7-day limit is no longer a grey line
+  under the 5-hour headline.
+- A smaller **Fable** gauge beside Claude's 7-day gauge shows the percent left
+  of your Fable allowance, when Claude reports one (Max and similar plans). It
+  resets with the weekly limit.
 - With **Show 5-hour limit** on, Codex shows the 5-hour limit as a second
   headline under its weekly limit.
 - A **Settings** gear in the panel header, next to the show/hide shortcut.
@@ -32,12 +41,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - The panel header shows just the show/hide shortcut under the underlined
   app name; clicking elsewhere still dismisses the panel.
+- An expanded section no longer repeats a limit as a bar when its gauge
+  already shows it.
 
 ### Fixed
 
 - Expanding or collapsing a section no longer makes the panel or its text
   jump for a moment.
-
 - The Codex **Show 5-hour limit** toggle no longer hides Claude's 5-hour
   meter and countdown.
 - The last-seen values saved by 0.2.2 still load after updating, so the panel
