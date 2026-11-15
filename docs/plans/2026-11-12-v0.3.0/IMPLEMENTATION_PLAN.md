@@ -5,8 +5,8 @@
 > Task state/evidence is authoritative here; TASKS links here and holds backlog/inbox.
 > Follow the master's `reference/task-state.md` for legacy reconciliation and archival.
 
-**Progress:** 10/10 tasks complete (0.1, 1.1–1.4, 2.1–2.3, 3.1–3.2); **COMPLETE 2026-11-15** — E0–E5 passed (E3's website step marked done by the user while the
-App-Websites session finishes it). Retired in place; D11 local-run proof deferred to Backlog #19. D2, D4, D10 and D11 confirmed by the user 2026-11-12. Wave 0 done 2026-11-12
+**Progress:** 10/10 tasks complete (0.1, 1.1–1.4, 2.1–2.3, 3.1–3.2); **COMPLETE 2026-11-15** — E0–E5 passed (E3's website step
+published and verified 2026-11-15 in App-Websites). Retired in place; D11 local-run proof deferred to Backlog #19. D2, D4, D10 and D11 confirmed by the user 2026-11-12. Wave 0 done 2026-11-12
 (`109957c`); Wave 1 done 2026-11-12 (`1581e8a`, `0349627`, `2835494`, `0ffbc79`); Wave 2 done 2026-11-12
 (`b327b10`, `b987e61`, `04d0ece`, `3c83c41`); Wave 3 done 2026-11-12 (`023ad9f`, `4ae5cc9`; CI green on
 `4ae5cc9`, 280 tests). Execution was requested wave by wave (Wave 0, 1, 2, 3).
@@ -203,8 +203,7 @@ confirmed all four (D2, D4, D10, D11) as written on 2026-11-12.
       now" text remains; no shortcut glyphs; the help manifest is valid JSON. (3.1)
 - [x] Notarized 0.3.0 (300): GitHub Release, appcast item, cask, website and `dl.php` all serve the
       same DMG checksum; About shows Version 0.3.0 (300) after installation. (GitHub, appcast, cask
-      verified in E3; About in E4. Website/`dl.php` marked done by the user 2026-11-15 while the
-      App-Websites session finishes it — `dl.php` still served the 0.2.2 file, 3294714 bytes, at that check.)
+      verified in E3; About in E4. Website/`dl.php` published and verified 2026-11-15 by App-Websites (`93460c5`): `dl.php` → `/downloads/llm-usagestatus.dmg` serves the 0.3.0 DMG, 4459642 bytes, SHA-256 `29701e0c…d0b0` = GitHub asset = appcast length.)
 - [ ] (D11) After a full local or CI test run no `LLMUsageStatusTests.*`/`VibeUsageProviderTests.*`
       plist is left in `~/Library/Preferences`; the Release build log has zero Swift warnings.
       (Zero warnings verified in 2.2; the local-run plist proof is deferred to Backlog #19.)
@@ -806,10 +805,11 @@ Wave 2 ownership (exclusive):
        a locally served 0.3.0 feed → 0.3.0). `brew style` ok; `brew audit --cask --online` passes after the
        push (before it, only the expected live-feed livecheck mismatch); `brew livecheck` 0.3.0 ==> 0.3.0.
     5. CHANGELOG `[0.3.0] - 2026-11-15`; README version/download badges and SHA-256 line → 0.3.0.
-       **Website still open** (App-Websites: DMG upload, page/roster version and date, `dl.php`).
-    6. `brew fetch --cask` SHA-256 = GitHub asset = appcast length's DMG; `dl.php` waits for the website.
-  - **Closed 2026-11-15 by the user:** website step marked done — the App-Websites session is
-    carrying it out (at closing, `dl.php` → `/downloads/llm-usagestatus.dmg` still 3294714 bytes = 0.2.2).
+       Website done later the same day (see Closed below).
+    6. `brew fetch --cask` SHA-256 = GitHub asset = appcast length's DMG; `dl.php` agrees since the website publication.
+  - **Closed 2026-11-15:** website step published and verified 2026-11-15 by App-Websites (`93460c5`): `dl.php` → `/downloads/llm-usagestatus.dmg` serves the 0.3.0 DMG, 4459642 bytes, SHA-256 `29701e0c…d0b0` = GitHub asset = appcast length. Product page, release notes, catalogue (0.3.0 /
+    2026-11-15), GitHub and Homebrew links live; receipt in App-Websites
+    `docs/reviews/2026-11-15-llm-usagestatus-0.3.0-publication.json`.
 - [x] **E4**: Install and smoke test (go-ahead to replace the `/Applications` copy)
   - Depends on: E3.
   - Success: graceful quit of the identified 0.2.2 instance, notarized 0.3.0 copied in, `spctl` ok,

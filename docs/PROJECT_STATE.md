@@ -15,7 +15,7 @@ Developer ID signed, notarized, zero configuration for end users.
 
 ## Now
 
-- **Funnel:** released — 0.3.0 (300) is out (GitHub Release, appcast, Homebrew cask) and installed; the 0.3.0 plan is retired (`docs/plans/2026-11-12-v0.3.0/`). The website update is being finished in the App-Websites session.
+- **Funnel:** released — 0.3.0 (300) is out (GitHub Release, appcast, Homebrew cask) and installed; the 0.3.0 plan is retired (`docs/plans/2026-11-12-v0.3.0/`). The website (apps.lucesumbrarum.com) serves 0.3.0 too, verified 2026-11-15.
 - **Next:** no active plan — choose the next work from Backlog #14–#17 and #19 (D11 local-run proof) or the Inbox, then `/spec` or `/make-plan`.
 - Running: installed **0.3.0** (pid 69801) from `/Applications/LLM-UsageStatus.app`, identical to `dist/0.3.0`. No test builds remain.
 - 0.2.2 has no updater: 0.2.2 users update once by hand or `brew upgrade`; in-app updates start with 0.3.0.
