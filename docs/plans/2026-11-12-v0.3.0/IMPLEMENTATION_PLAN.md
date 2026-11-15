@@ -5,8 +5,8 @@
 > Task state/evidence is authoritative here; TASKS links here and holds backlog/inbox.
 > Follow the master's `reference/task-state.md` for legacy reconciliation and archival.
 
-**Progress:** 10/10 tasks complete (0.1, 1.1–1.4, 2.1–2.3, 3.1–3.2); E0 passed; E1–E5 open (E1 is
-next, user-operated). D2, D4, D10 and D11 confirmed by the user 2026-11-12. Wave 0 done 2026-11-12
+**Progress:** 10/10 tasks complete (0.1, 1.1–1.4, 2.1–2.3, 3.1–3.2); E0 and E1 passed; E2–E5 open
+(E2 notarize is next, needs go-ahead). D2, D4, D10 and D11 confirmed by the user 2026-11-12. Wave 0 done 2026-11-12
 (`109957c`); Wave 1 done 2026-11-12 (`1581e8a`, `0349627`, `2835494`, `0ffbc79`); Wave 2 done 2026-11-12
 (`b327b10`, `b987e61`, `04d0ece`, `3c83c41`); Wave 3 done 2026-11-12 (`023ad9f`, `4ae5cc9`; CI green on
 `4ae5cc9`, 280 tests). Execution was requested wave by wave (Wave 0, 1, 2, 3).
@@ -723,7 +723,7 @@ Wave 2 ownership (exclusive):
     starry_waterfall tangelo wattle_ember weekly_scoped_shares[allowance_percent<…>`. `limits[]` carries the
     R2 names (`kind`, `percent`, `resets_at`, `scope`). **Fable row present:** the panel rendered "Fable
     allowance: 87% left", which only a decoded `weekly_scoped` Fable row produces. No re-scope of 2.1 needed.
-- [ ] **E1**: Manual acceptance in a fresh Debug build (user-operated)
+- [x] **E1**: Manual acceptance in a fresh Debug build (user-operated) — **passed 2026-11-15**
   - Depends on: 3.2. Gates: the UI acceptance criteria; E2.
   - Success:
     1. Claude section: two headlines (5-hour, 7-day), each a pace gauge (ring orange when behind
@@ -750,6 +750,11 @@ Wave 2 ownership (exclusive):
     panel no longer jumps on expand/collapse (`7af531a`, user confirmed), and the header shows the
     shortcut plus a Settings gear under an underlined title (`9f8ede0`, user confirmed). E1's four
     checks are still open.
+  - **Result (2026-11-15): passed** — user: "all pass" (all four checks) on
+    `04_Exports/0.3.0-E1-main-57ea8cc-Debug/LLM-UsageStatus.app` (`main` @ `57ea8cc`, includes the pace
+    gauge and hover tips, folded into 0.3.0 by user decision). One user nit, fixed after E1: the panel
+    grew and shrank by a line on every refresh ("Updating…" was an extra line) — `8f06132`, user
+    looked at build `04_Exports/0.3.0-refresh-line-Debug` and approved. E2 builds from `main` at or after `8f06132`.
 - [ ] **E2**: Notarize 0.3.0 (go-ahead — Apple, `99-AUTH` key)
   - Depends on: E1.
   - Success: clean tree; `scripts/notarize-release.sh 0.3.0` → Accepted, stapled, `spctl`

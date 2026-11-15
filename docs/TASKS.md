@@ -4,7 +4,7 @@
 - **Plan (retired 2026-11-08):** `docs/plans/2026-11-06-settings-window/IMPLEMENTATION_PLAN.md` — **COMPLETE**: Settings window (launch at login, shortcut rebinding, About), 8/8 tasks (CI 204 green, 288f5ab), E1 passed. It stays in place as the permanent execution record.
 - **Plan (retired 2026-11-10):** `docs/plans/2026-11-08-v0.2.0/IMPLEMENTATION_PLAN.md` — **COMPLETE**: 0.2.0 (layout-aware shortcut names, in-app Help, Send Feedback… / Leave a Tip), 11/11 tasks, E1–E5 passed; notarized DMG + detail page live. Follow-up 0.2.1 (app icon) shipped the same day, user acceptance passed. It stays in place as the permanent execution record.
 - **Plan (retired 2026-11-12):** `docs/plans/2026-11-10-v0.2.2/IMPLEMENTATION_PLAN.md` — **COMPLETE**: 0.2.2 (202): Vibe totals fix (snapshot source, no double count, children fold), layout-aware shortcut refusals + AZERTY Settings key + ISO key, provider on/off in Settings, `SectionStateCache` logging. 8/8 tasks done; E1 passed 2026-11-11; E2 notarized and E3 published 2026-11-11; E4 installed 2026-11-12; provider toggles survive a relaunch (user, 2026-11-12). It stays in place as the permanent execution record.
-- **Active plan:** `docs/plans/2026-11-12-v0.3.0/IMPLEMENTATION_PLAN.md` — 0.3.0 (300): Sparkle auto-updates (EdDSA key, `appcast.xml` in this repo, Check for Updates…, Settings Updates section, inside-out signing in the release scripts), Claude 5-hour and 7-day as two equal headlines (Codex 5-hour headline with its toggle), Claude Fable allowance sub-meter after a key-names diagnostic, test/warning hygiene. 10/10 tasks checked (Waves 0–3 done 2026-11-12; CI green on `4ae5cc9`, 280 tests), E0 passed, E1–E5 open. D2, D4, D10 and D11 confirmed by the user 2026-11-12. Awaiting acceptance: E1 (user-operated, E1 Debug build running).
+- **Active plan:** `docs/plans/2026-11-12-v0.3.0/IMPLEMENTATION_PLAN.md` — 0.3.0 (300): Sparkle auto-updates (EdDSA key, `appcast.xml` in this repo, Check for Updates…, Settings Updates section, inside-out signing in the release scripts), Claude 5-hour and 7-day as two equal headlines (Codex 5-hour headline with its toggle), Claude Fable allowance sub-meter after a key-names diagnostic, test/warning hygiene. 10/10 tasks checked (Waves 0–3 done 2026-11-12), plus the pace gauge folded in 2026-11-15 (`57ea8cc`, `8f06132`; CI green 293+ tests). E0 and E1 passed (E1 2026-11-15); E2–E5 open — next: E2 notarize (go-ahead). D2, D4, D10 and D11 confirmed by the user 2026-11-12.
 
 ## Backlog
 
@@ -71,12 +71,12 @@ Retained for discoverability; items map into plan tasks (executed work tracks th
     diagnostic `Usage windows five_hour=present util=NN% …` logs utilization percentages at `.notice`,
     `privacy: .public`, on every fetch — usage numbers, not credentials; decide whether to demote it to
     `.debug` or drop `util=`.
-18. **Pace gauge (in progress on `feature/pace-gauge`, 2026-11-14)** — ADR in `decisions.md`
+18. ✅ **Done 2026-11-15 — shipped in 0.3.0 (`57ea8cc` on `main`, E1 passed).** **Pace gauge (was on `feature/pace-gauge`, 2026-11-14)** — ADR in `decisions.md`
     (2026-11-14). 2026-11-15: tooltips fixed — `.help` only shows while the app is active (confirmed
     by the user), replaced by `HoverTip.swift` (own click-through tip panel, works inactive; user
     confirmed section and gauge tips in build 3); expanded-view bars that duplicate a gauge removed
-    (user choice; build 4, accepted "looks good"). Open: CHANGELOG entry; commit + push and CI (local
-    run is app-hosted, needs go-ahead); whether it ships in 0.3.0 or 0.3.1.
+    (user choice; build 4, accepted "looks good"). Folded into 0.3.0 (user, 2026-11-15); CHANGELOG,
+    README screenshots, CI green (293 tests), fast-forwarded to `main`.
 
 ## Inbox
 
