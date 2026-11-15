@@ -6,6 +6,39 @@
     <description>Release feed for LLM Usage Status, a dockless macOS HUD that shows usage for Codex, Claude Code and Mistral Vibe.</description>
     <language>en</language>
     <item>
+      <title>Version 0.3.0</title>
+      <pubDate>Sun, 15 Nov 2026 18:20:40 +0000</pubDate>
+      <sparkle:version>300</sparkle:version>
+      <sparkle:shortVersionString>0.3.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[<h3>Added</h3>
+<ul>
+<li><strong>Automatic updates.</strong> The app checks this project's release feed once a day and offers a new version in an alert with its release notes; the update installs only after you choose Install Update. Updates are notarized disk images from GitHub Releases, verified with the app's own signing key before they replace the app.</li>
+<li><strong>Check for Updates…</strong> in the right-click menu, after Settings…, and in the warning menu-bar item that appears when the shortcut cannot be registered.</li>
+<li>Settings has a new <strong>Updates</strong> section: Check for updates automatically (on by default), a Check for Updates… button and the time of the last check.</li>
+<li><strong>Pace gauges.</strong> Each limit headline is now a round gauge instead of a bar: the outer ring is the usage left, the inner pie is the time left in that window. The ring turns orange when you have less usage left than time left, so you can see at a glance whether you are ahead of or behind pace.</li>
+<li><strong>Hover for details.</strong> Point at a gauge to see its countdown with the share of time left, the reset date and time and whether you are on pace; where a budget is known, it also estimates how much you can use per day. The tips also appear while another app is in front. Countdowns now add "(N% time left)" when the window length is known.</li>
+<li>Claude Code shows the 5-hour and the 7-day limit as <strong>two headlines</strong>, each with its own gauge and percent left. The 7-day limit is no longer a grey line under the 5-hour headline.</li>
+<li>A smaller <strong>Fable</strong> gauge beside Claude's 7-day gauge shows the percent left of your Fable allowance, when Claude reports one (Max and similar plans). It resets with the weekly limit.</li>
+<li>With <strong>Show 5-hour limit</strong> on, Codex shows the 5-hour limit as a second headline under its weekly limit.</li>
+<li>A <strong>Settings</strong> gear in the panel header, next to the show/hide shortcut.</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li>The panel header shows just the show/hide shortcut under the underlined app name; clicking elsewhere still dismisses the panel.</li>
+<li>An expanded section no longer repeats a limit as a bar when its gauge already shows it.</li>
+</ul>
+<h3>Fixed</h3>
+<ul>
+<li>Expanding or collapsing a section no longer makes the panel or its text jump for a moment.</li>
+<li>The panel no longer grows and shrinks by a line on every refresh: Updating… now takes the place of the Last updated line.</li>
+<li>The Codex <strong>Show 5-hour limit</strong> toggle no longer hides Claude's 5-hour meter and countdown.</li>
+<li>The last-seen values saved by 0.2.2 still load after updating, so the panel shows them at once after the first relaunch.</li>
+</ul>]]></description>
+      <sparkle:fullReleaseNotesLink>https://github.com/Xpycode/LLM-UsageStatus/releases/tag/v0.3.0</sparkle:fullReleaseNotesLink>
+      <enclosure url="https://github.com/Xpycode/LLM-UsageStatus/releases/download/v0.3.0/LLM-UsageStatus-0.3.0.dmg" length="4459642" type="application/octet-stream" sparkle:edSignature="q1zoe1MBVBQluHrJ6fnuFqZty+4jOusMXjUnlTiMbir1pvAg2gpf4ouNdi2I/kAU4SsWOtl7geAV+qtcmmAkCg=="/>
+    </item>
+    <item>
       <title>Version 0.2.2</title>
       <pubDate>Thu, 12 Nov 2026 03:46:05 +0000</pubDate>
       <sparkle:version>202</sparkle:version>

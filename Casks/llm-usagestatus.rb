@@ -1,6 +1,6 @@
 cask "llm-usagestatus" do
-  version "0.2.2"
-  sha256 "a4fbe57aa2fb864e9b6d7181073ce36800746fed5c5f91044957afa59d20136a"
+  version "0.3.0"
+  sha256 "29701e0cb31e86c7fbb85de88abbe462fb254dde814a14bd7b230b43999dd0b0"
 
   url "https://github.com/Xpycode/LLM-UsageStatus/releases/download/v#{version}/LLM-UsageStatus-#{version}.dmg"
   name "LLM Usage Status"
@@ -9,7 +9,7 @@ cask "llm-usagestatus" do
 
   livecheck do
     url "https://raw.githubusercontent.com/Xpycode/LLM-UsageStatus/main/appcast.xml"
-    strategy :sparkle
+    strategy :sparkle, &:short_version
   end
 
   auto_updates true

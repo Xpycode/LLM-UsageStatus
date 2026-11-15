@@ -6,8 +6,8 @@
   ![macOS](https://img.shields.io/badge/macOS-15%2B-blue)
   ![Swift](https://img.shields.io/badge/Swift-6.0-orange)
   ![License](https://img.shields.io/badge/license-MIT-green)
-  ![Version](https://img.shields.io/badge/version-0.2.2-brightgreen)
-  [![Download](https://img.shields.io/badge/Download-v0.2.2-blue?style=flat-square)](https://github.com/Xpycode/LLM-UsageStatus/releases/latest)
+  ![Version](https://img.shields.io/badge/version-0.3.0-brightgreen)
+  [![Download](https://img.shields.io/badge/Download-v0.3.0-blue?style=flat-square)](https://github.com/Xpycode/LLM-UsageStatus/releases/latest)
   [![Homebrew](https://img.shields.io/badge/Homebrew-Install-FBB040?logo=homebrew&logoColor=white)](#install-with-homebrew)
   ![Downloads](https://img.shields.io/github/downloads/Xpycode/LLM-UsageStatus/total?style=flat-square)
 
@@ -203,8 +203,8 @@ Download the notarized disk image from
 [apps site](https://apps.lucesumbrarum.com/dl.php?app=llm-usagestatus)
 (macOS 15 or newer, Apple silicon and Intel).
 
-SHA-256 of `LLM-UsageStatus-0.2.2.dmg`:
-`a4fbe57aa2fb864e9b6d7181073ce36800746fed5c5f91044957afa59d20136a`
+SHA-256 of `LLM-UsageStatus-0.3.0.dmg`:
+`29701e0cb31e86c7fbb85de88abbe462fb254dde814a14bd7b230b43999dd0b0`
 
 1. Optionally check the download: `shasum -a 256 <file>` should print the value above.
 2. Quit any older copy of LLM Usage Status normally.
